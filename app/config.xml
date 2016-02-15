@@ -1,0 +1,72 @@
+<?xml version='1.0' encoding='utf-8'?>
+<widget id="{{cordova-id}}" version="{{version}}" versionCode="0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0" defaultlocale="ru-Ru">
+    <name>JR</name>
+    <PublisherDisplayName>JR</PublisherDisplayName>
+    <description>
+        JR
+    </description>
+    <feature name="http://api.phonegap.com/1.0/device" />
+    <preference name="permissions" value="none" />
+    <preference name="orientation" value="default" />
+    <preference name="target-device" value="universal" />
+    <preference name="fullscreen" value="false" />
+    <preference name="webviewbounce" value="false" />
+    <preference name="prerendered-icon" value="true" />
+    <preference name="stay-in-webview" value="false" />
+    <preference name="detect-data-types" value="true" />
+    <preference name="exit-on-suspend" value="false" />
+    <!--<preference name="show-splash-screen-spinner" value="true" />-->
+    <preference name="auto-hide-splash-screen" value="true" />
+    <preference name="disable-cursor" value="false" />
+    <preference name="DisallowOverscroll" value="true" />
+
+    <preference name="android-minSdkVersion" value="14" />
+    <preference name="android-targetSdkVersion" value="19" />
+    <preference name="android-installLocation" value="auto" />
+
+    <preference name="KeyboardDisplayRequiresUserAction" value="false" />
+
+    <preference name="ios-statusbarstyle" value="black-opaque" />
+    <preference name="StatusBarOverlaysWebView" value="false" />
+    <preference name="StatusBarBackgroundColor" value="#000000" />
+
+    <preference name="SplashScreen" value="splash"/>
+    <preference name="SplashScreenDelay" value="3000" />
+    <preference name="AutoHideSplashScreen" value="false"/>
+
+    <preference name="AndroidPersistentFileLocation" value="Internal" />
+    <preference name="iosPersistentFileLocation" value="Library" />
+
+    <preference name="windows-target-version" value="8.1" />
+
+    <preference name="iosExtraFilesystems" value="library,library-nosync,documents,documents-nosync,cache,bundle,root" />
+    <preference name="AndroidExtraFilesystems" value="files,files-external,documents,sdcard,cache,cache-external,root" />
+
+    <feature name="debug-server" required="true">
+        <param name="domain" value="http://debug.build.phonegap.com"/>
+        <param name="key" value="JR"/>
+    </feature>
+    
+    <plugin name="cordova-plugin-whitelist" version="1" />
+    <access origin="*" />
+    <access origin="cdvfile://*" />
+
+    <allow-intent href="http://*/*" />
+    <allow-intent href="https://*/*" />
+    <allow-intent href="tel:*" />
+    <allow-intent href="sms:*" />
+    <allow-intent href="mailto:*" />
+    <allow-intent href="geo:*" />
+    <allow-intent href="cdvfile://*" />
+
+    <allow-navigation href="cdvfile://*" />
+
+    <platform name="android">
+        <allow-intent href="market:*" />
+    </platform>
+    <platform name="ios">
+        <allow-intent href="itms:*" />
+        <allow-intent href="itms-apps:*" />
+    </platform>
+
+</widget>

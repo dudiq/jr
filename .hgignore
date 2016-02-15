@@ -1,0 +1,17 @@
+syntax: glob
+.tmp/
+.cordova/
+.sass-cache/
+.idea/
+.git/
+*.iml
+app/scripts/config.js
+www-static/**
+
+syntax: regexp
+^plugins
+^platforms
+^reports
+^merges
+^www
+^node_modules

@@ -1,0 +1,2 @@
+!#/usr/bin/sh
+adb logcat CordovaLog:D *:S > a

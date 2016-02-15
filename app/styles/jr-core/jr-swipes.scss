@@ -1,0 +1,12 @@
+body.jr-gesture-no-select{
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.jr-swipe{
+  transition: transform 0.3s ease-out;
+}

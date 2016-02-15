@@ -1,0 +1,14 @@
+/*here is app styles*/
+.btn {
+  background: #C0C0C0;
+  padding: 10px;
+  border-radius: 10px;
+  background-image: url('../images/test.jpg');
+}
+
+@font-face {
+  font-family: 'test';
+  src:url('../fonts/test.eot');
+  font-weight: normal;
+  font-style: normal;
+}

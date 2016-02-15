@@ -1,0 +1,13 @@
+!#/usr/bin/sh
+cd ..
+cd ..
+
+cordova plugin add cordova-plugin-splashscreen
+cordova plugin add cordova-plugin-network-information
+cordova plugin add cordova-plugin-dialogs
+cordova plugin add cordova-plugin-device
+cordova plugin add cordova-plugin-battery-status
+cordova plugin add cordova-plugin-statusbar
+cordova plugin add cordova-plugin-inappbrowser
+cordova plugin add cordova-plugin-vibration
+cordova plugin add cordova-plugin-camera

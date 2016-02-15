@@ -1,0 +1,194 @@
+<!doctype html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>JR!</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="format-detection" content="telephone=no">
+    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+
+    <meta http-equiv="cache-control" content="max-age=0" />
+    <meta http-equiv="cache-control" content="no-cache" />
+    <meta http-equiv="expires" content="0" />
+    <meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+    <meta http-equiv="pragma" content="no-cache" />
+
+
+    <!-- unit(css, styles/styles.css) -->
+
+    <link rel="stylesheet" href="styles/jr-core/jr.css">
+    <link rel="stylesheet" href="styles/jr-core/jr-notify.css">
+    <link rel="stylesheet" href="styles/jr-core/jr-overflow.css">
+    <link rel="stylesheet" href="styles/jr-core/jr-page-popup.css">
+    <link rel="stylesheet" href="styles/jr-core/jr-swipes.css">
+    <link rel="stylesheet" href="styles/jr-core/jr-loading.css">
+    <link rel="stylesheet" href="styles/jr-core/jr-keyboard-popup.css">
+    <link rel="stylesheet" href="styles/jr-core/jr-fix-container.css">
+    <!-- endunit -->
+
+    <!-- unit(css, styles/styles2.css) -->
+        <!-- module(myModuleName) -->
+
+        <link rel="stylesheet" href="styles/pages/page-popup.css">
+        <link rel="stylesheet" href="styles/pages/page-gesture.css">
+
+        <!-- endmodule -->
+
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/my-app.css">
+
+
+    <!-- endunit -->
+</head>
+<body>
+
+<!--[if lte IE 8]>
+<p class="outdated-browser">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
+<script>
+    window.preventJr = true;
+</script>
+<![endif]-->
+
+<!-- Add your site or application content here -->
+<div class="jr-container" id="mainContainer">
+</div>
+
+<!-- prepare view of app loading -->
+<div class="jr-loading">
+    <div class="jr-loading-progress"></div>
+    <div class="jr-loading-text">Loading...</div>
+</div>
+
+<script karma src="cordova.js"></script>
+
+<!-- unit(js, scripts/scripts.js) -->
+
+<script karma src="scripts/core/js-overwrites.js"></script>
+
+<script karma src="scripts/vendors/jquery-2.1.3.min.js"></script>
+<script karma src="scripts/vendors/jquery.address-1.6.min.js"></script>
+<script karma src="scripts/vendors/jquery-jr-click.js"></script>
+<script karma src="scripts/vendors/jquery-jr-dnd.js"></script>
+
+
+<!--tabbale for overflow plugin-->
+<script karma src="scripts/vendors/jquery.tabbable.js"></script>
+
+<script karma src="scripts/core/main.js"></script>
+<script karma src="scripts/jr-config.js"></script>
+<script karma src="scripts/core/errors.js"></script>
+<script karma src="scripts/core/broadcast.js"></script>
+<script karma src="scripts/core/app.js"></script>
+<script karma src="scripts/core/helper.js"></script>
+<script karma src="scripts/core/cookie.js"></script>
+<script karma src="scripts/core/suspend.js"></script>
+<script karma src="scripts/core/local-storage.js"></script>
+
+<script karma src="scripts/core/translate.js"></script>
+<script karma src="scripts/langs/ru.js"></script>
+<script karma src="scripts/langs/en.js"></script>
+
+<script karma src="scripts/core/templater.js"></script>
+<script karma src="scripts/core/templater-data.js"></script>
+
+<script karma src="scripts/core/pages.js"></script>
+
+<script karma src="scripts/core/page-auth.js"></script>
+<script karma src="scripts/core/route.js"></script>
+<script karma src="scripts/core/navigation.js"></script>
+
+<script karma src="scripts/core/http.js"></script>
+<script karma src="scripts/core/storage.js"></script>
+
+<!-- plugins define -->
+<script karma src="scripts/config.js"></script>
+<script karma src="scripts/config-mixin.js"></script>
+<script karma src="scripts/rename-to-app-name/config-my-processing.js"></script>
+<script karma src="scripts/core/config-processing.js"></script>
+
+<script karma src="scripts/plugins/mod-require.js"></script>
+
+<script karma src="scripts/plugins/loading.js"></script>
+<script karma src="scripts/plugins/case-numbers.js"></script>
+<script karma src="scripts/plugins/device-os.js"></script>
+<script karma src="scripts/plugins/android-dialer.js"></script>
+<script karma src="scripts/plugins/route-commander.js"></script>
+<script karma src="scripts/plugins/cordova-device.js"></script>
+<script karma src="scripts/plugins/cordova-camera.js"></script>
+<script karma src="scripts/plugins/time-mod/time-mod.js"></script>
+<script karma src="scripts/plugins/time-mod/en.js"></script>
+<script karma src="scripts/plugins/time-mod/ru.js"></script>
+<script karma src="scripts/plugins/hashes.js"></script>
+<script karma src="scripts/plugins/build-version.js"></script>
+<script karma src="scripts/plugins/notify.js"></script>
+<script karma src="scripts/plugins/overflow.js"></script>
+<script karma src="scripts/plugins/validate.js"></script>
+<script karma src="scripts/plugins/cookie-ls-mix-adapter.js"></script>
+<script karma src="scripts/plugins/bootstrap-dropdown.js"></script>
+<script karma src="scripts/plugins/page-popup.js"></script>
+<script karma src="scripts/plugins/keyboard-popup.js"></script>
+<script karma src="scripts/plugins/remember-page.js"></script>
+<script karma src="scripts/plugins/object-template.js"></script>
+<script karma src="scripts/plugins/page-change-fix-clicks.js"></script>
+<script karma src="scripts/plugins/confirm/confirm.js"></script>
+<script karma src="scripts/plugins/close-back.js"></script>
+<script karma src="scripts/plugins/debounce.js"></script>
+
+
+
+<script karma src="scripts/plugins/watch-scope/watch-scope.js"></script>
+<script karma src="scripts/plugins/watch-scope/parent-watch.js"></script>
+<script karma src="scripts/plugins/watch-scope/base-watch.js"></script>
+<script karma src="scripts/plugins/watch-scope/watchers/change.js"></script>
+<script karma src="scripts/plugins/watch-scope/watchers/repeat.js"></script>
+<script karma src="scripts/plugins/watch-scope/watchers/css.js"></script>
+<script karma src="scripts/plugins/watch-scope/watchers/css-class-name.js"></script>
+<script karma src="scripts/plugins/watch-scope/watchers/bg-img.js"></script>
+<script karma src="scripts/plugins/watch-scope/watchers/bg-color.js"></script>
+<script karma src="scripts/plugins/watch-scope/watchers/data-attr.js"></script>
+<script karma src="scripts/plugins/watch-scope/watchers/a-href.js"></script>
+<script karma src="scripts/plugins/watch-scope/watchers/time-processor.js"></script>
+<script karma src="scripts/plugins/watch-scope/watchers/translate.js"></script>
+
+<script karma src="scripts/plugins/gestures/plugin.js"></script>
+<script karma src="scripts/plugins/gestures/base.js"></script>
+
+<script karma src="scripts/plugins/gestures/swipe.js"></script>
+<script karma src="scripts/plugins/gestures/swipe-left.js"></script>
+<script karma src="scripts/plugins/gestures/swipe-right.js"></script>
+<script karma src="scripts/plugins/gestures/swipe-top.js"></script>
+<script karma src="scripts/plugins/gestures/swipe-bottom.js"></script>
+<script karma src="scripts/plugins/gestures/swipe-lr.js"></script>
+
+
+<!--communication between jr and my app-->
+<script karma src="scripts/rename-to-app-name/user.js"></script>
+<script karma src="scripts/rename-to-app-name/my-app-name.js"></script>
+
+<script karma src="scripts/services/services.js"></script>
+
+<!--<script karma src="scripts/drop.me.js"></script>-->
+
+<!-- directives -->
+
+
+<!--init pages base class-->
+<script karma src="scripts/core/page.js"></script>
+
+<!--init page instances (controllers)-->
+<script karma src="scripts/pages/login.js"></script>
+<script karma src="scripts/pages/main.js"></script>
+<script karma src="scripts/pages/second.js"></script>
+
+    <!-- module(myModuleName) -->
+    <!-- views(tree.html, tree/, thr.html, popup.html, gestures.html) -->
+    <script karma src="scripts/pages/tree.js"></script>
+    <script karma src="scripts/pages/thr.js"></script>
+    <script karma src="scripts/pages/popup-page.js"></script>
+    <script karma src="scripts/pages/gestures.js"></script>
+    <!-- endmodule -->
+
+<!-- endunit -->
+</body>
+</html>

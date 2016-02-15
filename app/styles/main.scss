@@ -1,0 +1,45 @@
+/* Space out content a bit */
+@import "mixin";
+
+html, body {
+  // do not set height to 100%, animation will not work correctly with scrolling
+  // also do not use any div scrolling, if you does not know how it will be works on IOS and ANDROID input fields
+  // mean how scroll with work fix autofocus to input field
+  //height: 100%;
+  width: 100%;
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  @include drop-outline();
+}
+
+button, input, textarea, select, a{
+  //redefine orange box in chrome
+  @include drop-outline();
+
+
+  &:active, &:checked, &:after, &:focus {
+    @include drop-outline();
+  }
+}
+
+.no-selection{
+  @include no-selection();
+}
+
+.no-selection-deep{
+  @include no-selection-children();
+}
+
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.outdated-browser{
+
+}

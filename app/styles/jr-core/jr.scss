@@ -1,0 +1,97 @@
+$time-duration: 0.4s;
+
+.jr-container {
+  margin: 0 auto;
+  //position: relative;
+  overflow-x: hidden;
+  //don't set height=100% to this class, because you'll have problems with scroll on mobile devices
+  -webkit-text-size-adjust: 100%;
+}
+
+.jr-recalc-dom{
+  /* hack for immediately recalculate DOM */
+  width: 0 !important;
+  zoom: 1.001 !important; /*fix for chrome*/
+}
+
+.jr-page {
+    position: relative;
+    top: 0;
+    margin-left: 0;
+}
+
+.jr-slide {
+    height: 100%;
+    overflow: hidden;
+    //position: absolute;
+    .jr-page {
+      position: absolute;
+      width: 100%;
+      -webkit-backface-visibility: hidden;
+      transform: translate3d(0, 0, 0);
+    }
+
+}
+
+.jr-in.jr-page{
+  transform: translateX(100%);
+}
+
+.jr-out.jr-page, .jr-reverse .jr-out.jr-page{
+  transform: translateX(0%);
+}
+
+.jr-reverse .jr-in.jr-page{
+  transform: translateX(-100%);
+}
+
+@keyframes slide-in{
+    from {transform: translateX(100%);}
+    to {transform: translateX(0%);}
+}
+
+@keyframes slide-out{
+    from {transform: translateX(0%);}
+    to {transform: translateX(-100%);}
+}
+
+@keyframes slide-in-reverse{
+    from {transform: translateX(-100%);}
+    to {transform: translateX(0%);}
+}
+
+@keyframes slide-out-reverse{
+    from {transform: translateX(0%);}
+    to {transform: translateX(100%);}
+}
+
+.jr-reverse{
+
+}
+
+.jr-slide.jr-animate .jr-in{
+    animation: slide-in $time-duration ease forwards;
+}
+
+.jr-slide.jr-animate .jr-out{
+    animation: slide-out $time-duration ease forwards;
+}
+
+.jr-slide.jr-animate.jr-reverse .jr-in{
+    animation: slide-in-reverse $time-duration ease forwards;
+}
+
+.jr-slide.jr-animate.jr-reverse .jr-out{
+    animation: slide-out-reverse $time-duration ease forwards;
+}
+
+/* Customize container */
+@media (min-width: 768px) {
+  .jr-container {
+
+  }
+}
+/* Responsive: Portrait tablets and up */
+@media screen and (min-width: 768px) {
+
+}

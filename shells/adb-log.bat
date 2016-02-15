@@ -1,0 +1,1 @@
+call adb logcat CordovaLog:D *:S > a

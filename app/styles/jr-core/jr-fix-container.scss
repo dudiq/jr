@@ -1,0 +1,9 @@
+.jr-fix-click-container {
+  display: none;
+  position: fixed;
+  top: -100%;
+  left: -100%;
+  right: -100%;
+  bottom: -100%;
+  z-index: 10;
+}
