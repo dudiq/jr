@@ -5,20 +5,20 @@ This is javascript framework to create simple Single Page Applications (SPA)
 
 #### consist of ####
 
- - broadcast (simple communication using sync events)
- - cookie (working with cookie)
- - errors logger (just using console.log, but everything is changing)
- - helper (have a lot of different helper methods)
- - http adapter (or requester)
+ - broadcast (simple communication module. using sync events)
+ - cookie (cookie module)
+ - errors logger (wrapper of console.log[warn, error])
+ - helper (helper methods for using framework simply)
+ - http adapter (jquery ajax wrapper module)
  - local-storage (wrapper of window.localStorage)
- - storage (just a global object, where you can store object in live of app)
- - navigation (slide pages and connect to routing)
+ - storage (just a memory storage, simple key->value storage)
+ - navigation (slide pages and used routing)
  - routing (detect changes in url)
- - pages (handler for page instances)
+ - pages (communication between views and other parts of system)
  - page-auth (ACL for pages)
  - suspend (veeery simple '*deffered*' object)
- - templater (store and process templates)
- - translate (example for how to use templater)
+ - templater (store and process views)
+ - translate (multy language support)
 
 Browser support
 -
