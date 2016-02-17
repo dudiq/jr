@@ -26,13 +26,13 @@ IE9+, Android 4.x, IOS 5.x, Chrome 30+, FF 4+
 
 ----------
 ## Docs
-[cordova preparation](docs/cordova.md)
-[how to install](docs/install.md)
-[tasks for build, run, test](docs/build.md)
-[features](docs/features.md)
-[jr structure](docs/structure.md)
-[version inserting](docs/version.md)
-[testing](docs/testing.md)
+- [cordova preparation](docs/cordova.md)
+- [how to install](docs/install.md)
+- [tasks for build, run, test](docs/build.md)
+- [features](docs/features.md)
+- [jr structure](docs/structure.md)
+- [version inserting](docs/version.md)
+- [testing](docs/testing.md)
 
 
 ----------
