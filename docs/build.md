@@ -1,27 +1,27 @@
-
 ## Build & Commands
 > btw, most popular scripts is located in `/shells` folder
 
-flags for `grunt build`:
+ `grunt server` - run developer server
+     `--port-reload=9000:35729` - set port:reloadPort for `grunt server` cmd
+
 
  `grunt build` - compile all src to `www` folder for phonegap build
- `grunt server` - run developer server
- `--build-type=dev(true, any other)` - use DEV configs for build, if flag not defined, used DEV as default config
- `--build-type=release` - use for PRODUCTION build configs
- `--build-type=corporate` - use for CORPORATE build configs
- `--build-version=x.x.x` - use custom version value. if no need to use package.json:version field value
- `--minify=false` - for do not minify code
- `--rev-files=false` - for do not rename files as their revision. (windows build)
- `--config-mixin=my-config.js` - for define own my-config.js file for build, if value is not defined, it will use `dev-config.js`
- `--web=true` - for web server, NOT cordova version
- `--config-xml=my-config.xml` - for define special config xml
- `--copy-static=false` - copy www-static/* files to dist
- `--cordova-id` - set `id` value to config.xml
- `--port-reload` - set port and reload port for `grunt server` cmd
 
- `--exclude=module1,module2,etc...` - exclude modules for build
- `--excludeAll=true` - exclude all defined modules. flag `--exclude` will be dropped
+     `--build-type=dev` - default value. for DEVELOPMENT. used `dev-config.js`
+     `--build-type=release` - for PRODUCTION. used `dist-config.js`
+     `--build-type=corporate` - for CORPORATE. used `corp-config.js`
 
-other commands:
-`grunt server` - run locally web server for develop
-`karma start` - run tests
+     `--build-version=x.x.x` - for define custom version of app. instead `package.json:version` field value
+     `--minify=false` - `true` by default. minify js, css files
+     `--rev-files=false` - `true` by default. static asset revisioning through file content hash
+     `--config-mixin=my-config.js` - for define own my-config.js file for build. keys and values from config-mixin will be used as primary.
+     `--web=true` - `false` by default. make web app, NOT cordova version.
+     `--config-xml=my-config.xml` - empty by default. for custom config.xml using
+     `--copy-static=false` - `true` by default. copy from `www-static/**` to `www/`
+     `--cordova-id=just.my.id` - set `id` value to config.xml. instead `package.json:cordova-id` field value
+
+     `--exclude=module1,module2,etc...` - exclude modules for build
+     `--excludeAll=true` - `false` by default. exclude all defined modules. flag `--exclude` will be dropped.
+
+
+ `karma start` - run tests
