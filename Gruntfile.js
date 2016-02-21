@@ -5,6 +5,7 @@
 *
  `grunt server` - run developer server
     `--port-reload=9000:35729` - set port:reloadPort for `grunt server` cmd
+    `--hostname=0.0.0.0` - set host IP. if value is 0.0.0.0, this server will be accessed from outside
 
 
  `grunt build` - compile all src to `www` folder for phonegap build
@@ -32,8 +33,8 @@
 * */
 
 module.exports = function (grunt) {
-    require('load-grunt-tasks')(grunt);
     require('time-grunt')(grunt);
+    require('load-grunt-tasks')(grunt);
 
     // load files from /tasks/* folder
     grunt.loadTasks('tasks');
@@ -46,6 +47,7 @@ module.exports = function (grunt) {
     var isWebVersion = grunt.option('web');
 
     var configMixin = grunt.option("config-mixin");
+    var hostname = grunt.option("hostname") || '0.0.0.0';
 
     var configXml = grunt.option("config-xml") || 'config.xml';
 
@@ -70,19 +72,19 @@ module.exports = function (grunt) {
         notify: {
             postcss: {
                 options: {
-                    message: 'update finished'
+                    message: 'update completed'
                 }
             },
             build: {
                 options: {
-                    message: 'build was completed'
+                    message: 'build completed'
                 }
             }
         },
         watch: {
-            compass: {
-                files: ['<%= jrconfig.app %>/styles/{,**/}*.{scss,sass}'],
-                tasks: ['compass:server', 'postcss', 'notify:postcss']
+            sass: {
+                files: ['<%= jrconfig.app %>/styles/**'],
+                tasks: ['sass:server', 'postcss', 'notify:postcss']
             },
             styles: {
                 files: ['<%= jrconfig.app %>/styles/{,**/}*.css'],
@@ -115,8 +117,7 @@ module.exports = function (grunt) {
         connect: {
             options: {
                 port: port,
-                // Change this to '0.0.0.0' to access the server from outside.
-                hostname: '0.0.0.0',
+                hostname: hostname,
                 livereload: reloadPort
             },
             livereload: {
@@ -177,6 +178,16 @@ module.exports = function (grunt) {
                 ]
             },
             server: '<%= jrconfig.tmp %>'
+        },
+        sass: {
+            options: {
+                sassDir: '<%= jrconfig.app %>/styles/',
+                files: '**',
+                outDir: '<%= jrconfig.tmp %>/styles/',
+                libOptions: {}
+            },
+            dist: {},
+            server: {}
         },
         compass: {
             options: {
@@ -365,7 +376,7 @@ module.exports = function (grunt) {
         },
         insertversion:{
             dist: {
-                src: '<%= jrconfig.tmp %>/www/scripts/plugins/build-version.js',
+                src: '<%= jrconfig.tmp %>/www/scripts/core-plugins/build-version.js',
                 parseXml: '<%= jrconfig.tmp %>/www/config.xml'
             }
         }
@@ -378,7 +389,7 @@ module.exports = function (grunt) {
 
         grunt.task.run([
             'clean:server',
-            'compass:server',
+            'sass:server',
             'copy:styles',
             'postcss',
             'connect:livereload',
@@ -391,7 +402,7 @@ module.exports = function (grunt) {
         'clean:dist',
 
         // prepare css
-        'compass:dist',
+        'sass:dist',
         'copy:no_need_process_styles',
         'postcss', // compiled to <%= jrconfig.tmp %>/styles
         'copy:styles',

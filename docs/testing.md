@@ -2,7 +2,6 @@ Testing
 -
 
 > **jr** uses `karma`, `mocha` and `chai` for unit tests
-> and `dalek` for ui tests
 
 #### how to run tests?
 

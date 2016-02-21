@@ -3,6 +3,7 @@
 
  `grunt server` - run developer server
      `--port-reload=9000:35729` - set port:reloadPort for `grunt server` cmd
+    `--hostname=0.0.0.0` - set host IP. if value is 0.0.0.0, this server will be accessed from outside
 
 
  `grunt build` - compile all src to `www` folder for phonegap build

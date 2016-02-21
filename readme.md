@@ -36,6 +36,13 @@ IE9+, Android 4.x, IOS 5.x, Chrome 30+, FF 4+
 
 
 ----------
+## News
+
+21/02/2016
+- changed scss builder to `libSass`, instead of `compass`. please update node packages using 'npm i'
+- separated core-plugins and others
+
+----------
 
 ## License
 

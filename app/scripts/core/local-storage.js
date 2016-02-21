@@ -47,7 +47,11 @@
         } else {
             try {
                 var getVal = JSON.parse(localStorage.getItem(customPrefix + key));
-                ret = getVal.val;
+                if (getVal){
+                    ret = getVal.val;
+                } else {
+                    ret = null;
+                }
                 getVal = null;
             } catch(e){
                 ret = null;
