@@ -5,6 +5,7 @@
     app('config', {
         container: '#mainContainer',
         useContentLengthHeader: false, //http module
+        logsShowIntervals: true,
         scrollToTopPage: true,
         pageTransition: true
     });

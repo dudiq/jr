@@ -51,7 +51,7 @@ module.exports = function (grunt) {
         if (grunt.file.exists(path)){
             var file = grunt.file.read(path);
             // replace app version
-            file = file.replace('{{version}}"', ver);
+            file = file.replace('{{version}}', ver);
 
             // replace id.name
             file = file.replace('{{cordova-id}}', cordovaId);
@@ -166,7 +166,7 @@ module.exports = function (grunt) {
 
         grunt.log.writeln("");
         if (this.data.parseXml){
-            var cordovaId = grunt.option('cordova-id') || pkg['cordova-id'];
+            var cordovaId = grunt.option('cordova-id') || pkg['cordova-id'] || 'id.example.com';
 
             // process config.xml file to correct version
             replaceXml(this.data.parseXml, versions, cordovaId);

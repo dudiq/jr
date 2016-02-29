@@ -12,6 +12,7 @@
     var app = window.app;
 
     var errors = app('errors', {});
+    var cfg = app('config');
 
     errors.LEVEL_DEV = 5;
     errors.LEVEL_PROD = 0;
@@ -19,11 +20,13 @@
 
     var logLevel = errors.LEVEL_DEV;
 
-    var showTimeIntervals = false;
+    var showTimeIntervals = (cfg.logsShowIntervals === true);
     var prevTime = (new Date()).getTime();
     var timeIds = {};
     var helper;
     var isNative = false;
+    var lastLogs = [];
+    var MAX_LAST_LOGS = 20;
 
 
     // wrap for window.console
@@ -56,7 +59,7 @@
         isNative = helper.isNative;
     }
 
-    function apply(action, args){
+    function apply(action, args, doLog){
         if (manConsole[action]){
             defineHelper();
             args = helper.getArgs(args);
@@ -65,9 +68,16 @@
             if (isNative){
                 args = [args.join(", ")];
             }
-            manConsole[action].apply(manConsole, args);
-            args = null;
+            if (doLog === undefined || doLog){
+                manConsole[action].apply(manConsole, args);
+            }
 
+            args.splice(0, 0, action);
+            lastLogs.push(helper.clone(args));
+            args = null;
+            if (lastLogs.length > MAX_LAST_LOGS){
+                lastLogs.splice(0, 1);
+            }
         }
     }
 
@@ -96,10 +106,6 @@
         return ret;
     }
 
-    errors.showTimeIntervals = function(val){
-        showTimeIntervals = val ? true : false;
-    };
-
     // set log level
     errors.setLevel = function(lev){
         logLevel = lev;
@@ -111,9 +117,7 @@
 
     // first argument is module name, where error appear, others - it's just a params to show...
     errors.log = function(){
-        if (logLevel){
-            apply('log', arguments);
-        }
+        apply('log', arguments, logLevel);
     };
 
     errors.warning = errors.warn = function(){
@@ -165,6 +169,10 @@
                 errors.warning('timeEnd', 'wrong End for "' + id + '" timer');
             }
         }
+    };
+
+    errors.getLastLogs = function(){
+        return lastLogs;
     };
 
     function pushTime(id, message){
@@ -254,6 +262,5 @@
     };
 
     app('logger', createLogger);
-
 
 })();
