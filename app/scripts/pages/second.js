@@ -78,7 +78,7 @@
 
         window.$scope = scope;
 
-        var sw = this.scopeWatcher = watchScope.watch(content, scope);
+        var sw = window.$sw = this.scopeWatcher = watchScope.watch(content, scope);
 
         sw.on('change', function(){
             //console.log(arguments);

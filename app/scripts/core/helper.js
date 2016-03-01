@@ -8,7 +8,7 @@
     var app = window.app;
 
     var broadcast = app('broadcast');
-    var systemEvs = broadcast.putEvents('system');
+    var systemEvs = broadcast.events('system');
 
     var helper = app('helper', {});
 
@@ -260,7 +260,7 @@
     }
 
     /*this is for develop only*/
-    var logger = app('errors').getLogger('helper');
+    var logger = app('logger')('helper');
 
     logger.info('isMobile = ' +  helper.isMobile);
     logger.info('isNative = ' +  helper.isNative);

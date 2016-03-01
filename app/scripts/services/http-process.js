@@ -9,7 +9,7 @@
 (function(){
     var app = window.app;
     var http = app('http');
-    var logger = app('errors').getLogger('http-response');
+    var logger = app('logger')('http-response');
 
     function onDone(respObj, servObj){
         if (servObj){

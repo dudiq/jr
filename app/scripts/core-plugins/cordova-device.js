@@ -9,7 +9,7 @@
     var cordovaDevice = app('cordova-device', {});
     var broadcast = app('broadcast');
     var helper = app('helper');
-    var deviceEvs = broadcast.putEvents('device', {
+    var deviceEvs = broadcast.events('device', {
         _ready: '_ready', // for internal use only
         pause: 'pause',
         menubutton: 'menubbtn',

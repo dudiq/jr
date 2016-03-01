@@ -11,7 +11,7 @@
         onLangSet: 'onLangSet'
     });
 
-    var logger = app('errors').getLogger('translate');
+    var logger = app('logger')('translate');
     var navLang = (navigator.language || navigator.userLanguage).substring(0, 2).toLowerCase();
     var currLang = 'en';
     var currentWords;

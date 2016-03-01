@@ -22,8 +22,8 @@
     var config = app('config');
     var pagePopup = app('page-popup', {});
     var broadcast = app('broadcast');
-    var routeEvs = broadcast.getEvents('route');
-    var rCmdEvs = broadcast.getEvents('route-commander');
+    var routeEvs = broadcast.events('route');
+    var rCmdEvs = broadcast.events('route-commander');
 
     var pages = app('pages');
     var navi = app('navigation');
@@ -118,7 +118,7 @@
 
     function isParentPage(inst, pId){
         var parents = inst._parentPageId;
-        var ret = false;
+        var ret = (parents.length == 0);
         for (var i = 0, l = parents.length; i < l; i++){
             if (parents[i] == pId){
                 ret = true;
@@ -255,7 +255,9 @@
         var id = this._id = params.id;
         var parentPageId = params.parentPageId;
         if (!helper.isArray(parentPageId)){
-            parentPageId = [parentPageId];
+            var parentPageIdArr = [];
+            parentPageId && parentPageIdArr.push(parentPageId);
+            parentPageId = parentPageIdArr;
         }
         this._parentPageId = parentPageId;
         this._useRoute = (params.useRoute === undefined) ? true : params.useRoute;

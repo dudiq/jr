@@ -8,6 +8,9 @@
     var helper = app('helper');
     var userMod = app('user');
     var navi = app('navigation');
+    var rememberPage = app('remember-page');
+
+    rememberPage.init(true);
 
     var myApp = app('my-app', {});
 
@@ -16,18 +19,13 @@
         navi.switchPage('login');
     };
 
-    function defaultRedirect(){
-        var isLogged = isLoggedIn();
-        if (isLogged){
-            // if location in login page and user logged in, go to main page
-            navi.switchPage('main');
-        } else if (!isLogged){
-            navi.switchPage('login');
-        }
-    }
-
     function isLoggedIn(){
         return userMod.isLoggedIn();
+    }
+
+    function openPages(){
+        //make list of default pages for redirect, when url changed manually or app started
+        rememberPage.open(['main', 'login']);
     }
 
     function onStart(){
@@ -35,14 +33,10 @@
         //redirect if user logged in or not
 
         route.register('/_default', function(){
-            defaultRedirect();
+            openPages();
         });
 
-        if (!isLoggedIn()){
-            navi.switchPage('login');
-        } else {
-            defaultRedirect();
-        }
+        openPages();
     }
 
     // define rules for access to pages

@@ -9,7 +9,7 @@
     var broadcast = app('broadcast');
     var helper = app('helper');
     var warning = app('errors').warning;
-    var routeEvs = broadcast.putEvents('route', {
+    var routeEvs = broadcast.events('route', {
         changed: 'changed',
         beforeChange: 'beforeChange',
         started: 'started'
@@ -123,27 +123,39 @@
     }
 
     // getting args as array, where first arg is page id
-    function getArgs(loc){
-        var args = [];
+    function getAddrParams(loc){
+        loc = (loc === undefined) ? addrVal() : loc;
+
+        var addrParams = [];
         if (loc){
-            args = loc.split('/');
-            args.splice(0, 1); // remove first '/' not defined, after # char
+            addrParams = loc.split('/');
+            if (loc[0] == '/'){
+                addrParams.splice(0, 1); // remove first '/' not defined, after # char
+            }
         }
-        return args;
+        return addrParams;
+    }
+
+    function getPageFromAddr(addrParams){
+        var pageName = addrParams[0];
+        if (pageName.slice(-1) == "?"){
+            pageName = pageName.slice(0, -1);
+        }
+        return pageName;
     }
 
     function setAddressVars(loc){
-        loc = (loc === undefined) ? addrVal() : loc;
-        var args = getArgs(loc);
-        var pageStr = args[0];
-        if (pageStr.slice(-1) == "?"){
-            pageStr = pageStr.slice(0, -1);
-        }
-        addressPageAlias = pageStr;
+        var addrParams = getAddrParams(loc);
+        var pageName = getPageFromAddr(addrParams);
+        addressPageAlias = pageName;
+
         addressParamsList.clear();
         addressParamsList = null;
 
-        addressParamsList = args;
+        addressParamsList = addrParams;
+
+        pageName = null;
+        addrParams = null;
     }
 
     // processing all routes in map
@@ -250,9 +262,15 @@
         return helper.clone(addressParamsList);
     };
 
-    // return page alias by location
-    route.getPageAlias = function(){
-        return addressPageAlias;
+    // return current page alias by location
+    // or return parsed value from location
+    route.getPageAlias = function(loc){
+        var ret = addressPageAlias;
+        if (loc !== undefined){
+            var addrParams = getAddrParams(loc);
+            ret = getPageFromAddr(addrParams);
+        }
+        return ret;
     };
 
     // return current location

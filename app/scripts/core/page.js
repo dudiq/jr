@@ -5,7 +5,7 @@
     var app = window.app;
 
     var templater = app('templater');
-    var logger = app('errors').getLogger('basePageClass');
+    var logger = app('logger')('basePageClass');
 
     var weightMap = {};
 

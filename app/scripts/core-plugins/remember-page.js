@@ -1,9 +1,13 @@
 (function(){
     var app = window.app;
-    var localStorage = app('local-storage');
+    var ls = app('local-storage');
     var route = app('route');
+    var helper = app('helper');
+    var pageAuth = app('page-auth');
+    var navi = app('navigation');
     var broadcast = app('broadcast');
-    var routeEvs = broadcast.getEvents('route');
+    var logger = app('logger')('remember-page');
+    var routeEvs = broadcast.events('route');
 
     var rememberPage = app('remember-page', {});
 
@@ -11,18 +15,17 @@
 
     var CONST_KEY = 'remember-page-plugin';
 
-    var savedPagePath = localStorage(CONST_KEY);
+    var savedPagePath = ls(CONST_KEY);
 
     var notStoredPages = {};
 
-    var noInit = false;
-
     function onChanged(){
         var pageAlias = route.getPageAlias();
-        savedPagePath = route.location();
+        var prePath = route.location();
 
-        if (savedPagePath != '/__drop__' && !notStoredPages[pageAlias]){
-            localStorage(CONST_KEY, savedPagePath);
+        if (prePath != '/__drop__' && !notStoredPages[pageAlias]){
+            savedPagePath = prePath;
+            ls(CONST_KEY, prePath);
         }
     }
 
@@ -37,31 +40,51 @@
         broadcast.off(routeEvs.changed, onChanged);
     };
 
-    rememberPage.status = function(){
-        return enable;
-    };
-
-    rememberPage.value = function(){
-        return savedPagePath;
-    };
-
-    rememberPage.noInit = function(){
-        noInit = true;
-    };
-
-    rememberPage.init = function(notStored){
-        this.enable();
-        if (!noInit) {
-            if (notStored && notStored.length) {
-                for (var i = 0, l = notStored.length; i < l; i++) {
-                    var key = notStored[i];
-                    notStoredPages[key] = true;
-                }
-            }
-            if (route.location() != savedPagePath && savedPagePath) {
-                route.pushState(this.value());
+    // start remember page
+    //
+    // isEnable - set true/false for plugin
+    // notStored - page ids for no storing in plugin
+    rememberPage.init = function(isEnable, notStored){
+        isEnable && this.enable();
+        if (notStored && notStored.length) {
+            for (var i = 0, l = notStored.length; i < l; i++) {
+                var key = notStored[i];
+                notStoredPages[key] = true;
             }
         }
     };
+
+    // define pages in priority list
+    // rememberPage.open(['main', 'login', 'settings', etc...]);
+    // if some of page will not access, plugin asc next in list.
+    // and when founded with access, will trying to show this page
+    //
+    // accessPages - priority pages. first - is main priority
+    rememberPage.open = function(accessPages){
+        var loc = route.location() || savedPagePath;
+        if (enable &&
+            pageAuth(route.getPageAlias(loc))){
+            // checking access to saved path page id, if ok, do redirect
+            route.pushState(loc);
+        } else {
+            doDefaultRedirect(accessPages);
+        }
+    };
+
+    function doDefaultRedirect(pages){
+        var redirected = false;
+        for (var i = 0, l = pages.length; i < l; i++){
+            var pageId = pages[i];
+            if (pageAuth(pageId)){
+                redirected = true;
+                logger.warn('address page redirected to default');
+                navi.switchPage(pageId);
+                break;
+            }
+        }
+        if (!redirected){
+            logger.error('something wrong with redirect of page, please see rules and workflow of opening pages');
+        }
+    }
 
 })();

@@ -22,7 +22,7 @@
     var templater = app('templater');
     var translate = app('translate');
     var broadcast = app('broadcast');
-    var keyboardPopupEvs = broadcast.getEvents('keyboard-popup');
+    var keyboardPopupEvs = broadcast.events('keyboard-popup');
 
     var tpl = templater.get('overflow');
 

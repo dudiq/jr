@@ -2,10 +2,10 @@
     var app = window.app;
     var translate = app('translate');
     var helper = app('helper');
-    var logger = app('errors').getLogger('progress');
+    var logger = app('logger')('progress');
 
     var broadcast = app('broadcast');
-    var progressEvs = broadcast.putEvents('progress', {
+    var progressEvs = broadcast.events('progress', {
         start: 'start',
         progress: 'progress',
         stop: 'stop',

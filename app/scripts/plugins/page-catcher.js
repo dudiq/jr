@@ -7,7 +7,7 @@
     var app = window.app;
     var navi = app('navigation');
     var broadcast = app('broadcast');
-    var naviEvs = broadcast.getEvents('navigation');
+    var naviEvs = broadcast.events('navigation');
     var helper = app('helper');
 
     var pageCatcher = app('page-catcher', {});

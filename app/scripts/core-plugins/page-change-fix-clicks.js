@@ -5,7 +5,7 @@
     var app = window.app;
     var helper = app('helper');
     var broadcast = app('broadcast');
-    var naviEvs = broadcast.getEvents('navigation');
+    var naviEvs = broadcast.events('navigation');
 
     var fixClicks = app('fix-clicks', {});
 

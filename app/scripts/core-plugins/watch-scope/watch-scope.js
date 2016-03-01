@@ -27,7 +27,7 @@
 * */
 (function(){
     var app = window.app;
-    var logger = app('errors').getLogger('watch-scope');
+    var logger = app('logger')('watch-scope');
     var helper = app('helper');
     var broadcast = app('broadcast');
 
@@ -328,6 +328,12 @@
     watchScope._watchKeyChanges = watchKeyChanges;
     watchScope._unwatchKeyChanges = unwatchKeyChanges;
 
+    // old way
     app('watch-scope', watchScope);
+
+    // new way
+    app('scope', function(el, scope, cb){
+        return watchScope.watch(el, scope, cb);
+    });
 
 })();

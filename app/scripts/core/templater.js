@@ -5,7 +5,7 @@
 (function(){
     var app = window.app;
     var translate = app('translate');
-    var logger = app('errors').getLogger('templater');
+    var logger = app('logger')('templater');
 
     var templater = app('templater', {});
 

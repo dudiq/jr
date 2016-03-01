@@ -4,11 +4,11 @@
     var helper = app('helper');
     var confirmPlugin = app('confirm');
     var translate = app('translate');
-    var logger = app('errors').getLogger('close-back');
+    var logger = app('logger')('close-back');
 
     var broadcast = app('broadcast');
-    var routeEvs = broadcast.getEvents('route');
-    var naviEvs = broadcast.getEvents('navigation');
+    var routeEvs = broadcast.events('route');
+    var naviEvs = broadcast.events('navigation');
 
     var closeBack = app('close-back', {});
 

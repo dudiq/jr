@@ -11,7 +11,7 @@
 (function(){
     var app = window.app;
     var broadcast = app('broadcast');
-    var systemEvs = broadcast.putEvents('system', {
+    var systemEvs = broadcast.events('system', {
         onStartBegin: 'app-start-begin',
         onStartEnd: 'app-start-end',
         onDomReady: 'domReady'

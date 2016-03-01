@@ -3,7 +3,7 @@
     var helper = app('helper');
     var config = app('config');
     var broadcast = app('broadcast');
-    var keyPopupEvs = broadcast.putEvents('keyboard-popup', {
+    var keyPopupEvs = broadcast.events('keyboard-popup', {
         onShow: 's',
         onHide: 'h'
     });
@@ -21,7 +21,7 @@
         var helperDiv = $(".jr-keyboard-popup-helper");
         if (!helperDiv.length){
             helperDiv = $("<div class='jr-keyboard-popup-helper'></div>");
-            $body.prepend(helperDiv);
+            $body.append(helperDiv);
         }
 
         $(document).on('focus', selectors, function(ev) {

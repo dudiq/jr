@@ -4,10 +4,10 @@
     var route = app('route');
     var helper = app('helper');
     var broadcast = app('broadcast');
-    var routeEvs = broadcast.getEvents('route');
-    var naviEvs = broadcast.getEvents('navigation');
+    var routeEvs = broadcast.events('route');
+    var naviEvs = broadcast.events('navigation');
 
-    var rCmdEvs = broadcast.putEvents('route-commander', {
+    var rCmdEvs = broadcast.events('route-commander', {
         onRemoved: 'removed',
         onSets: 'sets',
         onChanged: 'changed'

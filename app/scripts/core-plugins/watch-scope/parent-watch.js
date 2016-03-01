@@ -8,7 +8,7 @@
     var app = window.app;
     var watchScope = app('watch-scope');
     var helper = app('helper');
-    var logger = app('errors').getLogger('parent-watch');
+    var logger = app('logger')('parent-watch');
 
     var findObjectByPath = watchScope._findObjectByPath;
     var watchObject = watchScope._watchObject;

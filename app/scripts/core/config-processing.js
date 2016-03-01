@@ -9,7 +9,7 @@
     var broadcast = app('broadcast');
     var ls = app('local-storage');
     var processConfig = app('process-my-config');
-    var configProcessingEvs = broadcast.putEvents('config-processing', {
+    var configProcessingEvs = broadcast.events('config-processing', {
         _configChanged: 'cc'
     });
 

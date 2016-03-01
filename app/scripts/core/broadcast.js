@@ -53,7 +53,7 @@
      *
      *
      * // will create namespace evs with detection of collisions
-     * var evs = broadcast.putEvents('my-namespace', {
+     * var evs = broadcast.events('my-namespace', {
      *  myEv1: 'myEv1',
      *  myEv2: 'myEv2'
      * })
@@ -61,7 +61,7 @@
      * broadcast.trig(evs.myEv1); - will trigger message
      *
      * // will return evs namespace from other places
-     * var evs = broadcast.getEvents('my-namespace');
+     * var evs = broadcast.events('my-namespace');
      *
      *
      * */
@@ -486,7 +486,7 @@
     var showedDeprecated = true;
     app('ev-storage', function(evName, events){
         if (showedDeprecated){
-            errors.warn('ev-storage', 'deprecated, use broadcast.putEvents("evsNamespace", {evs...}) instead.');
+            errors.warn('ev-storage', 'deprecated, use broadcast.events("evsNamespace", {evs...}) instead.');
             showedDeprecated = false;
         }
 

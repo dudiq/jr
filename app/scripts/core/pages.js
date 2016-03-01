@@ -5,7 +5,7 @@
 (function(){
     var app = window.app;
     var helper = app('helper');
-    var logger = app('errors').getLogger('pages');
+    var logger = app('logger')('pages');
     var inherit = helper.inherit;
 
     // storage for all page instances

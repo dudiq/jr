@@ -5,7 +5,7 @@
 (function(){
     var app = window.app;
     var pages = app('pages');
-    var logger = app('errors').getLogger('page-auth');
+    var logger = app('logger')('page-auth');
     var rules = true;
 
     function checkAuth(pageId){

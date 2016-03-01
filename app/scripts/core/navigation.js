@@ -14,8 +14,8 @@
     var navi = app('navigation', {});
     var pageAuth = app('page-auth');
     var warning = app('errors').warning;
-    var translateEvs = broadcast.getEvents('translate');
-    var naviEvs = broadcast.putEvents('navigation', {
+    var translateEvs = broadcast.events('translate');
+    var naviEvs = broadcast.events('navigation', {
         onBeforePageShow: 'onBeforePageShow',
         onBeforePageHide: 'onBeforePageHide',
         onPageShow: 'onPageShow',

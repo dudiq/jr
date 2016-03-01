@@ -4,8 +4,7 @@
 (function(){
     var app = window.app;
     var timeMod = app('time-processor', {});
-    var errors = app('errors');
-    var logger = errors.getLogger('time-mod');
+    var logger = app('logger')('time-mod');
     var translate = app('translate');
 
     var minInMs = (1000 * 60);

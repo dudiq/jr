@@ -9,7 +9,7 @@
     var watchScope = app('watch-scope');
     var base = watchScope('base');
     var inherit = app('helper').inherit;
-    var logger = app('errors').getLogger('watch-scope.repeat');
+    var logger = app('logger')('watch-scope.repeat');
 
     var watchBro = watchScope.broadcast();
     var watchKeyChanges = watchScope._watchKeyChanges;
@@ -317,7 +317,9 @@
         params = params || {};
         var obj = getArr.call(this);
 
-        params.path = this.path + ((params.hasOwnProperty('path'))? "#" + params.path : "");
+        var sub = (params.hasOwnProperty('path')) ? "#" + params.path : "";
+        params.path = this.path + sub;
+
         params.val = (params.hasOwnProperty('val')) ? params.val : obj;
 
         watchBro.trig(this.message, params);

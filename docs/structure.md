@@ -117,7 +117,7 @@ function bindMyButtonClick(content){
 (function(){
 	var app = window.app;
 	var broadcast = app('broadcast');
-	var myPluginEvs = broadcast.putEvents('my-plugin', {
+	var myPluginEvs = broadcast.events('my-plugin', {
 		'onStart':'onStartMsg',
 		'onStop':'onStopMsg',
 		'onStopAfter': 'onStopMsg' //this is wrong. `broadcast` detect this, because message is equal with prev event name. and will notify developer in console.
@@ -135,7 +135,7 @@ then you can use this event in other plugins
 (function(){
 	var app = window.app;
 	var broadcast = app('broadcast');
-	var myPluginEvs = broadcast.getEvents('my-plugin');
+	var myPluginEvs = broadcast.events('my-plugin');
 	var helper = app('helper');
 
 	function whenSomeEventTrigger(ev){
