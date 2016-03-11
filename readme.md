@@ -38,6 +38,15 @@ IE9+, Android 4.x, IOS 5.x, Chrome 30+, FF 4+
 ----------
 ## News
 
+11/03/2016
+
+- updated jquery to 2.2.1 version
+- updated core plugins
+- big update of watch scope plugins
+- changed page initialize. old way will work too
+- added simple modal-popup-page
+- bug fixes
+
 21/02/2016
 - changed scss builder to `libSass`, instead of `compass`. please update node packages using 'npm i'
 - separated core-plugins and others
