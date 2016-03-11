@@ -481,14 +481,8 @@
     /*jshint -W055*/
     var inst = new BroadcastClass('core');
 
-
-    // register ev-storage, deprecated in next releases
-    var showedDeprecated = true;
     app('ev-storage', function(evName, events){
-        if (showedDeprecated){
-            errors.warn('ev-storage', 'deprecated, use broadcast.events("evsNamespace", {evs...}) instead.');
-            showedDeprecated = false;
-        }
+        app('deprecate')('ev-storage', 'use broadcast.events("evsNamespace", {evs...}) instead');
 
         return inst.putEvents(evName, events);
     });

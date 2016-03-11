@@ -11,6 +11,8 @@
     // storage for all page instances
     var collection = {};
 
+    var BaseClass;
+
 
     var pages = app('pages', function(id){
         return collection[id];
@@ -24,16 +26,16 @@
         var newPage;
 
         if (!collection[id]){
+            newPage = collection[id] = new this(params, this);
+            newPage.init();
 
-
-            newPage = collection[id] = new this(params);
             var templater = app('templater');
-            templater.get(newPage.templateId);
+            templater.get(newPage.viewId);
 
             if (newPage.alias !== undefined){
                 var changePage = app('navigation').changePage;
 
-                // :todo need refactor this reouteRule for correct define and detect alias of page
+                // :todo need refactor this routeRule for correct define and detect alias of page
                 if (newPage.alias.indexOf('/') == 0){
                     logger.error('alias of page "' + id + '" is not correct, must be without "/" character');
                 } else {
@@ -67,17 +69,49 @@
         }
     };
 
+    pages.setBase = function(val){
+        BaseClass = val;
+    };
+
     // create new class page
     pages.createClass = function(){
-        var basePageClass = pages.base;
-        function pageClass(){
-            pageClass._parent.constructor.apply(this, arguments);
+        function PageClass(){
+            PageClass._parent.constructor.apply(this, arguments);
         }
 
-        inherit(pageClass, basePageClass);
+        inherit(PageClass, BaseClass);
 
-        pageClass.createPage = createPage;
-        return pageClass;
+        PageClass.createPage = createPage;
+        return PageClass;
     };
+
+
+    pages.create = function(data){
+        return create(null, data);
+    };
+
+    pages.createByParent = function(parent, data){
+        return create(parent, data);
+    };
+
+    function create(parent, data){
+        if (!parent){
+            parent = pages;
+        }
+        var PageClass = parent.createClass();
+        var opt = {};
+        var p = PageClass.prototype;
+        for (var key in data){
+            var val = data[key];
+            if (typeof val == "function"){
+                p[key] = val;
+            } else {
+                opt[key] = val;
+            }
+        }
+
+        var inst = createPage.call(PageClass, opt);
+        return inst;
+    }
 
 })();

@@ -30,7 +30,7 @@
     var helper = app('helper');
     var overflow = helper('overflow');
     var pageAuth = app('page-auth');
-    var logger = app('errors').getLogger('page-popup');
+    var logger = app('logger')('page-popup');
 
     var rCmd = app('route-commander');
 

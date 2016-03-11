@@ -328,8 +328,8 @@
         return this;
     };
 
-    // deprecated
     navi.back = function(){
+        app('deprecate')('navigation.back()', 'use route.back(); instead');
         route.back();
     };
 

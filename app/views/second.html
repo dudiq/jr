@@ -1,4 +1,4 @@
-<div class="jr-page page-second">
+<div>
 
     second html - {{hashone}}
     <div class="btn btn-first">main page</div>
@@ -11,6 +11,8 @@
         <div>TOTAL init time: <span jr-watch='change(totalTime)'/></div>
     </div>
     <a href="#/second/modal-page=popup">show popup</a>
+    <div class="btn btn-popup">show popup</div>
+    <div class="btn btn-show-more">show more</div>
     <div jr-watch='css(noUsers, {"true": "show", "false": "hide"})'>
         noUsers!
     </div>
@@ -19,13 +21,13 @@
 
     <input jr-watch='change(val)' type="number"/>
     <input jr-watch='change(t.val)' type="number"/>
-    <div jr-watch='change(t.val)'></div>
+    <div jr-watch='html(t.val)'></div>
 
     <div jr-watch='repeat(arr)'>
         <div>
             <label>
                 <input type="checkbox" jr-watch='change(checked)'>
-                <span jr-watch='change(label)'></span>
+                <span jr-watch='html(label)'></span>
             </label>
             <input type="radio" name="baseRadio" jr-watch='change(radio)'>
             <select jr-watch='change(select, selectItems)'>
@@ -34,8 +36,19 @@
                 <option value="3">t3</option>
             </select>
             <div jr-watch='repeat(arr2)'>
-                <div jr-watch='change(lofi)'></div>
+                <div jr-watch='html(lofi)'></div>
             </div>
         </div>
     </div>
+
+    <div jr-watch='repeat(arrView)'>
+        <div>
+            <label>
+                <span jr-watch='html(label)'></span>
+            </label>
+            <div jr-watch='html(select)'>
+            </div>
+        </div>
+    </div>
+
 </div>

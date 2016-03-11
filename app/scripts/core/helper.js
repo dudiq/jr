@@ -41,6 +41,27 @@
         child._parent.constructor = parent;
     };
 
+    helper.createClass = function(parent, params){
+        function ChildClass(){
+            ChildClass._parent.constructor.apply(this, arguments);
+        }
+
+        this.inherit(ChildClass, parent);
+
+        var p = ChildClass.prototype;
+
+        if (!params.getClass){
+            p.getClass = function(){
+                return ChildClass;
+            };
+        }
+
+        for (var key in params){
+            p[key] = params[key];
+        }
+        return ChildClass;
+    };
+
     // deep clone object
     helper.clone = function(data){
         var obj = {

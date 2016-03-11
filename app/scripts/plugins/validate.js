@@ -1,36 +1,16 @@
 (function(){
-    //todo, change to validate not dom elements, but just array of elements
-
-    //find and check valid data from required inputs only
-
     var app = window.app;
-    var helper = app('helper');
 
     var emailReg = new RegExp('[\\w\\.+]{1,}[@][\\w\\-]{1,}([.]([\\w\\-]{1,})){1,5}$', 'ig');
 
-    app('validate', validate);
+    var validate = {};
 
-    function validate(objects, onRemove){
-        var ret = {};
-        ret.passed = {};
-        ret.notPassed = {};
+    var selectors = '.check-validate';
+    var errorClass = 'validation-error';
+    var passwordClass = 'validate-pwd';
+    var passwordSelectors = '.' + passwordClass;
 
-        for (var key in objects){
-            var item = objects[key];
-            if (!item){
-                continue;
-            }
-            if (!helper.isArray(item)){
-                item = [item];
-            }
-            for (var i = 0, l = item.length; i < l; i++){
-                var el = item[i];
-                el && processItem(ret, key, el, onRemove);
-            }
-        }
-
-        return ret;
-    }
+    var PWD_MIN_LENGTH = 3;
 
     validate.testEmail = function(val){
         emailReg.lastIndex = 0;
@@ -38,38 +18,87 @@
         return ret;
     };
 
-    function processItem(ret, key, item, onRemove){
+    function validateItem($this){
         var res = true;
-        var val = item.val();
-        switch (key){
+        var value = $this.val();
+        var type = $this.attr('type');
+        var trimValue = value.trim();
+
+        switch (type){
             case "email":
-                res = validate.testEmail(val);
-                break;
-            case "name":
-                res = (val.trim() != "");
+                res = validate.testEmail(value);
                 break;
             case "password":
-                res = ((val.trim()).length > 5);
+                res = (trimValue.length > PWD_MIN_LENGTH);
                 break;
             default:
-                res = (val.trim() != "");
+                res = (trimValue != "");
                 break;
         }
 
-        ret.passed && (ret.passed[key] = val);
-        if (!res) {
-            ret.passed = false;
-            (ret.notPassed[key] = item);
-            (function(el){
-                el.parent().addClass('jr-dirty');
-                el.on('touchstart.jrdirty mousedown.jrdirty cut.jrdirty paste.jrdirty keydown.jrdirty keyup.jrdirty change.jrdirty', function(){
-                    el.off('.jrdirty');
-                    el.parent().removeClass('jr-dirty');
-                    onRemove();
-                });
-            })(item);
-        }
-
+        return res
     }
+
+    function processError($this, isValid){
+        var parent = $this.parent();
+
+        isValid ?
+            parent.removeClass(errorClass) :
+            parent.addClass(errorClass);
+    }
+
+    function processPasswords(fields){
+        var firstValue = $(fields[0]).val();
+        var isValid = true;
+
+        $.each(fields, function(index, el){
+            var $el = $(el);
+            var value = $el.val();
+            var trimValue = value.trim();
+            var isValid = (trimValue !== '') && (value === firstValue) && (trimValue.length > PWD_MIN_LENGTH);
+            processError($el, isValid);
+        });
+
+        return isValid;
+    }
+
+    validate.isValid = function(content){
+        var res = true;
+        var fields = content.find(passwordSelectors);
+        content.find(selectors).each(function(index, el){
+            var $el = $(el);
+            var isValid = validateItem($el);
+            var isPassword = $el.hasClass(passwordClass);
+
+            if (isPassword) {
+                isValid = processPasswords(fields);
+            } else if (!isValid) {
+                processError($el, isValid);
+            }
+
+            if (res) {
+                res = isValid;
+            }
+
+        });
+
+        return res;
+    };
+
+    validate.bindContent = function(content){
+        var fields = content.find(passwordSelectors);
+        content.on('focusout keyup', selectors, function(){
+            var el = $(this);
+            var isValid = validateItem(el);
+            var isPassword = el.hasClass(passwordClass);
+            processError(el, isValid);
+
+            if (isPassword) {
+                processPasswords(fields);
+            }
+        });
+    };
+
+    app('validate', validate);
 
 })();

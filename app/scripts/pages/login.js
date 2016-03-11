@@ -1,16 +1,9 @@
-(function(){
+(function () {
     var app = window.app;
-    var pages = app('pages');
-    var helper = app('helper');
-    var translate = app('translate');
     var navi = app('navigation');
     var userMod = app('user');
 
-    var page = pages.createClass();
-
-    var p = page.prototype;
-
-    function checkLoginPwd(pwdField){
+    function checkLoginPwd(pwdField) {
         var pwd = pwdField.val();
         if (pwd == 'test') {
             userMod.setUser({
@@ -21,20 +14,15 @@
         }
     }
 
-    p.prepareDomContent = function(content){
-
-        var pwdField = content.find('.pwd-field');
-
-        content.find(".btn-login").on("jrclick", function(){
-            checkLoginPwd(pwdField);
-        });
-
-        return content;
-    };
-
-    page.createPage({
+    app('pages').create({
         id: 'login',
-        alias: 'login',
-        weight: 1
+        weight: 1,
+        prepareDomContent: function (content) {
+            var pwdField = content.find('.pwd-field');
+            content.find(".btn-login").on("jrclick", function () {
+                checkLoginPwd(pwdField);
+            });
+        }
     });
+
 })();

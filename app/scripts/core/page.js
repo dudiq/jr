@@ -5,22 +5,41 @@
     var app = window.app;
 
     var templater = app('templater');
-    var logger = app('logger')('basePageClass');
+    var logger = app('logger')('PageBaseClass');
 
     var weightMap = {};
 
     // parent page class
-    var basePageClass = function(params){
+    function PageBaseClass(params, pageClass){
+        this._init(params, pageClass);
+    }
+
+    var p = PageBaseClass.prototype;
+
+    p._init = function(params, pageClass){
         this.id = params.id; //page id for identify
-        this.templateId = params.templateId || this.id;
+        if (!this.id){
+            logger.error('page id is not defined!');
+        }
+
+        if (params.templateId){
+            app('deprecate')('page.templateId', 'please use viewId');
+        }
+        this.viewId = params.templateId || params.viewId || this.id;
+
         this.alias = params.alias; // for route module [optional]
-        this.weight = params.weight; // for history.back action
+        if (params.useHistory !== false){
+            this.alias = params.id;
+        }
+
         this.drawn = false;
         this.shown = false;
         this.content = null;
         this.sliding = false;
         this.topPos = 0;
         this.restorePos = true;
+        this._pageClass = pageClass;
+        this.weight = params.weight; // for history.back action
         if (params.hasOwnProperty('weight')){
             var w = params.weight;
             if (weightMap[w]){
@@ -29,31 +48,13 @@
                 weightMap[w] = this.id;
             }
         }
-
-        this.init();
-    };
-
-    var p = basePageClass.prototype;
-
-    // called once, when page created
-    p.init = function(){
-        // can be redefined
-    };
-
-    // initialize dom content before insert to document
-    //
-    // called once before show page, but if language changed, it was called again
-    p.prepareDomContent = function(newDom){
-        // can be redefined
-        // but dom must be returned
-        return newDom;
     };
 
     // processing draw for page
     // replace template by langs, draw if not drawn
     p._draw = function(){
         if (!this.drawn){
-            var rawTpl = templater.get(this.templateId);
+            var rawTpl = templater.get(this.viewId);
             var tpl = templater.translate(rawTpl);
 
             var newDom = $(tpl);
@@ -62,8 +63,12 @@
             if (oldContent){
                 oldContent.detach();
             }
-            newDom.addClass('jr-page');
+            var pageClassName = 'page-' + this.id;
+            newDom.addClass('jr-page ' + pageClassName);
             var content = this.prepareDomContent(newDom);
+            if (!content){
+                content = newDom;
+            }
             this.content = content;
 
             if (oldContent){
@@ -71,9 +76,10 @@
                 oldContent = null;
             }
 
+            newDom = null;
+            content = null;
             this.drawn = true;
         }
-        return this.content;
     };
 
     p._hide = function(){
@@ -102,6 +108,24 @@
 
     p._toTop = function(){
         window.scrollTo(0, 0);
+    };
+
+    p.getPageClass = function(){
+        return this._pageClass;
+    };
+
+    // called once, when page created
+    p.init = function(){
+        // can be redefined
+    };
+
+    // initialize dom content before insert to document
+    //
+    // called once before show page, but if language changed, it was called again
+    p.prepareDomContent = function(newDom){
+        // can be redefined
+        // but dom must be returned
+        return newDom;
     };
 
     // checking restoring position after return to page
@@ -154,6 +178,6 @@
 
     // define in pages
     var pages = app('pages');
-    pages.base = basePageClass;
+    pages.setBase(PageBaseClass);
 
 })();

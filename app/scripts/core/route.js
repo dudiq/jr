@@ -251,6 +251,8 @@
     // deprecated
     // return params of router
     route.params = function(){
+        app('deprecate')('route.params()', 'use route.back(); instead');
+
         var params = {
             args: addressParamsList,
             pageAlias: addressPageAlias

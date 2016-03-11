@@ -7,14 +7,12 @@
 (function(){
     var app = window.app;
     var watchScope = app('watch-scope');
-    var base = watchScope('base');
-    var inherit = app('helper').inherit;
     var logger = app('logger')('watch-scope.repeat');
+    var CONST_LINK = watchScope.CONST_LINK;
 
     var watchBro = watchScope.broadcast();
     var watchKeyChanges = watchScope._watchKeyChanges;
     var unwatchKeyChanges = watchScope._unwatchKeyChanges;
-    //var unwrapMethods = ['push', 'pop', 'shift', 'unshift', 'splice', 'clear'];
     var unwrapMethods = {
         push: true,
         pop: true,
@@ -24,7 +22,6 @@
         clear: true
     };
 
-
     function watchKeyForSub(arr, pos, pId){
         var self = this;
         watchKeyChanges(arr, pos, function(params){
@@ -33,12 +30,9 @@
         });
     }
 
-    function getSubWatcherByPos(pos){
-        var subWatchers = this._repeatWatchers;
-        var ret;
-        var obj = getArr.call(this);
-        var scope = obj[pos];
+    function findWatcherByScope(subWatchers, scope){
         var item;
+        var ret;
         for (var key in subWatchers){
             item = subWatchers[key];
             if (item.scope == scope){
@@ -46,11 +40,29 @@
                 break;
             }
         }
+        key = null;
         item = null;
+        return ret;
+    }
+
+    function getSubWatcherByPos(pos){
+        var subWatchers = this._repeatWatchers;
+        var ret;
+        var obj = getArr.call(this);
+        var scope = obj[pos];
+        if (scope[CONST_LINK]){
+            var pWatchers = scope[CONST_LINK].pWatchers;
+            if (pWatchers[1]){
+                ret = findWatcherByScope(subWatchers, scope);
+            } else {
+                ret = pWatchers[0];
+            }
+        } else {
+            ret = findWatcherByScope(subWatchers, scope);
+        }
         subWatchers = null;
         obj = null;
         scope = null;
-        key = null;
         return ret;
     }
 
@@ -91,9 +103,9 @@
 
     function initSubWatcher(arr, pos){
         var self = this;
-        var arrEl = arr[pos];
+        var scopeEl = arr[pos];
         var el = this._template.clone();
-        var subWatcher = watchScope.watch(el, arrEl);
+        var subWatcher = watchScope.watch(el, scopeEl);
         var pId = subWatcher.getId();
         this._repeatWatchers[pId] = subWatcher;
 
@@ -107,25 +119,25 @@
     }
 
     function createElements(arr, startPos, endPos){
-        var fragment = $("<div/>");
+        var buff = [];
+
         (startPos === undefined) && (startPos = 0);
         (endPos === undefined) && (endPos = arr.length);
         for (var i = startPos; i < endPos; i++){
             var subWatcher = initSubWatcher.call(this, arr, i);
             var el = subWatcher.getElement();
-            fragment.append(el);
+            buff.push(el);
             subWatcher = null;
         }
-        return fragment.children();
+        return buff;
     }
 
     // processing rewrite item
     function onItemRewrite(watcherId, pos, rewrite){
-        dropSubwatcher.call(this, watcherId, pos);
+        var oldWatcher = this._repeatWatchers[watcherId];
+        var oldEl = oldWatcher.getElement();
 
-        //sync DOM with array
-        var containerChildren = this.el.children();
-        var oldEl = containerChildren.eq(pos);
+        dropSubwatcher.call(this, watcherId, pos);
 
         if (rewrite){
             //create new watcher for new value
@@ -134,8 +146,10 @@
             var newEl = subWatcher.getElement();
             subWatcher = null;
             oldEl.before(newEl);
+            oldEl.remove();
+        } else {
+            oldEl.remove();
         }
-        oldEl.remove();
     }
 
     function removeElement(startPos, endPos){
@@ -245,6 +259,10 @@
             var newLen = 0;
             if (len != newLen){
                 // removed
+                var el = self.el;
+                var parent = el.parent();
+                el.detach();
+
                 removeElement.call(self, newLen, len - 1);
                 wasChanged = true;
             }
@@ -265,7 +283,11 @@
 
             arr.length = 0;
 
-            wasChanged && triggerChanges.call(self);
+            if (wasChanged){
+                parent.append(el);
+                triggerChanges.call(self);
+            }
+
         };
         arr._clear = clear;
     }
@@ -326,51 +348,40 @@
         this.parent.trigChanges(params);
     }
 
-    // constructor
-    function repeat(){
-        this._repeatWatchers = {};
-        this._template = "";
-        repeat._parent.constructor.apply(this, arguments);
-    }
+    app('watch-scope')('repeat', {
+        init: function(){
+            this._repeatWatchers = {};
 
-    inherit(repeat, base);
+            var el = this.el;
+            this._template = $(el.html());
+            el.children().remove();
+            var value = this.getPropValue();
 
-    var p = repeat.prototype;
+            //define initial value (first)
+            addNewElements.call(this, value);
 
-    // initialize
-    p.init = function(){
-        var el = this.el;
-        this._template = $(el.html());
-        el.children().remove();
-        var value = this.getPropValue();
+            wrapArray.call(this, value);
+        },
+        destroy: function(){
+            // drop listen array item changes
+            var arr = getArr.call(this);
+            for (var i = 0, l = arr.length; i < l; i++){
+                unwatchKeyChanges(arr, i);
+            }
 
-        //define initial value (first)
-        addNewElements.call(this, value);
+            unwrapArray(arr);
 
-        wrapArray.call(this, value);
-    };
+            this.getClass()._parent.destroy.call(this);
 
-    p.destroy = function(){
-
-        // drop listen array item changes
-        var arr = getArr.call(this);
-        for (var i = 0, l = arr.length; i < l; i++){
-            unwatchKeyChanges(arr, i);
+            var repeats = this._repeatWatchers;
+            for (var key in repeats){
+                repeats[key].destroy();
+                repeats[key] = null;
+                delete repeats[key];
+            }
+            this._repeatWatchers = repeats = null;
         }
+    });
 
-        unwrapArray(arr);
-
-        repeat._parent.destroy.call(this);
-
-        var repeats = this._repeatWatchers;
-        for (var key in repeats){
-            repeats[key].destroy();
-            repeats[key] = null;
-            delete repeats[key];
-        }
-        this._repeatWatchers = repeats = null;
-    };
-
-    watchScope('repeat', repeat);
 
 })();

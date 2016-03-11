@@ -29,6 +29,7 @@
     var app = window.app;
     var logger = app('logger')('watch-scope');
     var helper = app('helper');
+    var inherit = helper.inherit;
     var broadcast = app('broadcast');
 
     // own instance of broadcast for bind/unbind object prop changes
@@ -38,10 +39,33 @@
     var watchers = {};
 
     var CONST_SYSTEM_KEY = '___system__cl___';
+
+    var CONST_LINK = '___system_lk___';
+
     var useObserve = false;
 
     // storage of all watchers and external interface
-    function watchScope(name, val){
+    function watchScope(name, params){
+        var ret;
+        if (params){
+            if (typeof params == "function"){
+                // constructor
+                ret = putToStorage(name, params);
+            } else {
+                var BaseClass = watchers['base'];
+                var WatcherClass = helper.createClass(BaseClass, params);
+                ret = putToStorage(name, WatcherClass);
+            }
+        } else {
+            // getter
+            ret = watchers[name];
+        }
+        return ret;
+    }
+
+    watchScope.CONST_LINK = CONST_LINK;
+
+    function putToStorage(name, val){
         if (val){
             if (watchers[name]){
                 logger.error('watcher "' + name + '" already exists.');
@@ -258,11 +282,8 @@
     // return scope by link from storage
     function getStoreItem(scope){
         var ret = false;
-        for (var key in scopeStorage){
-            if (scopeStorage[key].scope == scope){
-                ret = scopeStorage[key];
-                break;
-            }
+        if (scope[CONST_LINK]){
+            ret = scope[CONST_LINK];
         }
         return ret;
     }
@@ -288,6 +309,7 @@
                 pathHandlers: {},
                 pWatchers: []
             };
+            scope[CONST_LINK] = item;
         }
         var ParentClass = watchScope('parent');
         var inst = new ParentClass(el, item, callback);
@@ -309,6 +331,7 @@
             }
             item.pathHandlers = null;
             item.pWatchers = null;
+            item.scope && (item.scope[CONST_LINK] = null);
             item.scope = null;
             var guid = item.guid;
             item.guid = null;

@@ -133,7 +133,7 @@
     }
 
     // constructor
-    function parentWatchInstance(el, item, callback){
+    function ParentWatchClass(el, item, callback){
         var scope = this.scope = item.scope;
 
         this.watchers = [];
@@ -169,7 +169,7 @@
         }
     }
 
-    var p = parentWatchInstance.prototype;
+    var p = ParentWatchClass.prototype;
 
     p.getElement = function(){
         return this.el;
@@ -226,7 +226,7 @@
         this.parentId = null;
     };
 
-    watchScope('parent', parentWatchInstance);
+    watchScope('parent', ParentWatchClass);
 
 
 })();

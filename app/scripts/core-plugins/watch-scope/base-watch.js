@@ -81,6 +81,7 @@
     // callback - handler returned new value
     p.bindElementChanges = function(evs, callback){
         var self = this;
+        this._binded = true;
         this.el.on(this.getEventMessage(evs), function(){
             if (!self.stopSet){
                 self.stopSet = true;
@@ -148,7 +149,9 @@
         this.objectCallback && watchBro.off(this.message, this.objectCallback);
         this.objectCallback = null;
 
-        this.el.off(this.getNameSpace());
+        if (this._binded){
+            this.el.off(this.getNameSpace());
+        }
         this.el = null;
 
         this.parent = null;

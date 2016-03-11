@@ -1,9 +1,9 @@
 (function(){
     var app = window.app;
 
-    app('watch-scope')('a-href', {
+    app('watch-scope')('html', {
         setVal: function(val){
-            this.el.prop('href', val);
+            this.el.html(val);
         }
     });
 

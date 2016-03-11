@@ -8,10 +8,11 @@
     var pagePopup = app('page-popup-modal');
 
     pagePopup.create({
-        id: 'popup',
-        weight: 100,
+        id: 'popup-next',
+        weight: 101,
         prepareDomContent: function (content) {
             this.scopeWatcher && this.scopeWatcher.destroy();
+
             var arr = [];
 
             function fillArray() {

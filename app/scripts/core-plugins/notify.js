@@ -20,6 +20,8 @@
     // collection of all messages
     var quene = [];
 
+    var autoClean = true;
+
     // how much messages can be shown
     var MAX_OPEN = 5;
 
@@ -126,7 +128,7 @@
 
     function createBtns(el, btns){
         if (btns && btns.length){
-            var buff = $("<div>");
+            var buff = $( document.createElement('div') );
             var $tpl;
             for (var i = 0, l = btns.length; i < l; i++){
                 var btn = btns[i];
@@ -173,13 +175,12 @@
     }
 
     function catchClickEvents(){
-
         $(document.body)
             .on('jrclick', function(){
                 // this is hack for bind to body action
             })
             .on('jrdeffered', function(){
-                startDemandRemove();
+                autoClean && startDemandRemove();
             });
     }
 
@@ -236,7 +237,6 @@
             addToDOM(bunch);
         }
 
-
         return note;
     };
 
@@ -255,13 +255,19 @@
         return this;
     };
 
-    // if set 0 value, auto clean will be stopped
     notify.setTimeoutClean = function(msValue){
         if (msValue){
             TIMEOUT = msValue;
         } else {
             TIMEOUT = DEFAULT_TIMEOUT;
         }
+    };
+
+    notify.autoClean = function(val){
+        if (val !== undefined){
+            autoClean = val;
+        }
+        return autoClean;
     };
 
     notify.setContainer = function(newContainer){

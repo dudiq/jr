@@ -40,8 +40,10 @@
     var overflow = helper('overflow', createNewModal);
 
 
-    // deprecated, supported for old create methods for plugins
-    overflow.get = createNewModal;
+    overflow.get = function(){
+        app('deprecate')('overflow.get()', 'just use overflow() as method instead');
+        return createNewModal.apply(this, arguments);
+    };
 
     function defineBody(){
         !$body && ($body = $(document.body));
