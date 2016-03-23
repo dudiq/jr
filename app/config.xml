@@ -34,10 +34,13 @@
     <preference name="SplashScreenDelay" value="3000" />
     <preference name="AutoHideSplashScreen" value="false"/>
 
-    <preference name="AndroidPersistentFileLocation" value="Internal" />
-    <preference name="iosPersistentFileLocation" value="Library" />
-
     <preference name="windows-target-version" value="8.1" />
+
+    <!-- DO NOT CHANGE to "Internal" it will store all files in internal storage, and attachments will not see this
+      also app('merge-internal-to-ext') will be broken!!!
+    -->
+    <preference name="AndroidPersistentFileLocation" value="Compatibility" />
+    <preference name="iosPersistentFileLocation" value="Library" />
 
     <preference name="iosExtraFilesystems" value="library,library-nosync,documents,documents-nosync,cache,bundle,root" />
     <preference name="AndroidExtraFilesystems" value="files,files-external,documents,sdcard,cache,cache-external,root" />

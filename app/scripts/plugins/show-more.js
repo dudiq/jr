@@ -17,6 +17,11 @@
         }
     }
 
+    function onAllShown(){
+        var isAllShown = (this._viewList.length == this._dataList.length);
+        this._params.onAllShown && this._params.onAllShown(isAllShown);
+    }
+
     function drawList(data){
         var view = this._viewList;
         var max = this._max;
@@ -44,7 +49,7 @@
                 view.push(newItem);
             }
         }
-
+        onAllShown.call(this);
     }
 
     p.showMore = function(){
@@ -57,6 +62,7 @@
             var newItem = oldData[i];
             view.push(newItem);
         }
+        onAllShown.call(this);
     };
 
     p.init = function(params){
