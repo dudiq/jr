@@ -25,4 +25,4 @@
      `--excludeAll=true` - `false` by default. exclude all defined modules. flag `--exclude` will be dropped.
 
 
- `karma start` - run tests
+ `app('tester').run()'` - run unit tests. must be called in browser console

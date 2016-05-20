@@ -8,7 +8,6 @@ JR structure and etc...
 >>docs - documentation
 >>shells - script files
 >>tasks - grunt tasks
->>test - files for testing in karma
 >>ui-test - files for UI testing, choosed by you
 
 ####docs:
