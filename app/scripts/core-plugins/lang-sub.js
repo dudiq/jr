@@ -11,6 +11,7 @@
 
     var collection = {};
     var currId = null;
+    var subSet = false;
 
     langSub.regSub = function(id, lang, words){
         var coll = collection[id] = collection[id] || {};
@@ -21,29 +22,41 @@
         }
     };
 
-    // for test only
-    langSub.setSubstituteId = function(id){
-        currId = id;
-        var currLang = translate.getCurrLang();
-        translate.setLang(currLang);
-    };
-
     useConf.on(function(){
         currId = config.id;
         var currLang = translate.getCurrLang();
-        setCurrent(currLang);
+        if (isSubstitute(currLang)){
+            if (!app.startEnd){
+                setCurrent(currLang);
+            } else {
+                translate.setLang(currLang);
+            }
+        } else {
+            // just clear for not in substitute
+            if (subSet){
+                subSet = false;
+                translate.setLang(currLang);
+            }
+        }
     });
+
+    function isSubstitute(currLang){
+        var coll = collection[currId];
+        var ret = !!(currId && coll && coll[currLang]);
+        return ret;
+    }
 
     function setCurrent(currLang){
         var coll = collection[currId];
         if (currId && coll && coll[currLang]){
             var collLang = coll[currLang];
             var processedWords = translate.buildWords(collLang);
-            translate.setSubstitute(currLang, processedWords);
+            translate.setSubstitute(processedWords);
+            subSet = true;
         }
     }
 
-    broadcast.on(langEvs.onLangSet, function(currLang){
+    broadcast.on(langEvs.onWordsProcessed, function(currLang){
         setCurrent(currLang);
     });
 })();

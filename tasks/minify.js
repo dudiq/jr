@@ -29,7 +29,8 @@ module.exports = function (grunt) {
         }
     }
 
-    function getExcludedViews(units, ex){
+    function getExcludedViews(units){
+        var ex = units.excludes;
         var exViews = {};
         for (var i = 0, l = units.length; i < l; i++){
             var modules = units[i].modules();
@@ -163,12 +164,13 @@ module.exports = function (grunt) {
 
         var indexHtml = grunt.file.read(source + '/index.html', fileOptions);
         var parserOptions = {
+            excludes: excludedModules,
             excludeAll: (grunt.option("excludeAll") === true) // false by default
         };
-        var units = indexParser(indexHtml, excludedModules, parserOptions);
+        var units = indexParser(indexHtml, parserOptions);
 
 
-        var exViews = getExcludedViews(units, excludedModules);
+        var exViews = getExcludedViews(units);
         replaceViews(replaceViewsOpt, exViews);
         removeFilesByType(source, units, 'exFiles');
 
@@ -183,7 +185,7 @@ module.exports = function (grunt) {
 
             grunt.log.writeln('--- Started minify');
 
-            tasks.push('concat:dist', 'uglify:dist', 'cssmin:dist')
+            tasks.push('concat:dist', 'uglify:dist', 'cssmin:dist');
         } else {
             // just copy all as is
             tasks.push('copy:no_minify');

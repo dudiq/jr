@@ -40,9 +40,6 @@ module.exports = function (grunt) {
         if (ext == path){
             ext = '';
         }
-        if (ext.length > 4){
-            ext = '';
-        }
         if (ext && ext.indexOf(" ") != -1){
             ext = '';
         }

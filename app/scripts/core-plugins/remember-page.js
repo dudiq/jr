@@ -29,6 +29,10 @@
         }
     }
 
+    rememberPage.remember = function(){
+        onChanged();
+    };
+
     rememberPage.enable = function(){
         enable = true;
         broadcast.off(routeEvs.changed, onChanged);
@@ -61,9 +65,8 @@
     //
     // accessPages - priority pages. first - is main priority
     rememberPage.open = function(accessPages){
-        var loc = route.location() || savedPagePath;
-        if (enable &&
-            pageAuth(route.getPageAlias(loc))){
+        var loc = savedPagePath || route.location();
+        if (pageAuth(route.getPageAlias(loc))){
             // checking access to saved path page id, if ok, do redirect
             route.pushState(loc);
         } else {

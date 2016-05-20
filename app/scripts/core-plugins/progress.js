@@ -100,7 +100,7 @@
             total: 0,
             progress: 0,
             percent: 0
-        }
+        };
     }
 
     function SubProgressClass(name, index, parent, params){

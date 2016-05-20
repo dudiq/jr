@@ -26,8 +26,6 @@
      `--exclude=module1,module2,etc...` - exclude modules for build
      `--excludeAll=true` - `false` by default. exclude all defined modules. flag `--exclude` will be dropped.
 
-
- `karma start` - run tests
  *
 *
 * */

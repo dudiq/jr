@@ -36,7 +36,7 @@
             // cleanup
             for (var j = coll.length - 1; j >= 0; j--){
                 if (!coll[j]){
-                    coll.splice(1, i);
+                    coll.splice(j, 1);
                 }
             }
             if (coll.length == 0){

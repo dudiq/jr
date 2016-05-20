@@ -43,13 +43,15 @@
 </head>
 <body>
 
-<!--[if lte IE 8]>
-<p class="outdated-browser">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
+<script>
+    (function(){for(var a=(navigator.language||navigator.userLanguage).substring(0,2).toLowerCase(),g="jr-lang-"+("en"==a||"ru"==a?a:"en"),a="jr-lang-"+a,d=document.body,e=d.className.split(" "),b=[],c=0,h=e.length;c<h;c++){var f=e[c];f!=g&&b.push(f)}b.push(a);d.className=b.join(" ")})();
+</script>
+<!--[if lte IE 10]>
+<p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a></p>
 <script>
     window.preventJr = true;
 </script>
 <![endif]-->
-
 <!-- Add your site or application content here -->
 <div class="jr-container" id="mainContainer">
 </div>
@@ -199,6 +201,20 @@
     <script karma src="scripts/pages/popup-page-next.js"></script>
     <script karma src="scripts/pages/gestures.js"></script>
     <!-- endmodule -->
+
+    <!-- exModule(utests) -->
+    <!-- views(tester-page.html) -->
+    <script src="scripts/tests/tester-page.js"></script>
+    <script src="scripts/tests/tester.js"></script>
+    <script src="scripts/tests/cases/core/dom-is-ok.js"></script>
+    <script src="scripts/tests/cases/core/broadcast.js"></script>
+    <script src="scripts/tests/cases/core/helper.js"></script>
+    <script src="scripts/tests/cases/core/local-storage.js"></script>
+    <script src="scripts/tests/cases/core/main.js"></script>
+    <script src="scripts/tests/cases/core/route-cmd.js"></script>
+    <script src="scripts/tests/cases/core/suspend.js"></script>
+    <script src="scripts/tests/cases/core/watch-scope.js"></script>
+    <!-- endexModule -->
 
 <!-- endunit -->
 </body>

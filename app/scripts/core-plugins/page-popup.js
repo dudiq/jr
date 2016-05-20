@@ -426,9 +426,9 @@
         var p = newPageClass.prototype;
         // redefine _draw method for add class to page content
         p._draw = function () {
-            var content = newPageClass._parent._draw.apply(this, arguments);
-            content.addClass('jr-page-popup');
-            return content;
+            var drawn = this.drawn;
+            newPageClass._parent._draw.apply(this, arguments);
+            !drawn && this.drawn && this.content.addClass('jr-page-popup');
         };
 
         p._storeTopPos = function(){};

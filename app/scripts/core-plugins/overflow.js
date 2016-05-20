@@ -131,9 +131,7 @@
 
     overflow.disableScreen = function(msg){
         defineBody();
-        if (!bodyInst){
-            bodyInst = this.get($body);
-        }
+        bodyInst = getBodyInst();
 
         bodyInst.enable(null, msg);
     };
@@ -142,11 +140,22 @@
         bodyInst && bodyInst.disable();
     };
 
+    overflow.getScreenInstance = function(){
+        bodyInst = getBodyInst();
+        return bodyInst;
+    };
+
 
     helper.onDomReady(function(){
         defineBody();
     });
 
+    function getBodyInst(){
+        if (!bodyInst){
+            bodyInst = overflow($body);
+        }
+        return bodyInst;
+    }
 
     $.fn.tabbing = function (){
         return this.each(function(){

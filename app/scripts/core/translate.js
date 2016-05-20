@@ -2,22 +2,27 @@
  *  translate module
  *
  *  just store and give us words with current language
+ *
+ *
+ *  ATTENTION!
+ *  see also first script after <body> tag, where sets jr-lang-[language]
+ *
  * */
 (function(){
     var app = window.app;
     var helper = app('helper');
     var broadcast = app('broadcast');
     var translateEvs = broadcast.events('translate', {
-        onLangSet: 'onLangSet'
+        onLangSet: 'onLangSet',
+        onWordsProcessed: 'onWordsProcessed'
     });
 
     var logger = app('logger')('translate');
     var navLang = (navigator.language || navigator.userLanguage).substring(0, 2).toLowerCase();
-    var currLang = 'en';
+    var currLang = (navLang == 'en' || navLang == 'ru') ? navLang : 'en';
     var currentWords;
     var collection = {};
     var processed = {};
-    var $body;
 
     var translate = app('translate', function(key, values){
         if (collection[key]){
@@ -60,7 +65,7 @@
 
     // set substitute processed words
     // they was used for replace translates
-    translate.setSubstitute = function(lang, processedWords){
+    translate.setSubstitute = function(processedWords){
         if (currentWords){
             for (var key in processedWords){
                 currentWords[key] = processedWords[key];
@@ -73,10 +78,10 @@
     //change lang of all APP, it will redraw all pages
     // :todo think how to change content without redraw???
     translate.setLang = function(lang){
-        updateBodyClass(currLang, lang);
         currLang = lang;
         cleanCurrentWords();
         currentWords = process();
+        broadcast.trig(translateEvs.onWordsProcessed, currLang);
         broadcast.trig(translateEvs.onLangSet, currLang);
     };
 
@@ -161,22 +166,11 @@
         }
     }
 
-    function updateBodyClass(prev, next){
-        !$body && ($body = $(document.body));
-        $body.removeClass('jr-lang-' + prev);
-        $body.addClass('jr-lang-' + next);
-    }
-
     function onStart(){
         if (collection[navLang]){
             currLang = navLang;
             cleanCurrentWords();
         }
     }
-
-    helper.onDomReady(function(){
-        updateBodyClass(currLang, navLang);
-    });
-
 
 })();

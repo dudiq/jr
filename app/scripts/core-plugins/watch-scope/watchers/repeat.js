@@ -257,10 +257,10 @@
         arr.clear = function(){
             var wasChanged = false;
             var newLen = 0;
+            var el = self.el;
+            var parent = el.parent();
             if (len != newLen){
                 // removed
-                var el = self.el;
-                var parent = el.parent();
                 el.detach();
 
                 removeElement.call(self, newLen, len - 1);

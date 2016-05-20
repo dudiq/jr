@@ -10,13 +10,16 @@
     var ls = app('local-storage');
     var processConfig = app('process-my-config');
     var configProcessingEvs = broadcast.events('config-processing', {
-        _configChanged: 'cc'
+        _configChanged: 'cc',
+        _onDone: 'od'
     });
 
     var SAVED_CONF = 'scc';
     var DEF_NAME = 'def';
 
     var oldConfig = helper.clone(config);
+
+    //:todo add timeout for awaits
 
     function mixConfigs(fromObj, toObj){
         for (var key in fromObj){
@@ -67,6 +70,8 @@
         if (isDone){
             waits.clear();
             onDoneWaits && onDoneWaits();
+            onDoneWaits = null;
+            broadcast.trig(configProcessingEvs._onDone);
         }
     }
 
@@ -113,8 +118,14 @@
         checkWaits();
     }
 
-    useConfig.on = function(cb){
-        broadcast.on(configProcessingEvs._configChanged, cb);
+    useConfig.on =
+    useConfig.bindStart =
+            function(cb){
+                broadcast.on(configProcessingEvs._configChanged, cb);
+            };
+
+    useConfig.bindDone = function(cb){
+        broadcast.on(configProcessingEvs._onDone, cb);
     };
 
     useConfig.getSubKeys = function(){

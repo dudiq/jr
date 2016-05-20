@@ -42,24 +42,42 @@
     };
 
     helper.createClass = function(parent, params){
-        function ChildClass(){
-            ChildClass._parent.constructor.apply(this, arguments);
-        }
+        var ChildClass;
+        if (parent){
+            ChildClass = function (){
+                ChildClass._parent.constructor.apply(this, arguments);
+            };
 
-        this.inherit(ChildClass, parent);
+            this.inherit(ChildClass, parent);
+        } else {
+            (!params && typeof parent != "function") && (params = parent);
+            ChildClass = function (){
+                // parent class
+            };
+        }
 
         var p = ChildClass.prototype;
 
-        if (!params.getClass){
+        if (!params.getClass && !p.getClass){
             p.getClass = function(){
                 return ChildClass;
             };
         }
 
-        for (var key in params){
-            p[key] = params[key];
-        }
+        helper.extendClass(ChildClass, params);
+
         return ChildClass;
+    };
+
+    helper.extendClass = function(classy, params){
+        var p = classy.prototype;
+        for (var key in params){
+            if (!p.hasOwnProperty(key)){
+                p[key] = params[key];
+            } else {
+                logger && logger.error('trying to define already defined method in prototype!');
+            }
+        }
     };
 
     // deep clone object
