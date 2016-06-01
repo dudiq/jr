@@ -241,7 +241,7 @@
     };
 
     // remove all messages from quene and DOM
-    notify.clean = function(){
+    notify.clean = notify.clear = function(){
         for (var i = 0, l = quene.length; i < l; i++){
             var item = quene[i];
             item.el.off().remove();

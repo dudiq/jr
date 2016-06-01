@@ -73,6 +73,10 @@
         BaseClass = val;
     };
 
+    pages.getBase = function(){
+        return BaseClass;
+    };
+
     // create new class page
     pages.createClass = function(){
         function PageClass(){

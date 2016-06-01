@@ -65,11 +65,9 @@
             }
             var pageClassName = 'page-' + this.id;
             newDom.addClass('jr-page ' + pageClassName);
+            this.content = newDom;
             var content = this.prepareDomContent(newDom);
-            if (!content){
-                content = newDom;
-            }
-            this.content = content;
+            content && (this.content = content);
 
             if (oldContent){
                 oldContent.remove().empty();

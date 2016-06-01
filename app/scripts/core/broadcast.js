@@ -305,7 +305,7 @@
     //
     // msg - string message
     // params - event params
-    p.trig = function(msg, params) {
+    p.trig = function(msg, param1, param2, param3) {
         var targets = this.map[msg];
         if (targets){
             for (var i = 0, l = targets.length; i < l; i++){
@@ -313,7 +313,7 @@
                 if (!callback._dirty){
                     var handler = callback._link;
                     var context = handler.cont;
-                    var res = handler.call(context, params);
+                    var res = handler.call(context, param1, param2, param3);
                     if (callback._once){
                         // remove them
                         cleanCallback(callback);

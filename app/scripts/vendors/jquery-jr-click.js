@@ -156,6 +156,7 @@
                     if ((dx > CONST_TRESHOLD) ||
                         (dy > CONST_TRESHOLD)){
                         self.moved = true;
+                        stopLongTap.call(self);
                     }
                 }
             }

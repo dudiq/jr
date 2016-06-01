@@ -1,14 +1,15 @@
-## Cordova cli installation
-### install:
+##Cordova
 
-preparations:
+###preparations:
 
+####install:
  - nodejs (if not installed)
  - mercurial hg (cli) (if not installed)
- - call "`npm install -g cordova`"
+ - git for windows(linux, macos) (if not installed)
+ - call in command line "`npm install -g cordova`"
+ - create in root folder `platforms` and `plugins` folders if not exist
 
-for android build:
-
+####install for android build:
  - java jdk
  - java jre
  - android sdk

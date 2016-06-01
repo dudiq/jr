@@ -19,10 +19,12 @@
 
     var logger = app('logger')('translate');
     var navLang = (navigator.language || navigator.userLanguage).substring(0, 2).toLowerCase();
-    var currLang = (navLang == 'en' || navLang == 'ru') ? navLang : 'en';
+    var defaultLang = (navLang == 'en' || navLang == 'ru') ? navLang : 'en';
+    var currLang = defaultLang;
     var currentWords;
     var collection = {};
     var processed = {};
+    var $body;
 
     var translate = app('translate', function(key, values){
         if (collection[key]){
@@ -78,11 +80,16 @@
     //change lang of all APP, it will redraw all pages
     // :todo think how to change content without redraw???
     translate.setLang = function(lang){
-        currLang = lang;
-        cleanCurrentWords();
-        currentWords = process();
-        broadcast.trig(translateEvs.onWordsProcessed, currLang);
-        broadcast.trig(translateEvs.onLangSet, currLang);
+        if (collection[lang]) {
+            defineBody();
+            $body.removeClass('jr-lang-' + currLang);
+            currLang = lang;
+            $body.addClass('jr-lang-' + currLang);
+            cleanCurrentWords();
+            currentWords = process();
+            broadcast.trig(translateEvs.onWordsProcessed, currLang);
+            broadcast.trig(translateEvs.onLangSet, currLang);
+        }
     };
 
     // getting translated hash array words for core using only
@@ -93,6 +100,11 @@
     // return current setted lang
     translate.getCurrLang = function(){
         return currLang;
+    };
+
+    // return default lang
+    translate.getDefaultLang  = function(){
+        return defaultLang;
     };
 
     // return translate from text
@@ -170,7 +182,12 @@
         if (collection[navLang]){
             currLang = navLang;
             cleanCurrentWords();
+            defineBody();
         }
+    }
+
+    function defineBody(){
+        !$body && ($body = $(document.body));
     }
 
 })();

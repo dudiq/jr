@@ -36,7 +36,7 @@
         window.location.reload();
     };
 
-    tester.run = function(){
+    tester.run = function(name){
         // run all
 
         msgs.length = 0;
@@ -46,7 +46,7 @@
         logger.info('---');
         logger.info('tests started');
         logger.info('---');
-        root.start(function(){
+        root.start(name, function(){
             var endTime = new Date();
             var totalTests = 0;
             var failTests = 0;
@@ -77,13 +77,15 @@
             pushMap();
             if (!ret){
                 assertFail();
-                msg && logger.info(msg);
+                var text = '[EQUAL] : ' + arg1 + ' is no equal ' + arg2 + ';' + msg;
+                logger.info(text);
             }
         }
     };
 
     function ItBlockClass(name, cb){
         this._cases = [];
+        this._runCases = [];
         this._index = 0;
     }
 
@@ -96,15 +98,34 @@
         });
     };
 
-    p.start = function(cb){
+    p.start = function(name, cb){
+        var runCases;
+        if (typeof name == "function"){
+            cb = name;
+            runCases = this._cases;
+        } else {
+            if (!name){
+                runCases = this._cases;
+            } else {
+                runCases = [];
+                var cases = this._cases;
+                for (var i = 0, l = cases.length; i < l; i++){
+                    var item = cases[i];
+                    if (item.name == name){
+                        runCases.push(item);
+                    }
+                }
+            }
+        }
         this._cb = cb;
         this._index = 0;
+        this._runCases = runCases;
         this.run();
     };
 
     p.run = function(){
         var self = this;
-        var currCase = this._cases[this._index];
+        var currCase = this._runCases[this._index];
         if (currCase){
             msgs.push(currCase.name);
             var itBlock = new ItBlockClass();
