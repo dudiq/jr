@@ -1,6 +1,7 @@
 (function () {
     var app = window.app;
     var cordovaDevice = app('cordova-device');
+    var helper = app('helper');
 
     var cordovaCamera = app('cordova-camera', {});
 
@@ -17,33 +18,39 @@
         cordovaDevice.onReady(function () {
             camObject = navigator.camera;
 
-            optionsForCamera = {
-                quality: CONST_CAMERA_QUALITY,
-                destinationType: camObject.DestinationType.FILE_URI,
-                sourceType: camObject.PictureSourceType.CAMERA,
-                encodingType: camObject.EncodingType.JPEG,
-                saveToPhotoAlbum: true,
-                correctOrientation: true,
-                cameraDirection: 0 // rear camera select
-            };
+            if (camObject){
+                optionsForCamera = {
+                    quality: CONST_CAMERA_QUALITY,
+                    destinationType: camObject.DestinationType.FILE_URI,
+                    sourceType: camObject.PictureSourceType.CAMERA,
+                    encodingType: camObject.EncodingType.JPEG,
+                    saveToPhotoAlbum: true,
+                    correctOrientation: true,
+                    cameraDirection: 0 // rear camera select
+                };
 
-            optionsForGallery = {
-                quality: CONST_CAMERA_QUALITY,
-                destinationType: camObject.DestinationType.NATIVE_URI,
-                sourceType: camObject.PictureSourceType.PHOTOLIBRARY,
-                encodingType: camObject.EncodingType.JPEG,
-                saveToPhotoAlbum: false,
-                correctOrientation: true
-            };
+                optionsForGallery = {
+                    quality: CONST_CAMERA_QUALITY,
+                    destinationType: camObject.DestinationType.NATIVE_URI,
+                    sourceType: camObject.PictureSourceType.PHOTOLIBRARY,
+                    encodingType: camObject.EncodingType.JPEG,
+                    saveToPhotoAlbum: false,
+                    correctOrientation: true
+                };
+            }
         });
     }
 
     function getPic(onSuccess, onError, options){
-        camObject.getPicture(function (fileUri) {
-            setTimeout(function () {
-                onSuccess(fileUri);
-            }, 0);
-        }, onError, options);
+        if (camObject){
+            camObject.getPicture(function (fileUri) {
+                setTimeout(function () {
+                    onSuccess(fileUri);
+                }, 0);
+            }, onError, options);
+        } else {
+            onError();
+        }
     }
 
     function getPicture(options, params) {
@@ -59,8 +66,14 @@
         }
     }
 
-    cordovaCamera.getPhotoFromCamera = function (params) {
-        getPicture(optionsForCamera, params);
+    cordovaCamera.getPhotoFromCamera = function (params, opt) {
+        var defOpt = helper.clone(optionsForCamera);
+        if (opt) {
+            for (var key in opt){
+                defOpt[key] = opt[key];
+            }
+        }
+        getPicture(defOpt, params);
     };
 
     cordovaCamera.getPhotoFromGallery = function (params) {

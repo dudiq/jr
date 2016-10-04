@@ -1,121 +1,162 @@
-/*
-* store, create and navigate page instances
-*
-* */
-(function(){
-    var app = window.app;
+(function (app) {
     var helper = app('helper');
     var logger = app('logger')('pages');
-    var inherit = helper.inherit;
+    var navi = app('navigation');
+    var route = app('route');
 
-    // storage for all page instances
-    var collection = {};
+    var pageInstances = {};
+    var pageClasses = {};
 
-    var BaseClass;
-
-
-    var pages = app('pages', function(id){
-        return collection[id];
+    var pages = app('pages', function (pageId) {
+        return pageInstances[pageId];
     });
 
-    // create new instance of page by params
-    // params - page id or hash array of params
-    function createPage(params){
-        params = (typeof params == "string") ? {id: params} : params;
-        var id = params.id;
-        var newPage;
+    helper.mixinClass(pages, {
+        create: function (data) {
+            var pageId = data.id;
+            var inst;
 
-        if (!collection[id]){
-            newPage = collection[id] = new this(params, this);
-            newPage.init();
-
-            var templater = app('templater');
-            templater.get(newPage.viewId);
-
-            if (newPage.alias !== undefined){
-                var changePage = app('navigation').changePage;
-
-                // :todo need refactor this routeRule for correct define and detect alias of page
-                if (newPage.alias.indexOf('/') == 0){
-                    logger.error('alias of page "' + id + '" is not correct, must be without "/" character');
-                } else {
-                    var routeRule = "/" + newPage.alias;
-                    app('route').register(routeRule, function(routeParams){
-                        // this is for NORMAL pages (NOT 'drop' pages)
-                        if (routeParams.pageChanged || !newPage.drawn){
-                            if (!changePage(id)){
-                                // no access to page
-                                logger.error('no access to page: ' + id);
-                            }
-                        } else {
-                            // onRouteChanged can't be run for 'drop' pages
-                            newPage.onRouteChanged(routeParams);
-                        }
-                    });
+            if (!pageInstances[pageId]){
+                var params = {};
+                var methods = {};
+                for (var key in data){
+                    var val = data[key];
+                    if (typeof val == "function"){
+                        methods[key] = val;
+                    } else {
+                        params[key] = val;
+                    }
                 }
-            }
-
-        } else {
-            logger.warn('trying to create defined page - "' + id +'"');
-        }
-        return newPage;
-    }
-
-    // just return all instances
-    pages.map = function(callback){
-        for (var key in collection) {
-            var page = collection[key];
-            callback(key, page);
-        }
-    };
-
-    pages.setBase = function(val){
-        BaseClass = val;
-    };
-
-    pages.getBase = function(){
-        return BaseClass;
-    };
-
-    // create new class page
-    pages.createClass = function(){
-        function PageClass(){
-            PageClass._parent.constructor.apply(this, arguments);
-        }
-
-        inherit(PageClass, BaseClass);
-
-        PageClass.createPage = createPage;
-        return PageClass;
-    };
-
-
-    pages.create = function(data){
-        return create(null, data);
-    };
-
-    pages.createByParent = function(parent, data){
-        return create(parent, data);
-    };
-
-    function create(parent, data){
-        if (!parent){
-            parent = pages;
-        }
-        var PageClass = parent.createClass();
-        var opt = {};
-        var p = PageClass.prototype;
-        for (var key in data){
-            var val = data[key];
-            if (typeof val == "function"){
-                p[key] = val;
+                var baseClassName = params.baseClass || 'base';
+                var PageClass = this.createClass(baseClassName, pageId, methods);
+                inst = pageInstances[pageId] = new PageClass(params);
             } else {
-                opt[key] = val;
+                logger.warn('trying to create defined page', pageId);
+            }
+
+            return inst;
+        },
+        createClass: function (parentClassName, pageId, methods) {
+            var PageClass;
+            if (pageClasses[pageId]){
+                logger.error('trying to defined already defined class of page', pageId);
+            } else {
+                var parentClass = pageClasses[parentClassName];
+                if (parentClass){
+                    PageClass = helper.createClass(parentClass, methods);
+                } else {
+                    if (typeof methods == "function"){
+                        // already defined class
+                        PageClass = methods;
+                    } else {
+                        logger.error('trying to define page without parent!');
+                    }
+                }
+                pageClasses[pageId] = PageClass;
+            }
+            return PageClass;
+        },
+        map: function (cb) {
+            for (var key in pageInstances) {
+                var page = pageInstances[key];
+                cb(key, page);
+            }
+        },
+        getPageClass: function (classId) {
+            return pageClasses[classId];
+        },
+        wrapClassMethods: function (opt, redefined) {
+            for (var methodName in redefined){
+                var method = redefined[methodName];
+                wrapMethod(opt, method, methodName);
             }
         }
+    });
 
-        var inst = createPage.call(PageClass, opt);
-        return inst;
+    function wrapMethod(opt, method, methodName) {
+        var isFirst = false;
+        if (typeof method == "object"){
+            isFirst = method.isFirst;
+            method = method.method;
+        }
+        if (opt[methodName]){
+            var oldMethod = opt[methodName];
+            opt[methodName] = function () {
+                var ret;
+                isFirst && (ret = method.apply(this, arguments));
+                
+                // call old method
+                (ret === undefined)
+                    ? ret = oldMethod.apply(this, arguments)
+                    : ret = ret && oldMethod.apply(this, arguments);
+
+                if (!isFirst) {
+                    (ret === undefined)
+                        ? ret = method.apply(this, arguments)
+                        : ret = ret && method.apply(this, arguments);
+                }
+                
+                return ret;
+            };
+        } else {
+            opt[methodName] = function () {
+                return method.apply(this, arguments);
+            };
+        }
     }
 
-})();
+
+    //
+    // var routeRule = "/" + newPage.alias;
+    // route.register(routeRule, function(routeParams){
+    //     // this is for NORMAL pages (NOT 'drop' pages)
+    //     if (routeParams.pageChanged || !newPage.drawn){
+    //         if (!navi.changePage(id)){
+    //             // no access to page
+    //             logger.error('no access to page: ' + id);
+    //         }
+    //     } else {
+    //         // onRouteChanged can't be run for 'drop' pages
+    //         newPage.onRouteChanged(routeParams);
+    //     }
+    // });
+
+    //
+
+    var currPageId = '';
+
+    function changePageByRoute(alias) {
+        var currPage = pageInstances[alias];
+        if (currPage && !currPage.shown){
+            currPageId = alias;
+            var changed = navi.changePage(alias);
+            if (!changed) {
+                logger.error('no access to page: ' + alias);
+            }
+        }
+    }
+
+    route.addMainField('page', {
+        index: 0,
+        onSet: function (alias) {
+            logger.log('onSet', alias);
+            changePageByRoute(alias);
+        },
+        onChanged: function (alias) {
+            logger.log('onChanged', alias);
+            changePageByRoute(alias);
+        },
+        onRemoved: function () {
+            logger.log('onRemoved');
+        },
+        onArgsChanged: function (args) {
+            var currPage = pageInstances[currPageId];
+            if (currPage && currPage.shown){
+                currPage.onRouteChanged(args);
+            }
+            logger.log('onArgsChanged', args);
+        }
+    });
+
+
+})(window.app);

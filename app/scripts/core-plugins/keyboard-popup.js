@@ -28,17 +28,26 @@
             broadcast.trig(keyPopupEvs.onShow);
 
             var dx = 0;
-            var val = $(ev.target).data('keyboardPopup');
-            if (val != false) {
-                var wh = $win.height();
-                var mh = mainContainer.height();
-                dx = Math.max(0, (wh - mh)) * 2;
+            var el = $(ev.target);
+            var containerScroll = el.closest('.jr-page-inside-container-scroll, .jr-page-internal-scrolling');
+            if (containerScroll.length){
+                el[0] && el[0].scrollIntoView(true);
+                helperDiv.height(0 + 'px');
+            } else {
+                // default behaviour
+                var val = el.data('keyboardPopup');
+                if (val != false) {
+                    var wh = $win.height();
+                    var mh = mainContainer.height();
+                    dx = Math.max(0, (wh - mh)) * 2;
+                }
+                helperDiv.height(dx + 'px');
             }
-            helperDiv.height(dx  + 'px');
-
+            
             clearTimeout(removeTimer);
             $body.addClass('jr-keyboard-popup');
-            broadcast.trig(keyPopupEvs.onShow);
+            broadcast.trig(keyPopupEvs.onShow, el, containerScroll);
+            
         }).on('blur', selectors, function() {
             clearTimeout(removeTimer);
             removeTimer = setTimeout(function(){

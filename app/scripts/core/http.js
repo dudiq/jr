@@ -245,7 +245,7 @@
 
     // processing post request
     httpMod.post = function(url, data, params){
-        var params = params || {};
+        params = params || {};
         params.type = "POST";
         params.contentType = (params.contentType === undefined) ? "application/json; charset=UTF-8" : params.contentType;
         params.processData = (params.processData !== undefined) ? params.processData : false;

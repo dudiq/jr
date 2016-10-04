@@ -11,22 +11,16 @@
         var route = app('route');
         var templater = app('templater');
 
-        var pages = app('pages');
-        var page = pages.createClass();
-
-        templater.set('routeCmdTestCasePage1', '<div>routeCmdTestCasePage1</div>');
-
-        var p = page.prototype;
-
-        p.hasAccess = function(){
-            return true;
-        };
-
-        page.createPage({
+        app('pages').create({
             id: 'routeCmdTestCasePage1',
             alias: 'routeCmdTestCasePage1',
-            weight: 2
+            weight: 2,
+            hasAccess: function () {
+                return true;
+            }
         });
+
+        templater.set('routeCmdTestCasePage1', '<div>routeCmdTestCasePage1</div>');
 
         it('checking init, finalize methods for NOT defined value', function(done){
 
@@ -52,9 +46,8 @@
             route.pushState("/routeCmdTestCasePage1/routeCmdTest1=11");
             route.pushState("/routeCmdTestCasePage1");
 
-
             var str = paths.join(" ");
-            assert.equal(str, "set  10 removed set 11 removed");
+            assert.equal(str, "set 10 removed set 11 removed");
             done();
         });
 
@@ -87,7 +80,7 @@
 
 
             var str = paths.join(" ");
-            assert.equal(str, "set  10 removed set 11 removed");
+            assert.equal(str, "set 10 removed set 11 removed");
             done();
         });
     });

@@ -34,6 +34,7 @@
     app('pages').create({
         id: 'second',
         weight: 1.5,
+        viewId: 'pages/second',
         init: function(){
             var scope = this.scope = {
                 t: {
@@ -82,7 +83,7 @@
             });
 
             content.find(".btn-popup").on("jrclick", function () {
-                app('pages')('popup').showPopup();
+                app('pages')('popup-me').showPopup();
             });
 
             content.find(".btn-second").on("jrclick", function () {
@@ -135,7 +136,7 @@
                     value: i
                 });
             }
-            //this.viewList.setData(checkList);
+            this.viewList.setData(checkList);
         }
     });
 

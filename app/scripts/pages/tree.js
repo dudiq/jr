@@ -4,21 +4,23 @@
     var helper = app('helper');
     var translate = app('translate');
     var templater = app('templater');
-    var navi = app('navigation');
+    var route = app('route');
 
     var itemTemplate;
 
     app('pages').create({
         id: 'tree',
+        viewId: 'pages/tree',
         useHistory: false,
         weight: 3,
+        isInternalScroll: true,
         init: function () {
             this.listUpdated = false;
-            itemTemplate = templater.get('tree/tree-item');
+            itemTemplate = templater.get('pages/tree/tree-item');
         },
         prepareDomContent: function (content) {
             content.find(".btn-second").on("jrclick", function () {
-                navi.back();
+                route.back();
             });
             this.listUpdated = false;
         },

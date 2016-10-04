@@ -1,5 +1,7 @@
 (function(){
     var app = window.app;
+    var helper = app('helper');
+    var pushToWatchedArray = helper('pushToWatchedArray');
 
     var MAX_ITEMS = 100;
     var UPDATE_FIELD = '__needUpdate';
@@ -44,10 +46,15 @@
 
         if (newDataLength >= oldDataLength){
             var total = Math.min(max, newDataLength);
+            var toPush = [];
             for (var i = oldDataLength; i < total; i++){
                 var newItem = data[i];
-                view.push(newItem);
+                toPush.push(newItem);
             }
+            pushToWatchedArray(view, toPush);
+            
+            toPush.length = 0;
+            toPush = null;
         }
         onAllShown.call(this);
     }
@@ -71,9 +78,24 @@
         this._dataList = [];
         this._max = params.max || MAX_ITEMS;
         this._viewList = params.scopeList;
-        this._createItem = params.createItem;
-        this._isItemsEqual = params.isItemsEqual;
-        this._updateItem = params.updateItem;
+        this._fields = params.fields || [];
+        this._createItem = params.createItem || defCreateScopeItem;
+        this._isItemsEqual = params.isItemsEqual || defIsItemsEqual;
+        this._updateItem = params.updateItem || defUpdateScopeItem;
+    };
+
+    p.destroy = function () {
+        this._params = null;
+        this._viewList = null;
+
+        this._dataList && this._dataList.clear();
+        this._dataList = null;
+
+        this._max = null;
+        this._fields = null;
+        this._createItem = null;
+        this._isItemsEqual = null;
+        this._updateItem = null;
     };
 
     p.getData = function(){
@@ -81,6 +103,14 @@
     };
 
     p.setData = function(newData){
+        if (!newData){
+            // drop data
+            this._dataList.clear();
+            this._viewList.clear();
+            onAllShown.call(this);
+            return true;
+        }
+        
         var createItem = this._createItem;
         var isItemsEqual = this._isItemsEqual;
         var updateItem = this._updateItem;
@@ -118,7 +148,7 @@
         // fill new list
         if (newDataLength >= oldDataLength){
             for (var i = oldDataLength; i < newDataLength; i++){
-                var newItem = createItem(newData[i]);
+                var newItem = createItem.call(this, newData[i]);
                 oldData.push(newItem);
                 changed = true;
             }
@@ -128,6 +158,33 @@
 
         return changed;
     };
+
+    function defCreateScopeItem(el){
+        var ret = {};
+        var fields = this._fields;
+        helper.arrayWalk(fields, function(name){
+            ret[name] = el[name];
+        });
+        return ret;
+    }
+
+    function defIsItemsEqual(oldItem, newItem){
+        var ret = true;
+        var fields = this._fields;
+        helper.arrayWalk(fields, function(name){
+            ret = ret && (oldItem[name] == newItem[name]);
+        });
+
+        return ret;
+    }
+
+    function defUpdateScopeItem(oldItem, newItem){
+        var fields = this._fields;
+        helper.arrayWalk(fields, function(name){
+            oldItem[name] = newItem[name];
+        });
+    }
+
 
     app('show-more-class', function(params){
         return new ShowMoreClass(params);

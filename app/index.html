@@ -62,144 +62,146 @@
     <div class="jr-loading-text">Loading...</div>
 </div>
 
-<script karma src="cordova.js"></script>
+<script src="cordova.js"></script>
 
 <!-- unit(js, scripts/scripts.js) -->
 
-<script karma src="scripts/core/js-overwrites.js"></script>
+<script src="scripts/core/js-overwrites.js"></script>
 
-<script karma src="scripts/vendors/jquery-2.2.1.min.js"></script>
-<script karma src="scripts/vendors/jquery.address-1.6.min.js"></script>
-<script karma src="scripts/vendors/jquery-jr-click.js"></script>
-<script karma src="scripts/vendors/jquery-jr-dnd.js"></script>
+<script src="scripts/vendors/jquery-2.2.1.min.js"></script>
+<script src="scripts/vendors/jquery.address-1.6.min.js"></script>
+<script src="scripts/vendors/jquery-jr-click.js"></script>
+<script src="scripts/vendors/jquery-jr-dnd.js"></script>
 
 
 <!--tabbale for overflow plugin-->
-<script karma src="scripts/vendors/jquery.tabbable.js"></script>
+<script src="scripts/vendors/jquery.tabbable.js"></script>
 
-<script karma src="scripts/core/main.js"></script>
-<script karma src="scripts/jr-config.js"></script>
-<script karma src="scripts/core/errors.js"></script>
-<script karma src="scripts/core/deprecate.js"></script>
-<script karma src="scripts/core/broadcast.js"></script>
-<script karma src="scripts/core/app.js"></script>
-<script karma src="scripts/core/helper.js"></script>
-<script karma src="scripts/core/cookie.js"></script>
-<script karma src="scripts/core/suspend.js"></script>
-<script karma src="scripts/core/local-storage.js"></script>
+<script src="scripts/core/main.js"></script>
+<script src="scripts/jr-config.js"></script>
+<script src="scripts/core/errors.js"></script>
+<script src="scripts/core/deprecate.js"></script>
+<script src="scripts/core/broadcast.js"></script>
+<script src="scripts/core/app.js"></script>
+<script src="scripts/core/helper.js"></script>
+<script src="scripts/core-plugins/mod-require.js"></script>
+<script src="scripts/core/cookie.js"></script>
+<script src="scripts/core/suspend.js"></script>
+<script src="scripts/core/browser-storage.js"></script>
 
-<script karma src="scripts/core/translate.js"></script>
-<script karma src="scripts/langs/ru.js"></script>
-<script karma src="scripts/langs/en.js"></script>
+<script src="scripts/core/translate.js"></script>
+<script src="scripts/langs/ru.js"></script>
+<script src="scripts/langs/en.js"></script>
 
-<script karma src="scripts/core/templater.js"></script>
-<script karma src="scripts/core/templater-data.js"></script>
+<script src="scripts/core/templater.js"></script>
+<script src="scripts/core/templater-data.js"></script>
 
-<script karma src="scripts/core/pages.js"></script>
+<script src="scripts/core/navigation.js"></script>
+<script src="scripts/core/route.js"></script>
 
-<script karma src="scripts/core/page-auth.js"></script>
-<script karma src="scripts/core/route.js"></script>
-<script karma src="scripts/core/navigation.js"></script>
+<script src="scripts/core/pages.js"></script>
 
-<script karma src="scripts/core/http.js"></script>
-<script karma src="scripts/core/storage.js"></script>
+<script src="scripts/core/page-auth.js"></script>
+
+<script src="scripts/core/page.js"></script>
+
+<script src="scripts/core/http.js"></script>
+<script src="scripts/core/storage.js"></script>
+
+<script src="scripts/core/route-start.js"></script>
 
 <!-- plugins define -->
-<script karma src="scripts/config.js"></script>
-<script karma src="scripts/config-mixin.js"></script>
-<script karma src="scripts/rename-to-app-name/config-my-processing.js"></script>
-<script karma src="scripts/core/config-processing.js"></script>
+<script src="scripts/config.js"></script>
+<script src="scripts/config-mixin.js"></script>
+<script src="scripts/rename-to-app-name/config-my-processing.js"></script>
+<script src="scripts/core/config-processing.js"></script>
 
-<script karma src="scripts/core-plugins/time-mod/time-mod.js"></script>
-<script karma src="scripts/core-plugins/time-mod/en.js"></script>
-<script karma src="scripts/core-plugins/time-mod/ru.js"></script>
-<script karma src="scripts/core-plugins/build-version.js"></script>
-<script karma src="scripts/core-plugins/mod-require.js"></script>
+<script src="scripts/core-plugins/time-mod/time-mod.js"></script>
+<script src="scripts/core-plugins/time-mod/en.js"></script>
+<script src="scripts/core-plugins/time-mod/ru.js"></script>
+<script src="scripts/core-plugins/build-version.js"></script>
 
-<script karma src="scripts/core-plugins/loading.js"></script>
-<script karma src="scripts/core-plugins/case-numbers.js"></script>
-<script karma src="scripts/core-plugins/device-os.js"></script>
-<script karma src="scripts/core-plugins/route-commander.js"></script>
-<script karma src="scripts/core-plugins/cordova-device.js"></script>
-<script karma src="scripts/core-plugins/notify.js"></script>
-<script karma src="scripts/core-plugins/overflow.js"></script>
-<script karma src="scripts/core-plugins/cookie-ls-mix-adapter.js"></script>
-<script karma src="scripts/core-plugins/page-popup.js"></script>
-<script karma src="scripts/core-plugins/page-popup-modal.js"></script>
-<script karma src="scripts/core-plugins/keyboard-popup.js"></script>
-<script karma src="scripts/core-plugins/remember-page.js"></script>
-<script karma src="scripts/core-plugins/page-change-fix-clicks.js"></script>
-<script karma src="scripts/core-plugins/confirm.js"></script>
-<script karma src="scripts/core-plugins/close-back.js"></script>
-<script karma src="scripts/core-plugins/lang-sub.js"></script>
-<script karma src="scripts/core-plugins/progress.js"></script>
+<script src="scripts/core-plugins/loading.js"></script>
+<script src="scripts/core-plugins/case-numbers.js"></script>
+<script src="scripts/core-plugins/device-os.js"></script>
+<script src="scripts/core-plugins/route-commander.js"></script>
+<script src="scripts/core-plugins/cordova-device.js"></script>
+<script src="scripts/core-plugins/notify.js"></script>
+<script src="scripts/core-plugins/overflow.js"></script>
+<script src="scripts/core-plugins/cookie-ls-mix-adapter.js"></script>
+<!--<script src="scripts/core-plugins/page-popup.js"></script>-->
+<script src="scripts/core-plugins/page-popup-modal.js"></script>
+<script src="scripts/core-plugins/keyboard-popup.js"></script>
+<script src="scripts/core-plugins/remember-page.js"></script>
+<script src="scripts/core-plugins/page-change-fix-clicks.js"></script>
+<script src="scripts/core-plugins/confirm.js"></script>
+<script src="scripts/core-plugins/close-back.js"></script>
+<script src="scripts/core-plugins/lang-sub.js"></script>
+<script src="scripts/core-plugins/progress.js"></script>
 
-<script karma src="scripts/core-plugins/watch-scope/watch-scope.js"></script>
-<script karma src="scripts/core-plugins/watch-scope/parent-watch.js"></script>
-<script karma src="scripts/core-plugins/watch-scope/base-watch.js"></script>
-<script karma src="scripts/core-plugins/watch-scope/watchers/change.js"></script>
-<script karma src="scripts/core-plugins/watch-scope/watchers/repeat.js"></script>
-<script karma src="scripts/core-plugins/watch-scope/watchers/css.js"></script>
-<script karma src="scripts/core-plugins/watch-scope/watchers/css-class-name.js"></script>
-<script karma src="scripts/core-plugins/watch-scope/watchers/bg-img.js"></script>
-<script karma src="scripts/core-plugins/watch-scope/watchers/bg-color.js"></script>
-<script karma src="scripts/core-plugins/watch-scope/watchers/data-attr.js"></script>
-<script karma src="scripts/core-plugins/watch-scope/watchers/a-href.js"></script>
-<script karma src="scripts/core-plugins/watch-scope/watchers/time-processor.js"></script>
-<script karma src="scripts/core-plugins/watch-scope/watchers/translate.js"></script>
-<script karma src="scripts/core-plugins/watch-scope/watchers/html.js"></script>
+<script src="scripts/core-plugins/watch-scope/watch-scope.js"></script>
+<script src="scripts/core-plugins/watch-scope/parent-watch.js"></script>
+<script src="scripts/core-plugins/watch-scope/base-watch.js"></script>
+<script src="scripts/core-plugins/watch-scope/watchers/change.js"></script>
+<script src="scripts/core-plugins/watch-scope/watchers/repeat.js"></script>
+<script src="scripts/core-plugins/watch-scope/watchers/css.js"></script>
+<script src="scripts/core-plugins/watch-scope/watchers/css-class-name.js"></script>
+<script src="scripts/core-plugins/watch-scope/watchers/bg-img.js"></script>
+<script src="scripts/core-plugins/watch-scope/watchers/bg-color.js"></script>
+<script src="scripts/core-plugins/watch-scope/watchers/data-attr.js"></script>
+<script src="scripts/core-plugins/watch-scope/watchers/a-href.js"></script>
+<script src="scripts/core-plugins/watch-scope/watchers/time-processor.js"></script>
+<script src="scripts/core-plugins/watch-scope/watchers/translate.js"></script>
+<script src="scripts/core-plugins/watch-scope/watchers/html.js"></script>
 
-<script karma src="scripts/core-plugins/gestures/plugin.js"></script>
-<script karma src="scripts/core-plugins/gestures/base.js"></script>
+<script src="scripts/core-plugins/gestures/plugin.js"></script>
+<script src="scripts/core-plugins/gestures/base.js"></script>
 
-<script karma src="scripts/core-plugins/gestures/swipe.js"></script>
-<script karma src="scripts/core-plugins/gestures/swipe-left.js"></script>
-<script karma src="scripts/core-plugins/gestures/swipe-right.js"></script>
-<script karma src="scripts/core-plugins/gestures/swipe-top.js"></script>
-<script karma src="scripts/core-plugins/gestures/swipe-bottom.js"></script>
-<script karma src="scripts/core-plugins/gestures/swipe-lr.js"></script>
+<script src="scripts/core-plugins/gestures/swipe.js"></script>
+<script src="scripts/core-plugins/gestures/swipe-left.js"></script>
+<script src="scripts/core-plugins/gestures/swipe-right.js"></script>
+<script src="scripts/core-plugins/gestures/swipe-top.js"></script>
+<script src="scripts/core-plugins/gestures/swipe-bottom.js"></script>
+<script src="scripts/core-plugins/gestures/swipe-lr.js"></script>
 
-<script karma src="scripts/plugins/cordova-camera.js"></script>
-<script karma src="scripts/plugins/hashes.js"></script>
-<script karma src="scripts/plugins/validate.js"></script>
-<script karma src="scripts/plugins/bootstrap-dropdown.js"></script>
-<script karma src="scripts/plugins/android-dialer.js"></script>
-<script karma src="scripts/plugins/debounce.js"></script>
-<script karma src="scripts/plugins/object-template.js"></script>
-<script karma src="scripts/plugins/page-catcher.js"></script>
-<script karma src="scripts/plugins/portion.js"></script>
-<script karma src="scripts/plugins/show-more.js"></script>
+<script src="scripts/plugins/on-callbacks.js"></script>
+<script src="scripts/plugins/cordova-camera.js"></script>
+<script src="scripts/plugins/hashes.js"></script>
+<script src="scripts/plugins/validate.js"></script>
+<script src="scripts/plugins/bootstrap-dropdown.js"></script>
+<script src="scripts/plugins/android-dialer.js"></script>
+<script src="scripts/plugins/debounce.js"></script>
+<script src="scripts/plugins/object-template.js"></script>
+<script src="scripts/plugins/portion.js"></script>
+<script src="scripts/plugins/data-serialize.js"></script>
+<script src="scripts/plugins/time-info.js"></script>
+<script src="scripts/plugins/show-more.js"></script>
 
 
 <!--communication between jr and my app-->
-<script karma src="scripts/rename-to-app-name/user.js"></script>
-<script karma src="scripts/rename-to-app-name/my-app-name.js"></script>
+<script src="scripts/rename-to-app-name/user.js"></script>
+<script src="scripts/rename-to-app-name/my-app-name.js"></script>
 
-<script karma src="scripts/services/http-process.js"></script>
-<script karma src="scripts/services/services.js"></script>
-<script karma src="scripts/services/request.js"></script>
-<script karma src="scripts/services/remote-check-service.js"></script>
+<script src="scripts/services/http-process.js"></script>
+<script src="scripts/services/services.js"></script>
+<script src="scripts/services/request.js"></script>
+<script src="scripts/services/remote-check-service.js"></script>
 
-<!--<script karma src="scripts/drop.me.js"></script>-->
+<!--<script src="scripts/drop.me.js"></script>-->
 
 <!-- directives -->
 
-
-<!--init pages base class-->
-<script karma src="scripts/core/page.js"></script>
-
 <!--init page instances (controllers)-->
-<script karma src="scripts/pages/login.js"></script>
-<script karma src="scripts/pages/main.js"></script>
-<script karma src="scripts/pages/second.js"></script>
+<script src="scripts/pages/login.js"></script>
+<script src="scripts/pages/main.js"></script>
+<script src="scripts/pages/second.js"></script>
 
     <!-- module(myModuleName) -->
-    <!-- views(tree.html, tree/, thr.html, popup.html, gestures.html) -->
-    <script karma src="scripts/pages/tree.js"></script>
-    <script karma src="scripts/pages/thr.js"></script>
-    <script karma src="scripts/pages/popup-page.js"></script>
-    <script karma src="scripts/pages/popup-page-next.js"></script>
-    <script karma src="scripts/pages/gestures.js"></script>
+    <!-- views(pages/tree.html, pages/tree/, pages/thr.html, pages/popup.html, pages/gestures.html) -->
+    <script src="scripts/pages/tree.js"></script>
+    <script src="scripts/pages/thr.js"></script>
+    <script src="scripts/pages/popup-page.js"></script>
+    <script src="scripts/pages/gestures.js"></script>
     <!-- endmodule -->
 
     <!-- exModule(utests) -->
@@ -209,11 +211,14 @@
     <script src="scripts/tests/cases/core/dom-is-ok.js"></script>
     <script src="scripts/tests/cases/core/broadcast.js"></script>
     <script src="scripts/tests/cases/core/helper.js"></script>
-    <script src="scripts/tests/cases/core/local-storage.js"></script>
+    <script src="scripts/tests/cases/core/browser-storage.js"></script>
     <script src="scripts/tests/cases/core/main.js"></script>
     <script src="scripts/tests/cases/core/route-cmd.js"></script>
     <script src="scripts/tests/cases/core/suspend.js"></script>
     <script src="scripts/tests/cases/core/watch-scope.js"></script>
+
+
+    <script src="scripts/tests/bench.js"></script>
     <!-- endexModule -->
 
 <!-- endunit -->

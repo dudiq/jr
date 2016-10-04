@@ -110,8 +110,7 @@
                     assert.equal(binded, 0);
                     done();
                 }, 100);
-
-            })
+            });
         });
 
         it('performance testing', function(block){

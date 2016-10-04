@@ -8,8 +8,7 @@
  * created: 2014-01-10
  * */
 
-(function(){
-    var app = window.app;
+(function(app){
     var broadcast = app('broadcast');
     var systemEvs = broadcast.events('system', {
         onStartBegin: 'app-start-begin',
@@ -97,4 +96,4 @@
         !startPrevented && start();
     });
 
-})();
+})(window.app);

@@ -7,19 +7,12 @@
     var config = app('app-config');
     var mixinConfig = app('app-config-mixin');
     var broadcast = app('broadcast');
-    var ls = app('local-storage');
     var processConfig = app('process-my-config');
     var configProcessingEvs = broadcast.events('config-processing', {
-        _configChanged: 'cc',
-        _onDone: 'od'
+        _configChanged: 'cc'
     });
 
-    var SAVED_CONF = 'scc';
-    var DEF_NAME = 'def';
-
-    var oldConfig = helper.clone(config);
-
-    //:todo add timeout for awaits
+    var subKeysConfig;
 
     function mixConfigs(fromObj, toObj){
         for (var key in fromObj){
@@ -38,71 +31,17 @@
         }
     }
 
+    // prepare normal config, defined in scripts
+    // we have two parts. config.js and mixin-config.js
+    // and just need to mix them into one
     mixConfigs(mixinConfig, config);
+    processConfig(); // set default keys, states and groups in config
+    var firstStateConfig = helper.clone(config);
 
-    var subKeysConfig = getFromLs();
-    !helper.isEmpty(subKeysConfig) && mixConfigs(subKeysConfig, config);
-    processConfig();
+    function useConfig(subKeys){
+        subKeys = helper.clone(subKeys);
 
-    var waits = [];
-    var onDoneWaits;
-    function createWaiter(){
-        var pos = waits.length;
-        var f = function(){
-            waits[pos] = false;
-            checkWaits();
-        };
-        waits.push(true);
-        return f;
-    }
-    function setOnDone(cb){
-        onDoneWaits = cb;
-    }
-
-    function checkWaits(){
-        var isDone = true;
-        for (var i = 0, l = waits.length; i < l; i++){
-            if (waits[i] !== false){
-                isDone = false;
-                break;
-            }
-        }
-        if (isDone){
-            waits.clear();
-            onDoneWaits && onDoneWaits();
-            onDoneWaits = null;
-            broadcast.trig(configProcessingEvs._onDone);
-        }
-    }
-
-    function saveToLs(subKeys, params){
-        var name = params.name || DEF_NAME;
-        var obj = {};
-        obj[name] = subKeys;
-        ls(SAVED_CONF, obj);
-    }
-
-    function getFromLs(){
-        var ret;
-        var data = ls(SAVED_CONF);
-        if (data && data[DEF_NAME]){
-            ret = data[DEF_NAME];
-        }
-        ret = ret || {};
-        return ret;
-    }
-
-    //helper.deepFreeze(config);
-    function useConfig(subKeys, params, onDone){
-        if (typeof params == "function"){
-            onDone = params;
-            params = {};
-        }
-        if (!params){
-            params = {};
-        }
-        saveToLs(subKeys, params);
-        var oldKeys = helper.clone(oldConfig);
+        var oldKeys = helper.clone(firstStateConfig);
         for (var key in config){
             delete config[key];
         }
@@ -113,34 +52,18 @@
         mixConfigs(subKeys, config);
         subKeysConfig = subKeys;
         processConfig();
-        broadcast.trig(configProcessingEvs._configChanged, {useNew: true});
-        setOnDone(onDone);
-        checkWaits();
+        // useNew will be deprecated
+        broadcast.trig(configProcessingEvs._configChanged);
     }
-
-    useConfig.on =
-    useConfig.bindStart =
-            function(cb){
-                broadcast.on(configProcessingEvs._configChanged, cb);
-            };
-
-    useConfig.bindDone = function(cb){
-        broadcast.on(configProcessingEvs._onDone, cb);
-    };
-
-    useConfig.getSubKeys = function(){
-        return subKeysConfig;
-    };
-
-    useConfig.await = function(){
-        return createWaiter();
-    };
-
-    app('use-my-config', useConfig);
-
-
-    helper.onStart(function(){
-        broadcast.trig(configProcessingEvs._configChanged, {});
+    
+    helper.mixinClass(useConfig, {
+        onChanged: function (cb) {
+            broadcast.on(configProcessingEvs._configChanged, cb);
+        },
+        getSubKeys: function () {
+            return subKeysConfig;
+        }
     });
 
+    app('use-my-config', useConfig);
 })();

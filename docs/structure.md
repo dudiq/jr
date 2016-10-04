@@ -8,7 +8,6 @@ JR structure and etc...
 >>docs - documentation
 >>shells - script files
 >>tasks - grunt tasks
->>ui-test - files for UI testing, choosed by you
 
 ####docs:
 > documentation files
@@ -18,9 +17,6 @@ JR structure and etc...
 
 ####tasks:
 >tasks folder for grunt, if needed own task, put it here and define in `gruntfile.js`
-
-####test/ui-test:
->test folder have `js` folder for create you own unit/ui tests of code
 
 ####main folder of project:
 >app:
@@ -36,7 +32,7 @@ JR structure and etc...
 
 ####app/styles:
 >styles:
-> all core styles defined in `jr/` folder, usually with `jr-` prefix. all other files are yours. please put your page styles into `styles/pages` folder, for correctly separate they.
+> all core styles defined in `jr/` folder, usually with `jr-` prefix. all other files are yours. please put your PAGE styles into `styles/pages` folder, for correctly separate they.
 
 #Js structure
 
@@ -54,24 +50,31 @@ JR structure and etc...
 >>`myApp.js` - main file of app logic
 
 ####app/scripts/core:
+>>`app` - start point of app.
 >>`broadcast` - for bind and trigger events. also storage of all events. used for detect collisions of different events (checking messages). and showing it in developer console.
+>>`browser-storage` - helper for simple use localStorage or sessionStorage of browser
+>>`config-prcessing` - for detect changes of config. and apply new config to app
 >>`cookie` - for access to cookies
+>>`deprecate` - for indicate deprecated methods or plugins or something else
 >>`errors` - for logging errors or warnings or just logs into console output (for debug in dev and production)
 >>`helper` - all helpers what you need to write own code
 >>`http` - AJAX calls.
 >>`js-overwrites` - methods what JR needs in javascript
->>`local-storage` - helper for simple use localStorage of browser
 >>`main` - module for create any other module/plugin/subplugin/etc... this is start point of all modules.
 >>`navigation` - for manipulate pages in DOM, switching between them, using animation (defined in jr-config)
 >>`page` - base class of page (controller)
 >>`page-auth` - acl module of pages. for correct showing pages in some cases, when we need check permissions for example.
 >>`pages` - collection of all pages
 >>`route` - routing address bar in browser
+>>`route-start` - start routing point
 >>`storage` - simple key/value storage for communicate between modules/plugins/etc. store object only in run. when app is terminated, storage is cleaned.
 >>`suspend` - own "deffered" object.
 >>`templater` - templater for processing views in pages
 >>`templater-data` - for build of framework. in this file stored all views as JSON object
 >>`translate` - for translate views in automatical mode or translate words by calling from code. all words defined in `app/scripts/langs`
+
+####app/scripts/core-plugins:
+>> here all core plugins, what can be may used for default SPA
 
 #some use cases
 - **examples**:
@@ -213,8 +216,7 @@ use `app.wait()` method, and run them, when you are ready.
 	var waiter = app.wait();
 
 	setTimeout(function(){
-		//system will know, that app can start. when all waiters will be called.
-		// in other case, system will wait and will show loading DIV.
+		// System will not start up until not execute the `waiter()`
 		waiter()
 	}, 5000);
 })();
@@ -259,21 +261,31 @@ how to create new plugin and access to them?
 	    alert(msg);
 	};
 
-})();
-``` 
-for accessing in others plugins use 
+...
 
-``` 
+	app('my-plugin-d', {
+		methodD: function(){
+			alert('D!');
+		}
+	});
+
+})();
+```
+for accessing in others plugins use
+
+```
 (function(){
     var app = window.app;
     var mp = app('my-plugin')
     var mpf = app('my-plugin-f');
-    
+    var mpd = app('my-plugin-d');
+
     var val = mpf(10);
     mp.alert(val);// will show 100 in alert message;
+	mpd.methodD();// will show 'D!' in alert message;
 
 })();
-``` 
+```
 
 for more details, see examples in `/plugins` folder
 

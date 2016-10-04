@@ -169,7 +169,7 @@
                 assert.equal(watchScope('test'), t1);
                 done();
 
-            })
+            });
 
         });
     });

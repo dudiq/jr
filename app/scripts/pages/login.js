@@ -17,6 +17,7 @@
     app('pages').create({
         id: 'login',
         weight: 1,
+        viewId: 'pages/login',
         prepareDomContent: function (content) {
             var pwdField = content.find('.pwd-field');
             content.find(".btn-login").on("jrclick", function () {

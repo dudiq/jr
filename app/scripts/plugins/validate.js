@@ -5,10 +5,10 @@
 
     var validate = {};
 
-    var selectors = '.check-validate';
+    var selectors = '.check-validate:visible';
     var errorClass = 'validation-error';
     var passwordClass = 'validate-pwd';
-    var passwordSelectors = '.' + passwordClass;
+    var passwordSelectors = '.' + passwordClass + ':visible';
 
     var PWD_MIN_LENGTH = 3;
 
@@ -22,7 +22,12 @@
         var res = true;
         var value = $this.val();
         var type = $this.attr('type');
+        var minLen = $this.attr('min-length');
         var trimValue = value.trim();
+
+        if (minLen){
+            res = (trimValue.length < minLen);
+        }
 
         switch (type){
             case "email":
@@ -31,12 +36,9 @@
             case "password":
                 res = (trimValue.length > PWD_MIN_LENGTH);
                 break;
-            default:
-                res = (trimValue != "");
-                break;
         }
 
-        return res
+        return res;
     }
 
     function processError($this, isValid){

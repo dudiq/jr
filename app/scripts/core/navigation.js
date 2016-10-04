@@ -10,12 +10,11 @@
     var broadcast = app('broadcast');
     var helper = app('helper');
     var config = app('config');
-    var route = app('route');
-    var navi = app('navigation', {});
-    var pageAuth = app('page-auth');
-    var warning = app('errors').warning;
+    var logger = app('logger')('navi');
     var translateEvs = broadcast.events('translate');
+    var routeEvs = broadcast.events('route');
     var naviEvs = broadcast.events('navigation', {
+        onDefaultPage: 'onDefPage',
         onBeforePageShow: 'onBeforePageShow',
         onBeforePageHide: 'onBeforePageHide',
         onPageShow: 'onPageShow',
@@ -25,10 +24,15 @@
         onSlideStop: 'navi-slide-stop',
         onSlideStart: 'navi-slide-start'
     });
+    
+    var route;
+    var pageAuth;
+
+    var navi = app('navigation', {});
 
     var animationSupport = helper.support.animation;
 
-    var pages = app('pages');
+    var pages;
 
     // main container, where pages will be drawn
     var container;
@@ -44,7 +48,7 @@
     var redrawFragment = $("<div/>");
 
     // variables for skipped pages (pages, which will NOT shown by changed history in address bar)
-    var DROP_PAGE_NAVI = "/_jr_page1";
+    var DROP_PAGE_NAVI = "_jr_page1";
 
     // default animation events names
     var CONST_ANIMATIONS = "webkitAnimationEnd animationend oanimationend msAnimationEnd";
@@ -90,16 +94,23 @@
         broadcast.trig(naviEvs.onSlideStop);
     }
 
-    function scrollFirstPage(page){
+    function processScrollCurrPage(page){
         if (config.scrollToTopPage && page){
             // save top position of page
             page._storeTopPos();
-            page._toTop();
+            // !page._isInternalScrolled() && page._toTop();
         }
     }
 
-    function scrollSecondPage(nextPage){
+    function setScrollNextPage(nextPage){
         if (config.scrollToTopPage && nextPage) {
+            // restore top position of page
+            nextPage._restoreTopPos();
+        }
+    }
+
+    function setScrollNextInside(nextPage) {
+        if (config.scrollToTopPage && nextPage && nextPage._isInternalScrolled()) {
             // restore top position of page
             nextPage._restoreTopPos();
         }
@@ -110,7 +121,7 @@
         !sliding.working && broadcast.trig(naviEvs.onSlideStart);
         container.removeClass('jr-slide jr-reverse jr-animate');
 
-        scrollFirstPage(page);
+        processScrollCurrPage(page);
 
         if (sliding.outPage){
             //if sliding run before last page not finished, need clean up context
@@ -138,7 +149,7 @@
         function onAnimationEnd() {
             onSlideEnd(page, nextPage);
             onDone && onDone();
-            scrollSecondPage(nextPage);
+            setScrollNextPage(nextPage);
         }
 
         if (nextPage){
@@ -156,6 +167,7 @@
             nextPage.sliding = true;
             nextPage.content.addClass('jr-in');
             appendNext(nextPage);
+            setScrollNextInside(nextPage);
             nextPage.content.height();
         }
 
@@ -191,13 +203,14 @@
             //just slide
             slidePages(prevPage, page, params.back);
         } else {
-            scrollFirstPage(currentPage);
+            processScrollCurrPage(currentPage);
             detachPrev(currentPage);
             currentPage && currentPage.onSwitchEnd(false);
             currentPage = page;
             appendNext(page);
+            setScrollNextInside(page);
             page.onSwitchEnd(true);
-            scrollSecondPage(page);
+            setScrollNextPage(page);
         }
         broadcast.trig(naviEvs.onChanged, evParams);
     }
@@ -217,7 +230,7 @@
 
     navi._slidePages = function(currPage, nextPage, isBack, onDone){
         if (!currPage && !nextPage){
-            warning('navi', 'cannot slide page, because they are not defined');
+            logger.warn('cannot slide page, because they are not defined');
         } else {
             beforeChange(currPage, nextPage);
             slidePages(currPage, nextPage, isBack, onDone);
@@ -277,7 +290,7 @@
     // switch current page to new page by id using history
     navi.switchPage = function(id, args){
         if (sliding.working || checkAccess(id) === false){
-            warning('navi', 'no access for "' + id + '"');
+            logger.warn('no access for "' + id + '"');
             return this;
         }
         var page = pages(id);
@@ -291,13 +304,13 @@
                 }
             }
             if (useAlias){
-                route.pushState("/" + alias + path);
+                route.pushByField(0, alias, path);
             } else {
-                route.pushState(DROP_PAGE_NAVI + path);
+                route.pushByField(0, DROP_PAGE_NAVI, path);
                 navi.changePage(id);
             }
         } else {
-            warning('navi', 'not found "' + id + '" page');
+            logger.warn('not found "' + id + '" page');
         }
         return this;
     };
@@ -321,6 +334,7 @@
                 }
                 if (isShown){
                     appendNext(page);
+                    setScrollNextInside(page);
                     page.onSwitchEnd(true);
                 }
             });
@@ -328,23 +342,38 @@
         return this;
     };
 
-    navi.back = function(){
-        app('deprecate')('navigation.back()', 'use route.back(); instead');
-        route.back();
-    };
-
     // return main container of app
     navi.getContainer = function(){
         return container;
     };
 
-    route.registerDrop(DROP_PAGE_NAVI);
+    navi.onDefaultPage = function (cb) {
+        cb && broadcast.on(naviEvs.onDefaultPage, cb);
+    };
+    
+    app('mod-require')('pages', 'route', 'page-auth', function (mod, mod2, mod3) {
+        pages = mod;
+        route = mod2;
+        pageAuth = mod3;
+
+        mod = null;
+        mod2 = null;
+        mod3 = null;
+    });
 
     helper.onStart(function(){
         container = $(app('config').container).first();
         broadcast.on(translateEvs.onLangSet, function(){
             navi.redraw();
         });
+        broadcast.on(routeEvs.started, function(){
+            // if app runned without any page, just goto dash
+            if (!navi.getCurrentPage()){
+                logger.warn('app is not processed first page! trying to run default page');
+                broadcast.trig(naviEvs.onDefaultPage);
+            }
+        });
+
     });
 
 })();

@@ -21,19 +21,21 @@
         var alias = ev.alias;
         var method = params[methodName];
         var pageId = params.pageId;
-        if (ev.keys.hasOwnProperty(key) && method && pageId.indexOf(alias) != -1){
-            var evValue = ev.keys[key];
-            method(evValue);
+        if (ev.keys.hasOwnProperty(key) && method){
+            if (!pageId || (pageId && pageId.indexOf(alias) != -1)){
+                var evValue = ev.keys[key];
+                method(evValue);
+            }
         }
     }
 
-    var rCmd = function(params){
+    function RouteCmdClass(params){
         var pageId = params.pageId;
-        if (!helper.isArray(pageId)){
+        if (pageId && !helper.isArray(pageId)){
             pageId = [pageId];
         }
 
-        var obj = {
+        var obj = this._obj = {
             pageId: pageId,
             value: params.value,
             key: params.key,
@@ -42,23 +44,44 @@
             onRemoved: params.onRemoved
         };
 
-        broadcast.on(rCmdEvs.onSets, function(ev){
+        this._onSetFn = function(ev){
             processRouteEv(ev, obj, 'onSets');
-        });
-        broadcast.on(rCmdEvs.onChanged, function(ev){
+        };
+
+        this._onChangedFn = function(ev){
             processRouteEv(ev, obj, 'onChanged');
-        });
-        broadcast.on(rCmdEvs.onRemoved, function(ev){
+        };
+
+        this._onRemovedFn = function(ev){
             processRouteEv(ev, obj, 'onRemoved');
-        });
+        };
+
+        broadcast.on(rCmdEvs.onSets, this._onSetFn);
+        broadcast.on(rCmdEvs.onChanged, this._onChangedFn);
+        broadcast.on(rCmdEvs.onRemoved, this._onRemovedFn);
+
+        params = null;
+    }
+
+    helper.extendClass(RouteCmdClass, {
+        destroy: function () {
+            this._obj && helper.clearObject(this._obj);
+            this._obj = null;
+            this._onSetFn && broadcast.off(rCmdEvs.onSets, this._onSetFn);
+            this._onChangedFn && broadcast.off(rCmdEvs.onChanged, this._onChangedFn);
+            this._onRemovedFn && broadcast.off(rCmdEvs.onRemoved, this._onRemovedFn);
+        }
+    });
+
+    RouteCmdClass.createCommander = function (params) {
+        return new RouteCmdClass(params);
     };
 
-
-    rCmd.setKey = function(searchKey, newValue){
+    RouteCmdClass.setKey = function(searchKey, newValue){
         setKey(searchKey, newValue);
     };
 
-    rCmd.getKey = function(searchKey){
+    RouteCmdClass.getKey = function(searchKey){
         var ret;
         processParams(function(key, value){
             if (searchKey == key){
@@ -69,7 +92,7 @@
         return ret;
     };
 
-    rCmd.isExist = function(searchKey){
+    RouteCmdClass.isExist = function(searchKey){
         var exist = false;
         processParams(function(key){
             if (searchKey == key){
@@ -80,11 +103,11 @@
         return exist;
     };
 
-    rCmd.removeKey = function(searchKey){
+    RouteCmdClass.removeKey = function(searchKey){
         setKey(searchKey, null, true);
     };
 
-    rCmd.getAll = function(){
+    RouteCmdClass.getAll = function(){
         var ret = {};
         processParams(function(key, value){
             ret[key] = value;
@@ -94,22 +117,21 @@
 
     // set/remove key in path
     function setKey(searchKey, newValue, isDrop){
-        var pageAlias = navi.getCurrentPage().alias;
-        var args = [pageAlias];
+        var args = [];
 
         singleSetKey(args, searchKey, newValue, isDrop);
 
         var str = args.join('/');
-        route.pushState(str);
+        route.pushArgs(str);
     }
 
     // getting all chunks from path and processing it by callback
     function processParams(callback){
-        var chunks = route.getAddressParams();
+        var chunks = route.getSubKeys();
         var value;
         var key;
         var haveValue;
-        for (var i = 1, l = chunks.length; i < l; i++){
+        for (var i = 0, l = chunks.length; i < l; i++){
             var chunk = chunks[i];
             var item = chunk.split("=");
             key = item[0];
@@ -169,7 +191,7 @@
     }
 
     function onRouteChanged(){
-        var keys = rCmd.getAll();
+        var keys = RouteCmdClass.getAll();
         var changed = {};
         var sets = {};
 
@@ -205,7 +227,7 @@
     }
 
     function startProcessingKeys(){
-        var keys = rCmd.getAll();
+        var keys = RouteCmdClass.getAll();
         for (var key in keys){
             activeKeys[key] = keys[key];
         }
@@ -260,6 +282,6 @@
         onStart();
     });
 
-    app('route-commander', rCmd);
+    app('route-commander', RouteCmdClass);
 
 })();

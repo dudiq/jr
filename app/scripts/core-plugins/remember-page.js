@@ -20,7 +20,7 @@
     var notStoredPages = {};
 
     function onChanged(){
-        var pageAlias = route.getPageAlias();
+        var pageAlias = route.getFieldValueByIndex(0);
         var prePath = route.location();
 
         if (prePath != '/__drop__' && !notStoredPages[pageAlias]){
@@ -66,7 +66,8 @@
     // accessPages - priority pages. first - is main priority
     rememberPage.open = function(accessPages){
         var loc = savedPagePath || route.location();
-        if (pageAuth(route.getPageAlias(loc))){
+        var pageName = route.getFieldValueByIndex(0, loc);
+        if (pageAuth(pageName)){
             // checking access to saved path page id, if ok, do redirect
             route.pushState(loc);
         } else {
@@ -77,11 +78,16 @@
     function doDefaultRedirect(pages){
         var redirected = false;
         for (var i = 0, l = pages.length; i < l; i++){
-            var pageId = pages[i];
-            if (pageAuth(pageId)){
+            var item = pages[i];
+            if (typeof item != "object"){
+                item = {
+                    0: item
+                };
+            }
+            if (pageAuth(item[0])){
                 redirected = true;
                 logger.warn('address page redirected to default');
-                navi.switchPage(pageId);
+                route.pushByField(item);
                 break;
             }
         }

@@ -8,8 +8,9 @@
     var pagePopup = app('page-popup-modal');
 
     pagePopup.create({
-        id: 'popup',
+        id: 'popup-me',
         weight: 100,
+        viewId: 'pages/popup',
         prepareDomContent: function (content) {
             this.scopeWatcher && this.scopeWatcher.destroy();
             var arr = [];

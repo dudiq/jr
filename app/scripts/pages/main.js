@@ -9,6 +9,7 @@
     app('pages').create({
         id: 'main',
         weight: 2,
+        viewId: 'pages/main',
         prepareDomContent: function (content) {
 
             content.find(".btn-second").on("jrclick", function () {

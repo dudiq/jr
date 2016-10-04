@@ -5,9 +5,9 @@ var replaceViews = require('./lib/replace-views');
 
 module.exports = function (grunt) {
 
-    function getExMap(){
+    function getOptMap(optionName){
         var excludedModules = {};
-        var excludedStr = grunt.option("exclude") || '';
+        var excludedStr = grunt.option(optionName) || '';
         var exList = excludedStr.split(',');
         for (var i = 0, l = exList.length; i < l; i++){
             var item = exList[i];
@@ -146,10 +146,12 @@ module.exports = function (grunt) {
         var source = this.data.src;
         var dest = this.data.dest;
         var replaceViewsOpt = this.data.replaceViews;
-        var excludedModules = getExMap();
+        var excludedModules = getOptMap("exclude");
+        var includedModules = getOptMap("include");
 
         var doMinifyCode = (grunt.option("minify") !== false); // true by default
         var doRevFiles = grunt.option("rev-files");
+        var minifyJs = (grunt.option('minifyJS') !== false); // true by default
 
         if (!doRevFiles && doRevFiles !== false){
             // for not defined `doRevFiles` use `doMinifyCode` flag value
@@ -165,6 +167,7 @@ module.exports = function (grunt) {
         var indexHtml = grunt.file.read(source + '/index.html', fileOptions);
         var parserOptions = {
             excludes: excludedModules,
+            includes: includedModules,
             excludeAll: (grunt.option("excludeAll") === true) // false by default
         };
         var units = indexParser(indexHtml, parserOptions);
@@ -178,7 +181,8 @@ module.exports = function (grunt) {
             var newHtml = units.html;
             grunt.file.write(source + '/index.html', newHtml);
 
-            setUglifyJsTask(dest, units);
+            minifyJs && setUglifyJsTask(dest, units);
+
             setCssMinTask(dest, units);
             setOptionForConcat(source, dest, units);
             tasks.push('concat:dist');

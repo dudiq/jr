@@ -331,9 +331,22 @@ function getHtml(arr, text) {
     return ret;
 }
 
+function isEmptyObject(obj) {
+    for (var key in obj){
+        return false;
+    }
+    return true;
+}
+
+function pushToDrop(retEx, exFiles, name, file) {
+    retEx[name] = true;
+    exFiles.push(file);
+}
+
 function processReturnFiles(unit, opt, retEx) {
     var excludes = opt.excludes;
     var includes = opt.includes;
+    var isIncludesEmpty = isEmptyObject(includes);
     var files = unit.files();
     var map = unit.filesMap();
     var retFiles = unit._processedFiles;
@@ -350,14 +363,14 @@ function processReturnFiles(unit, opt, retEx) {
             var modType = mod.modType();
             if (modType == ExModuleType && !includes[name]){
                 // need drop
-                retEx[name] = true;
-                exFiles.push(file);
-            } else if (excludeAll || excludes[name]) {
+                pushToDrop(retEx, exFiles, name, file)
+            } else if (excludeAll || (excludes[name] && !includes[name])) {
                 // need drop
-                retEx[name] = true;
-                exFiles.push(file);
-            } else {
+                pushToDrop(retEx, exFiles, name, file)
+            } else if (isIncludesEmpty || includes[name]){
                 retFiles.push(file);
+            } else {
+                pushToDrop(retEx, exFiles, name, file)
             }
         } else {
             retFiles.push(file);

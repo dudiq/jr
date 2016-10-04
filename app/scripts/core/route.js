@@ -5,17 +5,14 @@
  * */
 (function(){
     var app = window.app;
-    var route = app('route', {});
     var broadcast = app('broadcast');
     var helper = app('helper');
-    var warning = app('errors').warning;
+    var logger = app('logger')('route');
     var routeEvs = broadcast.events('route', {
         changed: 'changed',
         beforeChange: 'beforeChange',
         started: 'started'
     });
-
-    var routesMap = {};
 
     var dropMap = {};
 
@@ -26,18 +23,187 @@
     var firstRunned = false;
     var appStarted = false;
 
-    var addressParamsList = [];
-    var addressPageAlias = '';
-    var addressPrevLocation = '';
+    var mainFields = {};
+    var mainFieldsIndex = [];
 
-    // when user trying to use not defined url action (wrong page redirect).
-    var DEFAULT_REDIRECT = route.DEFAULT_REDIRECT = '/_default';
+    var pathAsAllKeys = [];
+    var pathAsMainKeys = [];
+    var pathAsSubKeys = [];
+    var oldSubKeys = '';
 
-    setAddressVars();
 
-    // default page, when web started
-    var currentPageAlias = addressPageAlias;
+    var route = app('route', {
+        DEFAULT_REDIRECT: '/_default',
+        startRoute: function () {
+            setAddressVars();
+        },
+        addMainField: function (name, opt) {
+            var index = opt.index;
+            var obj = {};
+            if (mainFields[name] || mainFieldsIndex[index]){
+                logger.error('trying to define already defined route main field', name, index);
+            } else {
+                helper.extendObject(obj, {
+                    name: name,
+                    value: undefined,
+                    subVal: undefined,
+                    index: opt.index,
+                    onChanged: opt.onChanged,
+                    onArgsChanged: opt.onArgsChanged,
+                    onSet: opt.onSet,
+                    onRemoved: opt.onRemoved
+                });
 
+                mainFields[name] = obj;
+                mainFieldsIndex[index] = obj;
+            }
+        },
+        // set location
+        pushState: function (location) {
+            $.address.value(location);
+        },
+        pushByField: function (fieldIndex, val, args) {
+            if (typeof fieldIndex != "object"){
+                var tmp = {};
+                tmp[fieldIndex] = val;
+                fieldIndex = tmp;
+                tmp = null;
+            } else {
+                args = val;
+            }
+            var toPath = [];
+            helper.arrayWalk(mainFieldsIndex, function (field, index) {
+                if (fieldIndex.hasOwnProperty(index)){
+                    if (fieldIndex[index] !== undefined){
+                        toPath.push(fieldIndex[index]);
+                    } else {
+                        field.value = undefined;
+                    }
+                }
+                else {
+                    if (field.value !== undefined){
+                        toPath.push(field.value);
+                    }
+                }
+            });
+
+            toPath.reverse();
+            var loc = toPath.join('/');
+            (loc != '') && (loc = '/' + loc);
+            if (args) {
+                (args[0] != '/') && (args = '/' + args);
+                loc += args;
+            }
+
+            $.address.value(loc);
+        },
+        pushArgs: function (args) {
+            this.pushByField(-1, null, args);
+        },
+        // return sub keys of router
+        getSubKeys: function () {
+            return helper.clone(pathAsSubKeys);
+        },
+        getFieldValueByIndex: function (index, loc) {
+            var main = [];
+            var sub = [];
+            collectMainAndSub(loc, main, sub);
+            var ret = main[index];
+            return ret;
+        },
+        // return current location
+        location: addrVal,
+        back: function () {
+            window.history.go(-1);
+        }
+    });
+
+    function setAddressVars(loc){
+        pathAsAllKeys.clear();
+        oldSubKeys = pathAsSubKeys.join('/');
+        collectMainAndSub(loc, pathAsMainKeys, pathAsSubKeys, pathAsAllKeys);
+    }
+
+    function collectMainAndSub(loc, main, sub, all) {
+        loc = (loc === undefined) ? addrVal() : loc;
+        all = all || [];
+
+        if (loc){
+            if (loc[0] == '/'){
+                loc = loc.substring(1);
+            }
+            var addrParams = loc.split('/');
+            if (addrParams[addrParams.length - 1] == ''){
+                addrParams.splice(addrParams.length - 1, 1);
+            }
+            helper.push(all, addrParams);
+        }
+
+        main.clear();
+        sub.clear();
+
+        var fillMain = true;
+        for (var i = 0, l = all.length; i < l; i++){
+            var item = all[i];
+            if (item.indexOf('=') != -1){
+                fillMain = false;
+            }
+            if (fillMain){
+                main.push(item);
+            } else {
+                sub.push(item);
+            }
+        }
+
+        main.reverse();
+    }
+
+    function processMainFields() {
+
+        var newSubKeys = pathAsSubKeys.join('/');
+
+        helper.arrayWalk(mainFieldsIndex, function (field, index) {
+            var val = pathAsMainKeys[index];
+            if (val !== undefined){
+                if (field.value === undefined){
+                    field.value = val;
+                    field.subVal = newSubKeys;
+                    field.onSet && field.onSet(val);
+                } else {
+                    if (field.value !== val){
+                        field.value = val;
+                        field.subVal = newSubKeys;
+                        field.onChanged && field.onChanged(val);
+                    }
+                }
+            } else {
+                if (field.value !== val){
+                    // removed
+                    field.value = val;
+                    field.subVal = newSubKeys;
+                    field.onRemoved && field.onRemoved();
+                }
+            }
+        });
+        if (newSubKeys != oldSubKeys){
+            helper.arrayWalk(mainFieldsIndex, function (field, index) {
+                if (field.subVal != newSubKeys){
+                    field.subVal = newSubKeys;
+                    field.onArgsChanged && field.onArgsChanged(pathAsSubKeys);
+                }
+            });
+        }
+    }
+
+    // processing all routes in map
+    function onPathProcess(location){
+        (location === undefined) && (location = addrVal());
+        broadcast.trig(routeEvs.beforeChange);
+        processMainFields(location);
+        broadcast.trig(routeEvs.changed);
+    }
+
+    /// main
 
     function onLocationChanged(ev){
         var path = ev.value;
@@ -56,7 +222,7 @@
                     if (window.history.replaceState) {
                         // for normal browsers
                         window.history.replaceState({} , '', '/' );
-                        redirect('/');
+                        onPathProcess('/');
                     } else {
                         // for browsers, that does not support replaceState;
                         route.pushState('/');
@@ -81,7 +247,7 @@
 
         if (!dropMap[prevLocation]){
             //redirect only when app started
-            redirect(path);
+            onPathProcess(path);
             prevLocation = path;
         } else {
             // if prevLocation is 'drop' page, we need to run special mechanizm for correcting history states
@@ -106,184 +272,23 @@
                 // goto page, that was before 'drop' page
                 canProcess = true;
                 prevLocation = beforeDropLocation;
-                currentPageAlias = null;
-                redirect(path);
+                for (var key in mainFields){
+                    mainFields[key].value = undefined;
+                }
+                onPathProcess(path);
             }
         }
     }
-
-    // when address bar changed, this event triggers
-    $.address.change(function(ev){
-        onLocationChanged(ev);
-    });
 
     // return address bar path after hash (location)
     function addrVal(){
         return $.address.value();
     }
 
-    // getting args as array, where first arg is page id
-    function getAddrParams(loc){
-        loc = (loc === undefined) ? addrVal() : loc;
-
-        var addrParams = [];
-        if (loc){
-            addrParams = loc.split('/');
-            if (loc[0] == '/'){
-                addrParams.splice(0, 1); // remove first '/' not defined, after # char
-            }
-        }
-        return addrParams;
-    }
-
-    function getPageFromAddr(addrParams){
-        var pageName = addrParams[0];
-        if (pageName.slice(-1) == "?"){
-            pageName = pageName.slice(0, -1);
-        }
-        return pageName;
-    }
-
-    function setAddressVars(loc){
-        var addrParams = getAddrParams(loc);
-        var pageName = getPageFromAddr(addrParams);
-        addressPageAlias = pageName;
-
-        addressParamsList.clear();
-        addressParamsList = null;
-
-        addressParamsList = addrParams;
-
-        pageName = null;
-        addrParams = null;
-    }
-
-    // processing all routes in map
-    function redirect(location){
-        (location === undefined) && (location = addrVal());
-        var params = {
-            useDefault: false,
-            location: location,
-            prevLocation: addressPrevLocation
-        };
-
-        if (dropMap[location]){
-            // do not process 'drop' pages
-            return;
-        }
-
-        params.prevPageAlias = currentPageAlias;
-
-        var args = addressParamsList;
-        var pageAlias = addressPageAlias;
-
-        params.args = args;
-
-
-        var ques = "/" + pageAlias;
-        if (routesMap[ques]) {
-            params.portion = true;
-            location = ques;
-        }
-
-
-        var defRoute = routesMap[DEFAULT_REDIRECT];
-
-        var locMap = routesMap[location] || defRoute;
-        if (locMap == defRoute){
-            pageAlias = null;
-        }
-
-        params.pageChanged = (currentPageAlias !== pageAlias);
-
-        params.pageAlias = pageAlias;
-        if (locMap) {
-            // route founded!
-            if (locMap == defRoute) {
-                warning("route", "no route for " + location + ", using default page");
-                params.useDefault = true;
-            }
-            broadcast.trig(routeEvs.beforeChange, params);
-            locMap(params);
-            broadcast.trig(routeEvs.changed, params);
-            currentPageAlias = pageAlias;
-        } else {
-            warning("route", "no route for " + location);
-        }
-        addressPrevLocation = location;
-    }
-
-    // register router in map
-    function registerRoute(key, callback){
-        if (!routesMap[key]){
-            routesMap[key] = callback;
-        } else {
-            warning("route", 'routes map already have this "' + key + '" route');
-        }
-    }
-
-    // register list or single route from external
-    route.register = function(newRoutes, callback){
-        if (callback) {
-            registerRoute(newRoutes, callback);
-        } else {
-            for (var key in newRoutes){
-                registerRoute(key, newRoutes[key]);
-            }
-            newRoutes = null;
-        }
-        return this;
-    };
-
-    // register 'drop' pages
-    route.registerDrop = function(loc){
-        if (loc && !dropMap[loc]){
-            dropMap[loc] = true;
-        }
-    };
-
-
-    // set location
-    route.pushState = function(location){
-        $.address.value(location);
-    };
-
-    // deprecated
-    // return params of router
-    route.params = function(){
-        app('deprecate')('route.params()', 'use route.back(); instead');
-
-        var params = {
-            args: addressParamsList,
-            pageAlias: addressPageAlias
-        };
-        return params;
-    };
-
-    route.getAddressParams = function(){
-        return helper.clone(addressParamsList);
-    };
-
-    // return current page alias by location
-    // or return parsed value from location
-    route.getPageAlias = function(loc){
-        var ret = addressPageAlias;
-        if (loc !== undefined){
-            var addrParams = getAddrParams(loc);
-            ret = getPageFromAddr(addrParams);
-        }
-        return ret;
-    };
-
-    // return current location
-    route.location = addrVal;
-
-    // set other url
-    route.redirect = redirect;
-
-    route.back = function(){
-        window.history.go(-1);
-    };
+    // when address bar changed, this event triggers
+    $.address.change(function(ev){
+        onLocationChanged(ev);
+    });
 
     helper.onStartEnd(function(){
         // need wait until all callstack will done before checking appStarted flag

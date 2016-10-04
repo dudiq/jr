@@ -12,15 +12,13 @@
     var app = window.app;
 
     var errors = app('errors', {});
-    var cfg = app('config');
-
+    
     errors.LEVEL_DEV = 5;
     errors.LEVEL_PROD = 0;
     errors.LEVEL_WARN = 4;
 
     var logLevel = errors.LEVEL_DEV;
 
-    var showTimeIntervals = (cfg.logsShowIntervals === true);
     var prevTime = (new Date()).getTime();
     var timeIds = {};
     var helper;
@@ -63,7 +61,9 @@
         if (manConsole[action]){
             defineHelper();
             args = helper.getArgs(args);
-            var firstArg = "#" + args[0] + getTimeInterval() +": ";
+            var nowTime = (new Date()).getTime();
+            var firstArg = "#" + args[0] + ' [' + helper.getTimeInterval(prevTime, nowTime) +"]: ";
+            prevTime = nowTime;
             args[0] = firstArg;
             if (isNative){
                 args = [args.join(", ")];
@@ -79,31 +79,6 @@
                 lastLogs.splice(0, 1);
             }
         }
-    }
-
-    var MS_SEC = 1000;
-    var MS_MIN = MS_SEC * 60;
-    var MS_HOUR = MS_MIN * 60;
-
-    function getTimeInterval(){
-        var ret = '';
-        if (showTimeIntervals){
-            var newTime = (new Date()).getTime();
-            var dx = newTime - prevTime;
-            prevTime = newTime;
-            var time = dx;
-            if (dx < MS_SEC) {
-                time = dx + " ms";
-            } else if (dx < MS_MIN) {
-                time = Math.floor((dx / MS_SEC) * 100) / 100 + 's';
-            } else if (dx < MS_HOUR) {
-                time = Math.floor((dx / MS_MIN) * 100) / 100 + 'm';
-            } else {
-                time = Math.floor((dx / MS_HOUR) * 100) / 100 + 'h';
-            }
-            ret = ' [' + time + ']';
-        }
-        return ret;
     }
 
     // set log level

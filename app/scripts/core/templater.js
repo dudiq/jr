@@ -12,6 +12,7 @@
     translate._start();
 
     var templates = {};
+    var buffed = {};
 
     var includesReg = new RegExp("\{\{include\(.*?\)\}\}", "ig");
 
@@ -86,7 +87,7 @@
         var newTpl = replaceData(template, translateWords);
         return newTpl;
     };
-    
+
     // processing content
     // id - page id
     // data - hash array for replace
@@ -107,14 +108,18 @@
     templater.get = function(id, processData){
         var template = templates[id];
         if (!template) {
-            $.ajax({
-                cache: false,
-                async: false,
-                url: '/views/' + id + '.html',
-                success: function (data) {
-                    template = addTemplate(id, data);
-                }
-            });
+            if (buffed[id]){
+                template = addTemplate(id, buffed[id]);
+            } else {
+                $.ajax({
+                    cache: false,
+                    async: false,
+                    url: '/views/' + id + '.html',
+                    success: function (data) {
+                        template = addTemplate(id, data);
+                    }
+                });
+            }
         }
         template = this.process(id, processData);
         return template;
@@ -127,17 +132,12 @@
     templater.set = function(id, data){
         if (typeof id == "object" && !data){
             for (var key in id){
-                if (templates[key]){
-                    logger.warning('template "'+ key +'" already defined');
-                } else {
-                    templates[key] = id[key];
-                }
-            }
-            for (var key in id){
-                templates[key] = processIncludes(templates[key], getDefaultInclude(key));
+                buffed[key] = id[key];
             }
         } else {
-            addTemplate(id, data);
+            if (id){
+                buffed[id] = data;
+            }
         }
     };
 
@@ -147,7 +147,7 @@
         if (templates[id]){
             logger.warning('template "'+ id +'" already defined');
         } else {
-            templates[id] = data;
+            // templates[id] = data;
             template = processIncludes(data, getDefaultInclude(id));
             templates[id] = template;
         }

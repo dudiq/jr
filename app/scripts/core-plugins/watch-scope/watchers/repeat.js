@@ -7,6 +7,7 @@
 (function(){
     var app = window.app;
     var watchScope = app('watch-scope');
+    var helper = app('helper');
     var logger = app('logger')('watch-scope.repeat');
     var CONST_LINK = watchScope.CONST_LINK;
 
@@ -14,6 +15,7 @@
     var watchKeyChanges = watchScope._watchKeyChanges;
     var unwatchKeyChanges = watchScope._unwatchKeyChanges;
     var unwrapMethods = {
+        pushList: true,
         push: true,
         pop: true,
         shift: true,
@@ -181,6 +183,15 @@
             triggerChanges.call(self);
             return ret;
         };
+        arr.pushList = function (list) {
+            var startPos = arr.length;
+            for (var i = 0, l = list.length; i < l; i++){
+                push.call(arr, list[i]);
+            }
+            addNewElements.call(self, arr, startPos);
+            len = arr.length;
+            triggerChanges.call(self);
+        };
         arr._push = push;
 
         var pop = arr.pop;
@@ -255,16 +266,18 @@
         var clear = arr.clear;
 
         arr.clear = function(){
-            var wasChanged = false;
+            var wasDetached = false;
             var newLen = 0;
             var el = self.el;
             var parent = el.parent();
+            var index = -1;
             if (len != newLen){
                 // removed
+                index = el.index();
                 el.detach();
 
                 removeElement.call(self, newLen, len - 1);
-                wasChanged = true;
+                wasDetached = true;
             }
             len = newLen;
             while(arr.length > 1) {
@@ -283,8 +296,12 @@
 
             arr.length = 0;
 
-            if (wasChanged){
-                parent.append(el);
+            if (wasDetached){
+                if (index == 0){
+                    parent.prepend(el);
+                } else {
+                    parent.children().eq(index - 1).after(el);
+                }
                 triggerChanges.call(self);
             }
 
@@ -384,4 +401,14 @@
     });
 
 
+    function pushToWatchedArray(arr, data) {
+        if (arr.pushList){
+            arr.pushList(data);
+        } else {
+            helper.push(arr, data);
+        }
+    }
+    
+    helper('pushToWatchedArray', pushToWatchedArray);
+    
 })();

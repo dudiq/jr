@@ -12,12 +12,12 @@
 
     rememberPage.init(true);
 
-    var myApp = app('my-app', {});
-
-    myApp.logout = function(){
-        userMod.removeUser();
-        navi.switchPage('login');
-    };
+    app('my-app', {
+        logout: function () {
+            userMod.removeUser();
+            navi.switchPage('login');   
+        }
+    });
 
     function isLoggedIn(){
         return userMod.isLoggedIn();
@@ -31,8 +31,7 @@
     function onStart(){
 
         //redirect if user logged in or not
-
-        route.register('/_default', function(){
+        navi.onDefaultPage(function () {
             openPages();
         });
 
@@ -59,8 +58,6 @@
         timeWaiter();
     }, 1000);
 
-    helper.onStartEnd(function(){
-        onStart();
-    });
+    helper.onStartEnd(onStart);
 
 })();

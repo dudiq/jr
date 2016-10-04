@@ -41,31 +41,31 @@
         child._parent.constructor = parent;
     };
 
-    helper.createClass = function(parent, params){
+    helper.createClass = function(ParentClass, params){
         var ChildClass;
-        if (parent){
+        if (ParentClass){
+            var onConstruct = params.classConstructor;
             ChildClass = function (){
                 ChildClass._parent.constructor.apply(this, arguments);
+                onConstruct && onConstruct.apply(this, arguments);
             };
 
-            this.inherit(ChildClass, parent);
+            this.inherit(ChildClass, ParentClass);
+            var p = ChildClass.prototype;
+
+            delete params.onConstructor;
+
+            if (!params.getClass && !p.getClass){
+                p.getClass = function(){
+                    return ChildClass;
+                };
+            }
+
+            helper.extendClass(ChildClass, params);
+
         } else {
-            (!params && typeof parent != "function") && (params = parent);
-            ChildClass = function (){
-                // parent class
-            };
+            logger.error('not defined parent class!');
         }
-
-        var p = ChildClass.prototype;
-
-        if (!params.getClass && !p.getClass){
-            p.getClass = function(){
-                return ChildClass;
-            };
-        }
-
-        helper.extendClass(ChildClass, params);
-
         return ChildClass;
     };
 
@@ -80,14 +80,33 @@
         }
     };
 
+    helper.extendObject = function (protoObject, mixins) {
+        for (var key in mixins){
+            if (!protoObject.hasOwnProperty(key)){
+                protoObject[key] = mixins[key];
+            } else {
+                logger && logger.error(key + ' is already defined');
+            }
+        }
+    };
+
+    helper.mixinClass = helper.extendObject;
+
     // deep clone object
     helper.clone = function(data){
-        var obj = {
-            val: data
-        };
-        var cloned = JSON.parse(JSON.stringify(obj));
+        var ret;
+        if (data !== null && typeof data == "object"){
+            var obj = {
+                val: data
+            };
+            var cloned = JSON.parse(JSON.stringify(obj));
+            ret = cloned.val;
+            cloned = null;
+        } else {
+            ret = data;
+        }
 
-        return cloned.val;
+        return ret;
     };
 
     // generate guid for some reasons
@@ -151,9 +170,9 @@
     };
 
     // concat two arrays
-    helper.push = function(arr1, arr2){
-        for (var i = 0, l = arr2.length; i < l; i++){
-            arr1.push(arr2[i]);
+    helper.push = function(dest, src){
+        for (var i = 0, l = src.length; i < l; i++){
+            dest.push(src[i]);
         }
     };
 
@@ -245,6 +264,25 @@
             return objectToStringFn.call(subject) === arrayToStringResult;
         };
     }());
+
+    var MS_SEC = 1000;
+    var MS_MIN = MS_SEC * 60;
+    var MS_HOUR = MS_MIN * 60;
+
+    helper.getTimeInterval = function(start, end){
+        var dx = end - start;
+        var time = dx;
+        if (dx < MS_SEC) {
+            time = dx + " ms";
+        } else if (dx < MS_MIN) {
+            time = Math.floor((dx / MS_SEC) * 100) / 100 + 's';
+        } else if (dx < MS_HOUR) {
+            time = Math.floor((dx / MS_MIN) * 100) / 100 + 'm';
+        } else {
+            time = Math.floor((dx / MS_HOUR) * 100) / 100 + 'h';
+        }
+        return time;
+    };
 
     // freeze object and all children
     helper.deepFreeze = function(o){

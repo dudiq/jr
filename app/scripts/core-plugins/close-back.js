@@ -88,17 +88,17 @@
     function defineCloseBack() {
 
         broadcast.on(routeEvs.changed, function (data) {
-            pushBack(data.location, data.useDefault);
+            // pushBack(data.location, data.useDefault);
         });
 
         broadcast.on(naviEvs.onChanged, function () {
             // drop total inactive back clicks
-            pathHash.clear();
+            // pathHash.clear();
         });
 
-        route.register('/__drop__', function () {
+        // route.register('/__drop__', function () {
             // processing back click to terminate app
-        });
+        // });
     }
 
     if (helper.isNative) {

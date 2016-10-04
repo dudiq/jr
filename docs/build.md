@@ -14,13 +14,15 @@
 
      `--build-version=x.x.x` - for define custom version of app. instead `package.json:version` field value
      `--minify=false` - `true` by default. minify js, css files
-     `--rev-files=false` - `true` by default. static asset revisioning through file content hash
+     `--minifyJS` - `true` by default. minify or not js only flag
+     `--rev-files=false` - `true` by default. static asset revisioning through file content hash.
      `--config-mixin=my-config.js` - for define own my-config.js file for build. keys and values from config-mixin will be used as primary.
      `--web=true` - `false` by default. make web app, NOT cordova version.
      `--config-xml=my-config.xml` - empty by default. for custom config.xml using
      `--copy-static=false` - `true` by default. copy from `www-static/**` to `www/`
      `--cordova-id=just.my.id` - set `id` value to config.xml. instead `package.json:cordova-id` field value
 
+     `--include=module1,module5,etc...` - include modules
      `--exclude=module1,module2,etc...` - exclude modules for build
      `--excludeAll=true` - `false` by default. exclude all defined modules. flag `--exclude` will be dropped.
 

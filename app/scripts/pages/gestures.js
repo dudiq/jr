@@ -6,6 +6,7 @@
     app('pages').create({
         id: 'gestures',
         weight: 5,
+        viewId: 'pages/gestures',
         prepareDomContent: function (content) {
 
             content.find(".btn-tree").on("jrclick", function () {
