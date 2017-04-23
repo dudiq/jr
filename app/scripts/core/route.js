@@ -186,7 +186,7 @@
             }
         });
         if (newSubKeys != oldSubKeys){
-            helper.arrayWalk(mainFieldsIndex, function (field, index) {
+            helper.arrayWalk(mainFieldsIndex, function (field) {
                 if (field.subVal != newSubKeys){
                     field.subVal = newSubKeys;
                     field.onArgsChanged && field.onArgsChanged(pathAsSubKeys);

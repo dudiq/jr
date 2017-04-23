@@ -15,8 +15,9 @@
         var timeoutValue = isNative ? 800 : 0;
 
         var removeTimer;
-        var $body = $(document.body);
-        var $win = $(window);
+        var topDomElements = app('top-dom-elements');
+        var $body = topDomElements.getBody();
+        var $win = topDomElements.getWindow();
         var mainContainer = $(config.container);
         var helperDiv = $(".jr-keyboard-popup-helper");
         if (!helperDiv.length){
@@ -24,15 +25,18 @@
             $body.append(helperDiv);
         }
 
-        $(document).on('focus', selectors, function(ev) {
+        topDomElements.getDocument().on('focus', selectors, function(ev) {
             broadcast.trig(keyPopupEvs.onShow);
 
             var dx = 0;
             var el = $(ev.target);
+
             var containerScroll = el.closest('.jr-page-inside-container-scroll, .jr-page-internal-scrolling');
             if (containerScroll.length){
-                el[0] && el[0].scrollIntoView(true);
-                helperDiv.height(0 + 'px');
+                if (!el.hasClass('jr-page-internal-scrolling-disabled')) {
+                    el[0] && el[0].scrollIntoView(true);
+                    helperDiv.height(0 + 'px');
+                }
             } else {
                 // default behaviour
                 var val = el.data('keyboardPopup');
@@ -43,11 +47,11 @@
                 }
                 helperDiv.height(dx + 'px');
             }
-            
+
             clearTimeout(removeTimer);
             $body.addClass('jr-keyboard-popup');
             broadcast.trig(keyPopupEvs.onShow, el, containerScroll);
-            
+
         }).on('blur', selectors, function() {
             clearTimeout(removeTimer);
             removeTimer = setTimeout(function(){

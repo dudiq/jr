@@ -1,0 +1,44 @@
+///////// sizes
+
+// screen size
+$screenMinHeight: 450px;
+
+// sizes
+$defPadding: 16px;
+
+$borderRadius: 4px;
+
+$topHeight: 40px;
+$topMargin: 10px;
+$topBorderAvatar: $topHeight / 10;
+$topMenuHeight: $topHeight + ($topMargin * 2);
+
+$leftMenuWidth: 220px;
+$leftMenuDetectMin: 800px;
+$leftMenuItemWidth: 44px;
+
+$textSizeHardBig: 22px;
+$textSizeTooBig: 18px;
+$textSizeBig: 16px;
+$textSize: 14px;
+$textSizeSmall: 12px;
+$textSizeTooSmall: 10px;
+
+$iconSize: 20px;
+
+$marginNormal: 10px;
+$marginSmall: 2px;
+$paddingNormal: 10px;
+
+$fieldBigHeight: 80px;
+
+$fieldNormalHeight: 40px;
+$fieldNormalWidth: 200px;
+
+$displayWidthMax: 820px;
+
+$btnHeight: 40px;
+$btnPadding: 8px;
+$btnPaddingSmall: 4px;
+
+///////// end sizes

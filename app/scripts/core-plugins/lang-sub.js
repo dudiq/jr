@@ -3,7 +3,6 @@
     var translate = app('translate');
     var broadcast = app('broadcast');
     var config = app('app-config');
-    var helper = app('helper');
     var logger = app('logger')('lang-sub');
     var langEvs = broadcast.events('translate');
     var useConf = app('use-my-config');
@@ -24,10 +23,6 @@
     };
 
     useConf.onChanged(function(){
-        startProcess();
-    });
-
-    function startProcess() {
         currId = config.id;
         var currLang = translate.getCurrLang();
         if (isSubstitute(currLang)){
@@ -43,7 +38,7 @@
                 translate.setLang(currLang);
             }
         }
-    }
+    });
 
     function isSubstitute(currLang){
         var coll = collection[currId];
@@ -61,11 +56,7 @@
         }
     }
 
-    broadcast.on(langEvs.onWordsProcessed, function(currLang){
+    broadcast.on(langEvs.onLangSet, function(currLang){
         setCurrent(currLang);
-    });
-
-    helper.onStart(function () {
-        startProcess();
     });
 })();

@@ -1,0 +1,3 @@
+<host name="*.my-site.com" scheme="https">
+    <path url="*" />
+</host>

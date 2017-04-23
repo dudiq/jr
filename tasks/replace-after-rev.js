@@ -170,7 +170,7 @@ module.exports = function (grunt) {
         });
     }
 
-    grunt.registerMultiTask('replace-after-rev', 'replace data after rev files', function () {
+    grunt.registerMultiTask('replaceAfterRev', 'replace data after rev files', function () {
         grunt.log.subhead(' > start processing REV files');
         processFiles.call(this);
     });

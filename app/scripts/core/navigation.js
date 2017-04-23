@@ -1,8 +1,8 @@
 /*
- * this is the most file in core... doh...
+ * this is one of the most file in core... doh...
  *
  *
- * Navigation module for pages
+ * Navigation module for pages by route module
  *
  * */
 (function(){
@@ -10,6 +10,9 @@
     var broadcast = app('broadcast');
     var helper = app('helper');
     var config = app('config');
+    var route = app('route');
+    var pageAuth = app('page-auth');
+    var pages = app('pages');
     var logger = app('logger')('navi');
     var translateEvs = broadcast.events('translate');
     var routeEvs = broadcast.events('route');
@@ -24,34 +27,120 @@
         onSlideStop: 'navi-slide-stop',
         onSlideStart: 'navi-slide-start'
     });
-    
-    var route;
-    var pageAuth;
-
-    var navi = app('navigation', {});
 
     var animationSupport = helper.support.animation;
-
-    var pages;
-
-    // main container, where pages will be drawn
-    var container;
-
+    var redrawFragment = $("<div/>");
     var currentPage;
-
+    var PAGE_INDEX = 0;
     var sliding = {
         working: false,
         inPage: null,
         outPage: null
     };
 
-    var redrawFragment = $("<div/>");
+    // main container, where pages will be drawn
+    var container;
 
     // variables for skipped pages (pages, which will NOT shown by changed history in address bar)
     var DROP_PAGE_NAVI = "_jr_page1";
 
     // default animation events names
     var CONST_ANIMATIONS = "webkitAnimationEnd animationend oanimationend msAnimationEnd";
+
+    app('navigation', {
+        _slidePages: function (currPage, nextPage, isBack, onDone) {
+            if (!currPage && !nextPage) {
+                logger.warn('cannot slide page, because they are not defined');
+            } else {
+                beforeChange(currPage, nextPage);
+                slidePages(currPage, nextPage, isBack, onDone);
+            }
+        },
+        //return active page
+        getCurrentPage: function () {
+            return currentPage;
+        },
+        // just append and show page in dom
+        show: function (id) {
+            if (checkAccess(id) === false) {
+                return this;
+            }
+            var page = pages(id);
+            if (page && page != currentPage) {
+                page._draw();
+                appendNext(page);
+            }
+            return this;
+        },
+        close: function (id) {
+            // :todo we really need check access to close action???
+//        if (checkAccess(id) === false){
+//            return this;
+//        }
+            var page = pages(id);
+            if (page) {
+                detachPrev(page);
+            }
+            return this;
+        },
+        // switch current page to new page by id using history
+        switchPage: function (id, args) {
+            if (sliding.working || checkAccess(id) === false) {
+                logger.warn('no access for "' + id + '"');
+                return this;
+            }
+            var page = pages(id);
+            if (page) {
+                var alias = pages(id).alias;
+                var useAlias = (alias !== undefined);
+                var path = '';
+                if (args) {
+                    for (var key in args) {
+                        path += '/' + key + '=' + args[key];
+                    }
+                }
+                if (useAlias) {
+                    route.pushByField(PAGE_INDEX, alias, path);
+                } else {
+                    route.pushByField(PAGE_INDEX, DROP_PAGE_NAVI, path);
+                    changePage(id);
+                }
+            } else {
+                logger.warn('not found "' + id + '" page');
+            }
+            return this;
+        },
+        // just redraw current page
+        redraw: function (pageIds) {
+            redraw(pageIds);
+            return this;
+        },
+        // return main container of app
+        getContainer: function () {
+            return container;
+        },
+        onDefaultPage: function (cb) {
+            cb && broadcast.on(naviEvs.onDefaultPage, cb);
+        }
+    });
+
+    function redraw(pageIds) {
+        if (currentPage) {
+            if (pageIds) {
+                for (var i = 0, l = pageIds.length; i < l; i++) {
+                    var id = pageIds[i];
+                    var page = pages(id);
+                    if (page) {
+                        redrawPage(page);
+                    }
+                }
+            } else {
+                pages.map(function (key, page) {
+                    redrawPage(page);
+                });
+            }
+        }
+    }
 
     function detachPrev(page){
         if (page){
@@ -60,7 +149,6 @@
             page._hide()._detach();
             canTrig && onHidePage(page);
         }
-
     }
 
     function appendNext(page){
@@ -136,13 +224,22 @@
             sliding.inPage.content
                 .off(CONST_ANIMATIONS)
                 .removeClass('jr-in jr-out');
-            sliding.inPage.onSwitchEnd(true);
+            // SwitchEnd here means we are going to show smth new,
+            // so the param "isShown" should be false for both old pages
+            (sliding.inPage != nextPage) && sliding.inPage.onSwitchEnd(false);
         }
         sliding.working = true;
 
         var slideCss = 'jr-slide' + (isBack ? ' jr-reverse' : '');
         container.addClass(slideCss);
 
+        bindAnimations(page, nextPage, onDone);
+
+        sliding.inPage = nextPage;
+        sliding.outPage = page;
+    }
+
+    function bindAnimations(page, nextPage, onDone) {
         // for correct animate we need one page for detect animation end
         // by default this is next page
 
@@ -174,9 +271,6 @@
         container.addClass('jr-animate');
 
         nextPage && nextPage.content.height();
-
-        sliding.inPage = nextPage;
-        sliding.outPage = page;
     }
 
     function beforeChange(prevPage, page, params){
@@ -228,22 +322,28 @@
         broadcast.trig(naviEvs.onPageHide, page);
     }
 
-    navi._slidePages = function(currPage, nextPage, isBack, onDone){
-        if (!currPage && !nextPage){
-            logger.warn('cannot slide page, because they are not defined');
-        } else {
-            beforeChange(currPage, nextPage);
-            slidePages(currPage, nextPage, isBack, onDone);
-        }
-    };
+    function redrawPage(page) {
+        var isShown = page.shown;
 
-    //return active page
-    navi.getCurrentPage = function(){
-        return currentPage;
-    };
+        if (isShown){
+            onBeforeHidePage(page);
+            redrawFragment.append(page.content);
+            page._hide();
+            onHidePage(page);
+        }
+        if (page.drawn) {
+            page.drawn = false;
+            isShown && page._draw();
+        }
+        if (isShown){
+            appendNext(page);
+            setScrollNextInside(page);
+            page.onSwitchEnd(true);
+        }
+    }
 
     // change page without pushing into history state
-    navi.changePage = function(id, params){
+    function changePage(id, params){
         var res = false;
         if (checkAccess(id) === false){
             return res;
@@ -260,120 +360,55 @@
             res = true;
         }
         return res;
-    };
+    }
 
-    // just append and show page in dom
-    navi.show = function(id){
-        if (checkAccess(id) === false){
-            return this;
-        }
-        var page = pages(id);
-        if (page && page != currentPage){
-            page._draw();
-            appendNext(page);
-        }
-        return this;
-    };
+    var currPageId = '';
 
-    navi.close = function(id){
-        // :todo we really need check access to close action???
-//        if (checkAccess(id) === false){
-//            return this;
-//        }
-        var page = pages(id);
-        if (page){
-            detachPrev(page);
-        }
-        return this;
-    };
-
-    // switch current page to new page by id using history
-    navi.switchPage = function(id, args){
-        if (sliding.working || checkAccess(id) === false){
-            logger.warn('no access for "' + id + '"');
-            return this;
-        }
-        var page = pages(id);
-        if (page){
-            var alias = pages(id).alias;
-            var useAlias = (alias !== undefined);
-            var path = '';
-            if (args){
-                for (var key in args){
-                    path += '/' + key + '=' + args[key];
-                }
+    function changePageByRoute(alias) {
+        var currPage = pages(alias);
+        if (currPage && !currPage.shown){
+            currPageId = alias;
+            var changed = changePage(alias);
+            if (!changed) {
+                logger.error('no access to page: ' + alias);
             }
-            if (useAlias){
-                route.pushByField(0, alias, path);
-            } else {
-                route.pushByField(0, DROP_PAGE_NAVI, path);
-                navi.changePage(id);
+        }
+    }
+
+    route.addMainField('page', {
+        index: PAGE_INDEX,
+        onSet: function (alias) {
+            // logger.log('onSet', alias);
+            changePageByRoute(alias);
+        },
+        onChanged: function (alias) {
+            // logger.log('onChanged', alias);
+            changePageByRoute(alias);
+        },
+        onRemoved: function () {
+            // logger.log('onRemoved');
+        },
+        onArgsChanged: function (args) {
+            var currPage = pages(currPageId);
+            if (currPage && currPage.shown){
+                currPage.onRouteChanged(args);
             }
-        } else {
-            logger.warn('not found "' + id + '" page');
+            // logger.log('onArgsChanged', args);
         }
-        return this;
-    };
-
-    // just redraw current page
-    navi.redraw = function(){
-        if (currentPage) {
-            pages.map(function(key, page){
-                var isShown = page.shown;
-
-                if (isShown){
-                    onBeforeHidePage(page);
-                    redrawFragment.append(page.content);
-                    page._hide();
-                    onHidePage(page);
-                }
-                if (page.drawn) {
-                    page.drawn = false;
-                    //page.shown = false;
-                    page._draw();
-                }
-                if (isShown){
-                    appendNext(page);
-                    setScrollNextInside(page);
-                    page.onSwitchEnd(true);
-                }
-            });
-        }
-        return this;
-    };
-
-    // return main container of app
-    navi.getContainer = function(){
-        return container;
-    };
-
-    navi.onDefaultPage = function (cb) {
-        cb && broadcast.on(naviEvs.onDefaultPage, cb);
-    };
-    
-    app('mod-require')('pages', 'route', 'page-auth', function (mod, mod2, mod3) {
-        pages = mod;
-        route = mod2;
-        pageAuth = mod3;
-
-        mod = null;
-        mod2 = null;
-        mod3 = null;
     });
 
     helper.onStart(function(){
         container = $(app('config').container).first();
         broadcast.on(translateEvs.onLangSet, function(){
-            navi.redraw();
+            redraw();
         });
         broadcast.on(routeEvs.started, function(){
             // if app runned without any page, just goto dash
-            if (!navi.getCurrentPage()){
+            if (!currentPage){
                 logger.warn('app is not processed first page! trying to run default page');
                 broadcast.trig(naviEvs.onDefaultPage);
             }
         });
-
     });
 
 })();

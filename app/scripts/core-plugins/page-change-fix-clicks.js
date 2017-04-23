@@ -40,14 +40,15 @@
     };
 
     helper.onStart(function(){
-
-        $body = $(document.body);
+        var topDomEls = app('top-dom-elements');
+        
+        $body = topDomEls.getBody();
 
         preventContainer = $("<div class='jr-fix-click-container'/>");
 
         $body.append(preventContainer);
-
-        $(document).on("click", "a, button, input, textarea", function(ev){
+        
+        topDomEls.getDocument().on("click", "a, button, input, textarea", function(ev){
             if (isPrevent()){
                 doPrevent();
                 ev.stopPropagation();

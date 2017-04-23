@@ -1,7 +1,7 @@
 /*
  * Helpers module
  *
- * consist of method for used by different parts of core
+ * consists of methods used by different parts of the core
  * */
 
 (function(){
@@ -53,7 +53,7 @@
             this.inherit(ChildClass, ParentClass);
             var p = ChildClass.prototype;
 
-            delete params.onConstructor;
+            delete params.classConstructor;
 
             if (!params.getClass && !p.getClass){
                 p.getClass = function(){
@@ -66,6 +66,7 @@
         } else {
             logger.error('not defined parent class!');
         }
+        params = null;
         return ChildClass;
     };
 
@@ -78,6 +79,7 @@
                 logger && logger.error('trying to define already defined method in prototype!');
             }
         }
+        params = null;
     };
 
     helper.extendObject = function (protoObject, mixins) {
@@ -88,6 +90,7 @@
                 logger && logger.error(key + ' is already defined');
             }
         }
+        mixins = null;
     };
 
     helper.mixinClass = helper.extendObject;
@@ -105,12 +108,13 @@
         } else {
             ret = data;
         }
-
+        data = null;
         return ret;
     };
 
     // generate guid for some reasons
-    helper.guid = function (num) {
+    helper.guid = function (num, delim) {
+        delim = (delim === undefined) ? '-' : delim;
         var today = (new Date()).getTime().toString(16);
         function fourChars() {
             return Math.floor(
@@ -118,17 +122,17 @@
             ).toString(16);
         }
 
-        if (num) {
+        if (num !== undefined) {
             var ret = fourChars();
             for (var i = 0; i < (num); i++) {
-                ret += '-' + fourChars();
+                ret += delim + fourChars();
             }
-            return (ret + '');
+            return (ret + today);
         } else {
             // return as "8x-8x-7x" (x - max chars)
             return (
-                fourChars() + fourChars() + fourChars() + '-' +
-                fourChars() + fourChars() + fourChars() + '-' +
+                fourChars() + fourChars() + fourChars() + delim +
+                fourChars() + fourChars() + fourChars() + delim +
                 today
             );
         }
@@ -147,12 +151,17 @@
     })();
 
     // helper for safeTextBuff
-    var safeTextBuff = $("<div/>");
+    var safeElBuff = document.createElement("div");
 
     // return HTML safe text
     helper.getEscapedText = function(text){
         text = text || "";
-        return safeTextBuff.text(text).html();
+        var ret = '';
+        if (text){
+            safeElBuff.innerText = safeElBuff.textContent = text;
+            ret = safeElBuff.innerHTML;
+        }
+        return ret;
     };
 
     // return arguments of parent function
@@ -180,6 +189,7 @@
     helper.clearObject = function(obj){
         if (obj){
             for (var key in obj){
+                obj[key] = undefined;
                 delete obj[key];
             }
         }
@@ -210,20 +220,41 @@
         processKey(obj, '', separator, cb);
     };
 
+    helper.replaceInText = function (text, data, value) {
+        var ret = '';
+        if (text !== undefined && text !== null){
+            ret = text;
+            if (data){
+                if (value === undefined){
+                    for (var key in data){
+                        ret = ret.replaceAll(key, data[key]);
+                    }
+                } else {
+                    ret = ret.replaceAll(data, value);
+                }
+            }
+        } else {
+            logger.error('replaceInText: trying to replace of undefined text');
+        }
+        return ret;
+    };
+
     // checking empty object
     // checking all types of vars
     helper.isEmpty = function(obj){
         var ret = true;
         if (obj === undefined || obj === null || obj === "") {
             ret = true;
-        } else if (this.isArray(obj)){
-            ret = (obj.length == 0);
         } else {
             var type = (typeof obj);
             if (type == "object"){
-                for (var key in obj){
-                    ret = false;
-                    break;
+                if (this.isArray(obj)) {
+                    ret = (obj.length == 0);
+                } else {
+                    for (var key in obj){
+                        ret = false;
+                        break;
+                    }
                 }
             } else if (type == "boolean" || (obj === 0)){
                 ret = false;

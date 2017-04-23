@@ -9,12 +9,12 @@
     var broadcast = app('broadcast');
     var processConfig = app('process-my-config');
     var configProcessingEvs = broadcast.events('config-processing', {
-        _configChanged: 'cc'
+        configChanged: 'cc'
     });
 
-    var subKeysConfig;
+    var additionalKeys;
 
-    function mixConfigs(fromObj, toObj){
+    function extendObject(toObj, fromObj){
         for (var key in fromObj){
             if (fromObj.hasOwnProperty(key)){
                 if (toObj[key] === undefined){
@@ -22,7 +22,7 @@
                 } else {
                     var type = typeof fromObj[key];
                     if (type == 'array' || type == 'object'){
-                        mixConfigs(fromObj[key], toObj[key]);
+                        extendObject(toObj[key], fromObj[key]);
                     } else {
                         toObj[key] = fromObj[key];
                     }
@@ -34,34 +34,33 @@
     // prepare normal config, defined in scripts
     // we have two parts. config.js and mixin-config.js
     // and just need to mix them into one
-    mixConfigs(mixinConfig, config);
+    extendObject(config, mixinConfig);
     processConfig(); // set default keys, states and groups in config
-    var firstStateConfig = helper.clone(config);
 
-    function useConfig(subKeys){
-        subKeys = helper.clone(subKeys);
+    var startStateConfig = helper.clone(config);
 
-        var oldKeys = helper.clone(firstStateConfig);
-        for (var key in config){
-            delete config[key];
-        }
+    function useConfig(newKeys){
+        var addKeys = helper.clone(newKeys);
 
-        mixConfigs(oldKeys, config);
-        mixConfigs(mixinConfig, config);
+        helper.clearObject(config);
 
-        mixConfigs(subKeys, config);
-        subKeysConfig = subKeys;
+        var clonedStartState = helper.clone(startStateConfig);
+        extendObject(config, clonedStartState);
+
+        extendObject(config, addKeys);
+        additionalKeys = addKeys;
         processConfig();
         // useNew will be deprecated
-        broadcast.trig(configProcessingEvs._configChanged);
+        broadcast.trig(configProcessingEvs.configChanged);
     }
-    
+
     helper.mixinClass(useConfig, {
         onChanged: function (cb) {
-            broadcast.on(configProcessingEvs._configChanged, cb);
+            broadcast.on(configProcessingEvs.configChanged, cb);
         },
-        getSubKeys: function () {
-            return subKeysConfig;
+        hasAdditionalKeys: function () {
+            var ret = helper.isEmpty(additionalKeys);
+            return ret;
         }
     });
 

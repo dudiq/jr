@@ -12,6 +12,9 @@ module.exports = function (grunt) {
         revision: "''//{{version-revision}}"
     };
 
+    var EXTEND_FILES_GETTER = /{{extend-file=([\w.\-\/]*)}}/g;
+    var EXTEND_FILE_VAR_TEMPLATE = '{{extend-file=%s}}';
+
     function processLine(line){
         var pos = line.indexOf(":");
         var key = trim(line.substring(0, pos));
@@ -46,15 +49,54 @@ module.exports = function (grunt) {
         grunt.log.ok('version changed');
     }
 
-    function replaceXml(path, versions, cordovaId){
-        var ver = versions.join(".");
+    function createExtendFileVar(filePath){
+        var ret = EXTEND_FILE_VAR_TEMPLATE.replace('%s', filePath);
+        return ret;
+    }
+
+    function replaceExtendFiles(file, filePaths, basePath){
+        for (var i = 0, l = filePaths.length; i < l; i++) {
+            var filePath = filePaths[i];
+            var fullPath = basePath + filePath;
+
+            var fileContent = grunt.file.read(fullPath);
+            var placeholder = createExtendFileVar(filePath);
+            file = file.replace(placeholder, fileContent);
+        }
+        return file;
+    }
+
+    function getExtendFilesPaths(fileContent){
+        var ret = [];
+        var match = EXTEND_FILES_GETTER.exec(fileContent);
+        while (match) {
+            var filePath = match[1];
+            ret.push(filePath);
+            match = EXTEND_FILES_GETTER.exec(fileContent);
+        }
+        return ret;
+    }
+
+    function replaceExtendFilesVars(file, extendFilesBasePath){
+        var filePaths = getExtendFilesPaths(file);
+        file = replaceExtendFiles(file, filePaths, extendFilesBasePath);
+        return file;
+    }
+
+    function replaceStringVars(file, strings){
+        for (var variable in strings) {
+            var replacer = strings[variable];
+            file = file.replace(variable, replacer);
+        }
+        return file;
+    }
+
+    function replaceXml(path, strings, extendFilesPath){
         if (grunt.file.exists(path)){
             var file = grunt.file.read(path);
-            // replace app version
-            file = file.replace('{{version}}', ver);
 
-            // replace id.name
-            file = file.replace('{{cordova-id}}', cordovaId);
+            file = replaceStringVars(file, strings);
+            file = replaceExtendFilesVars(file, extendFilesPath);
 
             grunt.file.write(path, file);
             grunt.log.ok('config.xml parsed, version changed');
@@ -140,7 +182,7 @@ module.exports = function (grunt) {
         replaceData(filePath, parseObj);
     }
 
-    grunt.registerMultiTask('insertversion', 'Define build version in code', function () {
+    grunt.registerMultiTask('insertVersion', 'Define build version in code', function () {
 
         grunt.log.subhead(' > start inserting version to build');
 
@@ -152,9 +194,9 @@ module.exports = function (grunt) {
         //allows to overwrite package.json version with custom grunt argument version
         var gruntVersionArgument = grunt.option('build-version');
 
-        var currVer = gruntVersionArgument || pkg.version;
+        var currVer = gruntVersionArgument || pkg.appVersion;
 
-        var versionsArray = currVer.split('.');
+        var versionsArray = (currVer + '').split('.');
         var versions = [];
         versions[0] = versionsArray[0];
         versions[1] = versionsArray[1];
@@ -165,11 +207,37 @@ module.exports = function (grunt) {
         grunt.log.writeln("current version of app: " + currVer);
 
         grunt.log.writeln("");
-        if (this.data.parseXml){
-            var cordovaId = grunt.option('cordova-id') || pkg['cordova-id'] || 'id.example.com';
+        if (this.data.inputXmlPath){
+            var cordovaBlock = pkg.cordova || {};
+            var version = versions.join(".");
+            var cordovaId = grunt.option('cordova-id') || cordovaBlock.id || 'id.example.com';
+            var appName = grunt.option('cordova-name') || pkg.name || 'exampleName';
+            var publisherDisplayName = grunt.option('cordova-publisherDisplayName') || cordovaBlock.publisherDisplayName || 'examplePublisher';
+            var description = grunt.option('cordova-description') ||cordovaBlock.description || 'description';
+            var iosTeamId = grunt.option('cordova-iosTeamId') || cordovaBlock.iosTeamId || 'ios-team-id-here';
+            var author = grunt.option('cordova-author') || cordovaBlock.author || 'author';
+
+            var authorEmail = grunt.option('cordova-author-email') || cordovaBlock.authorEmail || 'example@example.example';
+            var authorLink = grunt.option('cordova-author-link') || cordovaBlock.authorLink || '';
+            var debugServerValue = cordovaBlock.debugServerValue || '';
+
+            var androidVersionCode = (versions[0] * 100000 - 0) + (versions[1] * 1000 - 0) + (versions[2] - 0) + 108;
+            var strings = {
+                '{{appVersion}}': version,
+                '{{cordova.id}}': cordovaId,
+                '{{name}}': appName,
+                '{{cordova.publisherDisplayName}}': publisherDisplayName,
+                '{{cordova.description}}': description,
+                '{{cordova.iosTeamId}}': iosTeamId,
+                '{{cordova.author}}': author,
+                '{{cordova.authorEmail}}': authorEmail,
+                '{{cordova.authorLink}}': authorLink,
+                '{{cordova.debugServerValue}}': debugServerValue,
+                '{{versionCode}}': androidVersionCode
+            };
 
             // process config.xml file to correct version
-            replaceXml(this.data.parseXml, versions, cordovaId);
+            replaceXml(this.data.inputXmlPath, strings, this.data.extendFilesPath);
         }
 
         var done = this.async();

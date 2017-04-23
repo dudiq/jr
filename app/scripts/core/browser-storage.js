@@ -1,8 +1,8 @@
 /*
-* local-storage module
+* browser-storage module
 * how to use:
 *
-* var ls = app('local-storage');
+* var ls = app('local-storage'); // or ss = app('session-storage');
 * ls('myKey', 'myWord'); - set single key
 * ls.removeKey('myKey); - remove single key
 * ls.clear(); - remove all keys
@@ -18,30 +18,32 @@
     var app = window.app;
     var logger = app('logger')('browser-storage');
 
-    var storages = [];
+    var eventStorageList = [];
 
     function onStorage(ev) {
-        for (var i = 0, l = storages.length; i < l; i++){
-            var item = storages[i];
-            if (item.winStore === ev.storageArea){
+        for (var i = 0, l = eventStorageList.length; i < l; i++){
+            var item = eventStorageList[i];
+            if (item.storageArea === ev.storageArea){
                 var prefix = item.store.getPrefix();
                 var key = ev.key;
-                if (key.indexOf(prefix) == 0){
+                if (key && key.indexOf(prefix) == 0){
                     // all good
                     var viewKey = key.substring(prefix.length);
-                    
-                    var newValue;
-                    try {
-                        var getVal = JSON.parse(ev.newValue);
-                        if (getVal){
-                            newValue = getVal.val;
-                        } else {
+
+                    var newValue = ev.newValue;
+                    if (newValue){
+                        try {
+                            var getVal = JSON.parse(newValue);
+                            if (getVal){
+                                newValue = getVal.val;
+                            } else {
+                                newValue = null;
+                            }
+                            getVal = null;
+                        } catch(e){
                             newValue = null;
+                            logger.error('onStorage event try{}catch{}', item.name, e);
                         }
-                        getVal = null;
-                    } catch(e){
-                        newValue = null;
-                        logger.error(e);
                     }
 
                     var storeEv = {
@@ -66,12 +68,12 @@
         var currentStorage = window[nameInWindow];
         var logger = app('logger')(nameInApp);
 
-        // prefix for separate items in storage
-        var PREFIX = "jr-";
+        // prefix for separate items in storage from others
+        var PREFIX = app.prefix;
 
         var customPrefix = PREFIX;
 
-        var ls = app(nameInApp, function(key, value){
+        var storageInst = app(nameInApp, function(key, value){
 
             var ret;
             if (value !== undefined){
@@ -113,11 +115,10 @@
             return ret;
         });
 
-        ls.remove = function(key){
+        storageInst.remove = function(key){
             var ret = true;
             try {
-                var getVal = currentStorage.removeItem(customPrefix + key);
-                getVal = null;
+                currentStorage.removeItem(customPrefix + key);
                 ret = true;
             } catch(e){
                 ret = false;
@@ -125,24 +126,24 @@
             return ret;
         };
 
-        ls.clear = function(){
+        storageInst.clear = function(){
             currentStorage.clear();
         };
 
         // define custom prefix for separated items
         // prefix must be NOT empty string
-        ls.setPrefix = function(newPrefix){
+        storageInst.setPrefix = function(newPrefix){
             if (typeof newPrefix == "string"){
                 customPrefix = !newPrefix ? PREFIX : newPrefix;
             }
         };
 
-        ls.getPrefix = function () {
+        storageInst.getPrefix = function () {
             return customPrefix;
         };
 
         // walk in all fields in local storage
-        ls.map = function(callback, opt){
+        storageInst.map = function(callback, opt){
             opt = opt || {};
             var getValue = opt.getValue;
             var prefixLen = customPrefix ? customPrefix.length : 0;
@@ -163,29 +164,33 @@
             opt = null;
         };
 
-        //events
+        addEvents(nameInApp, storageInst, currentStorage);
+
+        return storageInst;
+    }
+
+    function addEvents(nameInApp, storageInst, currentStorage) {
         var evCbs = [];
         var evObj = {
+            name: nameInApp,
             process: function (ev) {
                 for (var i = 0, l = evCbs.length; i < l; i++){
                     evCbs[i](ev);
                 }
             },
-            store: ls,
-            winStore: currentStorage
+            store: storageInst,
+            storageArea: currentStorage
         };
-        ls.on = function (cb) {
+        storageInst.on = function (cb) {
             evCbs.push(cb);
         };
-        ls.off = function (cb) {
+        storageInst.off = function (cb) {
             var pos = evCbs.indexOf(cb);
             if (pos != -1){
                 evCbs.splice(pos, 1);
             }
         };
-        storages.push(evObj);
-
-        return ls;
+        eventStorageList.push(evObj);
     }
 
     makeStorage('local-storage', 'localStorage');

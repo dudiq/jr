@@ -34,32 +34,10 @@ IE9+, Android 4.x, IOS 5.x, Chrome 30+, FF 4+
 - [version inserting](docs/version.md)
 - [testing](docs/testing.md)
 
-
-----------
-## News
-
-03/10/2016
-
-- updated core for define pages and other plguins
-
-11/03/2016
-
-- updated jquery to 2.2.1 version
-- updated core plugins
-- big update of watch scope plugins
-- changed page initialize. old way will work too
-- added simple modal-popup-page
-- bug fixes
-
-21/02/2016
-
-- changed scss builder to `libSass`, instead of `compass`. please update node packages using 'npm i'
-- separated core-plugins and others
-
 ----------
 
 ## License
 
-MIT (c) 2016 dudiq
+MIT (c) 2017 dudiq
 
 created at https://stackedit.io/

@@ -6,9 +6,10 @@
  * */
 (function(){
     var app = window.app;
-    var cordovaDevice = app('cordova-device', {});
     var broadcast = app('broadcast');
     var helper = app('helper');
+    var logger = app('logger')('cordova-device');
+
     var deviceEvs = broadcast.events('device', {
         _ready: '_ready', // for internal use only
         pause: 'pause',
@@ -22,39 +23,46 @@
     var isNative = helper.isNative;
 
     // wait cordova device ready for start app correctly
-    var appWaiter = app.wait();
+    var appWaiter = app.wait('cordova-device');
 
     var deviceObject = {};
 
-    // return cordova device object or empty object, if not defined
-    cordovaDevice.getDevice = function(){
-        return deviceObject;
-    };
-
-    // checking device is ready
-    cordovaDevice.isReady = function(){
-        return isReady && isDomReady;
-    };
-
-    // subscribe to ready event of device
-    cordovaDevice.onReady = function(method){
-        if (isReady && isDomReady){
-            method();
-        } else {
-            broadcast.one(deviceEvs._ready, method);
+    app('cordova-device', {
+        // return cordova device object or empty object, if not defined
+        getDevice: function () {
+            return deviceObject;
+        },
+        isReady: function () {
+            return isReady && isDomReady;
+        },
+        onReady: function (method) {
+            if (isReady && isDomReady){
+                method();
+            } else {
+                broadcast.one(deviceEvs._ready, method);
+            }
+        },
+        onPause: function (cb) {
+            broadcast.on(deviceEvs.pause, cb);
+        },
+        onResume: function (cb) {
+            broadcast.on(deviceEvs.resume, cb);
         }
-    };
+    });
 
     // bind to device events and trigger them into app
     function bindDeviceEvents(){
         document.addEventListener("pause", function(ev){
             broadcast.trig(deviceEvs.pause, ev);
+            logger.log('on pause');
         }, false);
         document.addEventListener("resume", function(ev){
             broadcast.trig(deviceEvs.resume, ev);
+            logger.log('on resume');
         }, false);
         document.addEventListener("menubutton", function(ev){
             broadcast.trig(deviceEvs.menubutton, ev);
+            logger.log('on menubutton');
         }, false);
         // please, don't bind backbutton click. this is processed by router
         //document.addEventListener("backbutton", function(ev){
@@ -62,6 +70,7 @@
         //}, false);
         document.addEventListener("searchbutton", function(ev){
             broadcast.trig(deviceEvs.searchbutton, ev);
+            logger.log('on searchbutton');
         }, false);
     }
 

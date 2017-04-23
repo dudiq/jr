@@ -46,7 +46,7 @@
     };
 
     function defineBody(){
-        !$body && ($body = $(document.body));
+        !$body && ($body = app('top-dom-elements').getBody());
     }
 
     function OverflowModalClass(parent, params){
@@ -99,6 +99,10 @@
                 }
             }
         }
+    };
+
+    p.getPlace = function () {
+        return this.place;
     };
 
     p.disable = function(){

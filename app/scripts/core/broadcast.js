@@ -5,14 +5,14 @@
 * */
 (function(){
     var app = window.app;
-    var errors = app('errors');
+    var logger = app('logger')('broadcast');
 
-    function showInfo(msg){
-        errors.warning('broadcast', msg);
+    function showWarning(msg){
+        logger.warning(msg);
     }
 
     function showError(msg){
-        errors.error('broadcast', msg);
+        logger.error(msg);
     }
 
     /*
@@ -97,13 +97,13 @@
             for (var i = 0, l = msgs.length; i < l; i++){
                 var msg = msgs[i];
                 if (!msg || msg == "undefined"){
-                    showInfo('some event not dispatched, please check it!');
+                    showWarning('some event not dispatched, please check it!');
                 } else {
                     callback(msg);
                 }
             }
         } else {
-            showInfo('something wrong with messages, please check it!');
+            showWarning('something wrong with messages, please check it!');
         }
     }
 
@@ -112,6 +112,7 @@
         callback._dirty = null;
         callback._once = null;
         callback._namespace = null;
+        callback._context = null;
     }
 
     // clean all targets, what was dirty
@@ -135,7 +136,6 @@
         var all = (!!namespace && !!uCallback);
 
         setTimeout(function(){
-            var cleanAllNames = !namespace;
             // clean all dirty callbacks after callstack done
             for (var i = targets.length - 1; i >= 0; i--){
                 var tarCall = targets[i];
@@ -208,8 +208,9 @@
     //
     // msgs - messages
     // callback - method, when messages fires
-    p.on = function(msgs, namespace, userCallback){
+    p.on = function(msgs, namespace, userCallback, context){
         if (typeof namespace == "function"){
+            context = userCallback;
             userCallback = namespace;
             namespace = null;
         }
@@ -224,7 +225,7 @@
             function callback(){
                 //userCallback();
             }
-
+            callback._context = context;
             callback._link = userCallback;
             callback._name = userCallback.name; // to defined, from what callback it was
 
@@ -248,14 +249,15 @@
     //
     // msgs - messages
     // callback - method, when messages fires
-    p.one = function(msg, namespace, callback) {
+    p.one = function(msg, namespace, callback, context) {
         if (typeof namespace == "function"){
+            context = callback;
             callback = namespace;
             namespace = null;
         }
         if (callback){
             callback._once = true;
-            this.on(msg, namespace, callback);
+            this.on(msg, namespace, callback, context);
         }
         return this;
     };
@@ -312,7 +314,7 @@
                 var callback = targets[i];
                 if (!callback._dirty){
                     var handler = callback._link;
-                    var context = handler.cont;
+                    var context = callback._context;
                     var res = handler.call(context, param1, param2, param3);
                     if (callback._once){
                         // remove them
@@ -327,7 +329,8 @@
                 }
             }
 
-            if (l == 0){
+            if (targets.length == 0){
+                // heed check `targets.length`, because when trigger event, handler can bind again new event as cyclic
                 // if all callbacks was .one, remove targets from map
                 this.map[msg] = null;
                 delete this.map[msg];
@@ -350,7 +353,6 @@
     // clean all events
     p.clean = function(){
         var map = this.map;
-        var self = this;
 
         (function(){
             for (var key in map){
@@ -477,14 +479,12 @@
         map = null;
     }
 
-
-    /*jshint -W055*/
     var inst = new BroadcastClass('core');
 
     app('ev-storage', function(evName, events){
         app('deprecate')('ev-storage', 'use broadcast.events("evsNamespace", {evs...}) instead');
 
-        return inst.putEvents(evName, events);
+        return inst.events(evName, events);
     });
 
     app('broadcast', inst);

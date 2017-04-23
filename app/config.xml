@@ -1,16 +1,25 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="{{cordova-id}}" version="{{version}}" versionCode="0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0" defaultlocale="ru-Ru">
-    <name>JR</name>
-    <PublisherDisplayName>JR</PublisherDisplayName>
+<widget id="{{cordova.id}}" version="{{appVersion}}" versionCode="{{versionCode}}" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0" defaultlocale="ru-Ru">
+    <name>{{name}}</name>
+    <PublisherDisplayName>{{cordova.publisherDisplayName}}</PublisherDisplayName>
     <description>
-        JR
+        {{cordova.description}}
     </description>
     <feature name="http://api.phonegap.com/1.0/device" />
     <preference name="permissions" value="none" />
-    <preference name="orientation" value="default" />
+
+    <platform name="android">
+        <preference name="orientation" value="default" />
+    </platform>
+    <platform name="ios">
+        <preference name="orientation" value="all" />
+    </platform>
+    <platform name="windows">
+        <preference name="orientation" value="portrait,landscape,portraitFlipped,landscapeFlipped"/>
+    </platform>
+
     <preference name="target-device" value="universal" />
     <preference name="fullscreen" value="false" />
-    <preference name="webviewbounce" value="false" />
     <preference name="prerendered-icon" value="true" />
     <preference name="stay-in-webview" value="false" />
     <preference name="detect-data-types" value="true" />
@@ -18,6 +27,9 @@
     <!--<preference name="show-splash-screen-spinner" value="true" />-->
     <preference name="auto-hide-splash-screen" value="true" />
     <preference name="disable-cursor" value="false" />
+
+    <preference name="webviewbounce" value="false" />
+    <preference name="UIWebViewBounce" value="false" />
     <preference name="DisallowOverscroll" value="true" />
 
     <preference name="android-minSdkVersion" value="14" />
@@ -30,11 +42,10 @@
     <preference name="StatusBarOverlaysWebView" value="false" />
     <preference name="StatusBarBackgroundColor" value="#000000" />
 
-    <preference name="SplashScreen" value="splash"/>
+    <preference name="SplashScreen" value="screen"/>
     <preference name="SplashScreenDelay" value="3000" />
     <preference name="AutoHideSplashScreen" value="false"/>
-
-    <preference name="windows-target-version" value="8.1" />
+    <preference name="FadeSplashScreenDuration" value="500"/>
 
     <!-- DO NOT CHANGE to "Internal" it will store all files in internal storage, and attachments will not see this
       also app('merge-internal-to-ext') will be broken!!!
@@ -42,15 +53,22 @@
     <preference name="AndroidPersistentFileLocation" value="Compatibility" />
     <preference name="iosPersistentFileLocation" value="Library" />
 
+        <preference name="windows-target-version" value="8.1" />
+
     <preference name="iosExtraFilesystems" value="library,library-nosync,documents,documents-nosync,cache,bundle,root" />
     <preference name="AndroidExtraFilesystems" value="files,files-external,documents,sdcard,cache,cache-external,root" />
 
     <feature name="debug-server" required="true">
         <param name="domain" value="http://debug.build.phonegap.com"/>
-        <param name="key" value="JR"/>
+        <param name="key" value="{{cordova.debugServerValue}}"/>
     </feature>
-    
+
     <plugin name="cordova-plugin-whitelist" version="1" />
+
+    <author email="{{cordova.authorEmail}}" href="{{cordova.authorLink}}">
+        {{cordova.author}}
+    </author>
+
     <access origin="*" />
     <access origin="cdvfile://*" />
 
@@ -70,6 +88,19 @@
     <platform name="ios">
         <allow-intent href="itms:*" />
         <allow-intent href="itms-apps:*" />
+    </platform>
+
+    <universal-links>
+        <ios-team-id value="{{cordova.iosTeamId}}" />
+        {{extend-file=universal-links-hosts.xml}}
+    </universal-links>
+
+    <platform name="android">
+        <preference name="AndroidLaunchMode" value="singleTask" />
+    </platform>
+
+    <platform name="ios">
+        <hook type="after_build" src="hooks/plist.js" />
     </platform>
 
 </widget>

@@ -1,16 +1,16 @@
 syntax: glob
 .tmp/
 .cordova/
-.sass-cache/
 .idea/
 .git/
 *.iml
 app/scripts/config.js
-www-static/**
 
 syntax: regexp
-^plugins
-^platforms
+^plugins/(?!(empty)/)[^/]+/
+^plugins/.*json
+^platforms/(?!(empty)/)[^/]+/
+^platforms/.*json
 ^reports
 ^merges
 ^www

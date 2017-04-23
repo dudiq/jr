@@ -29,7 +29,6 @@
     var app = window.app;
     var logger = app('logger')('watch-scope');
     var helper = app('helper');
-    var inherit = helper.inherit;
     var broadcast = app('broadcast');
 
     // own instance of broadcast for bind/unbind object prop changes
@@ -110,7 +109,6 @@
     }
 
     function checkArrayBug(){
-        /* jshint ignore:start */
         var isChrome = /Chrome/.test(navigator.userAgent);
         var hasBug = false;
         if (isChrome){
@@ -196,7 +194,6 @@
                 };
             }
         }
-        /* jshint ignore:end */
     }
 
     checkArrayBug();

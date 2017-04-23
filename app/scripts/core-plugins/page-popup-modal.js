@@ -19,7 +19,6 @@
 (function(){
     var app = window.app;
 
-    var config = app('config');
     var broadcast = app('broadcast');
     var rCmdEvs = broadcast.events('route-commander');
 

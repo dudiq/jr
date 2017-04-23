@@ -2,9 +2,7 @@
     var app = window.app;
     var ls = app('local-storage');
     var route = app('route');
-    var helper = app('helper');
     var pageAuth = app('page-auth');
-    var navi = app('navigation');
     var broadcast = app('broadcast');
     var logger = app('logger')('remember-page');
     var routeEvs = broadcast.events('route');

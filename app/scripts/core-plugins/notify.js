@@ -175,7 +175,7 @@
     }
 
     function catchClickEvents(){
-        $(document.body)
+        app('top-dom-elements').getBody()
             .on('jrclick', function(){
                 // this is hack for bind to body action
             })
@@ -288,7 +288,7 @@
         var cont = $('.jr-notify-container');
         if (!cont.length){
             cont = $('<div class="jr-notify-container"></div>');
-            $(document.body).append(cont);
+            app('top-dom-elements').getBody().append(cont);
         }
         notify.setContainer(cont);
     });

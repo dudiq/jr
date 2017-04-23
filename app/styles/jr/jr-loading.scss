@@ -1,0 +1,51 @@
+.jr-loading {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10;
+
+    opacity: 1;
+    visibility: visible;
+    transition: visibility 0.2s ease-out, opacity 0.2s ease-out;
+
+    &.jr-loading-no-animate{
+        transition: none;
+    }
+
+    &.jr-loading-hide {
+        opacity: 0;
+        visibility: hidden;
+    }
+}
+
+.jr-loading {
+    background-color: #7f7f7f;
+
+}
+
+.jr-loading-progress {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: -50px;
+    margin-left: -50px;
+    width: 100px;
+    height: 100px;
+}
+
+.jr-loading-text {
+    position: absolute;
+    top: 50%;
+    margin-top: 65px;
+    text-align: center;
+    color: #fff;
+    font-size: 12px;
+    left: 50%;
+    margin-left: -22px;
+}
+
+.jr-loading-line {
+
+}

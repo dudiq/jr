@@ -1,8 +1,6 @@
 (function (app) {
     var helper = app('helper');
     var logger = app('logger')('pages');
-    var navi = app('navigation');
-    var route = app('route');
 
     var pageInstances = {};
     var pageClasses = {};
@@ -11,7 +9,7 @@
         return pageInstances[pageId];
     });
 
-    helper.mixinClass(pages, {
+    helper.extendObject(pages, {
         create: function (data) {
             var pageId = data.id;
             var inst;
@@ -62,9 +60,6 @@
                 cb(key, page);
             }
         },
-        getPageClass: function (classId) {
-            return pageClasses[classId];
-        },
         wrapClassMethods: function (opt, redefined) {
             for (var methodName in redefined){
                 var method = redefined[methodName];
@@ -84,7 +79,7 @@
             opt[methodName] = function () {
                 var ret;
                 isFirst && (ret = method.apply(this, arguments));
-                
+
                 // call old method
                 (ret === undefined)
                     ? ret = oldMethod.apply(this, arguments)
@@ -95,7 +90,7 @@
                         ? ret = method.apply(this, arguments)
                         : ret = ret && method.apply(this, arguments);
                 }
-                
+
                 return ret;
             };
         } else {
@@ -104,59 +99,5 @@
             };
         }
     }
-
-
-    //
-    // var routeRule = "/" + newPage.alias;
-    // route.register(routeRule, function(routeParams){
-    //     // this is for NORMAL pages (NOT 'drop' pages)
-    //     if (routeParams.pageChanged || !newPage.drawn){
-    //         if (!navi.changePage(id)){
-    //             // no access to page
-    //             logger.error('no access to page: ' + id);
-    //         }
-    //     } else {
-    //         // onRouteChanged can't be run for 'drop' pages
-    //         newPage.onRouteChanged(routeParams);
-    //     }
-    // });
-
-    //
-
-    var currPageId = '';
-
-    function changePageByRoute(alias) {
-        var currPage = pageInstances[alias];
-        if (currPage && !currPage.shown){
-            currPageId = alias;
-            var changed = navi.changePage(alias);
-            if (!changed) {
-                logger.error('no access to page: ' + alias);
-            }
-        }
-    }
-
-    route.addMainField('page', {
-        index: 0,
-        onSet: function (alias) {
-            logger.log('onSet', alias);
-            changePageByRoute(alias);
-        },
-        onChanged: function (alias) {
-            logger.log('onChanged', alias);
-            changePageByRoute(alias);
-        },
-        onRemoved: function () {
-            logger.log('onRemoved');
-        },
-        onArgsChanged: function (args) {
-            var currPage = pageInstances[currPageId];
-            if (currPage && currPage.shown){
-                currPage.onRouteChanged(args);
-            }
-            logger.log('onArgsChanged', args);
-        }
-    });
-
 
 })(window.app);

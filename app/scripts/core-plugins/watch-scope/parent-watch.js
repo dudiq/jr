@@ -105,6 +105,9 @@
             var path = obj.path;
             var name = obj.name;
             var subData = obj.data;
+            if (path.indexOf(':') != -1){
+                logger.error('trying to define variable name with undeclared syntax');
+            }
             obj = null;
 
             var ChildWatcher = watchScope(name);

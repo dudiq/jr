@@ -26,7 +26,7 @@
 (function(){
     var app = window.app;
     var helper = app('helper');
-    var errors = app('errors');
+    var logger = app('logger')('suspend');
 
     // return arguments as array
     var getArgs = helper.getArgs;
@@ -63,7 +63,7 @@
                 warningHave = true;
             }
         }
-        warningHave && errors.warning('suspend', 'some of callback is not defined? is it ok?');
+        warningHave && logger.warning('suspend', 'some of callback is not defined? is it ok?');
     }
 
     function callStop(args){
@@ -234,7 +234,6 @@
 
 
     function makeSuspend(){
-        /*jshint -W055*/
         return new suspend();
     }
 

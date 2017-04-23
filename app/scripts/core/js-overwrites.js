@@ -1,12 +1,11 @@
 // it's just define some methods, if it not defined
-/* jshint ignore:start */
 if (!Array.prototype.indexOf) {
     Array.prototype.indexOf = function (elt /*, from*/) {
         var len = this.length >>> 0;
 
         var from = Number(arguments[1]) || 0;
         from = (from < 0)
-            ? Math.ceil(from) // jshint ignore:line // jshint ignore:line
+            ? Math.ceil(from) 
             : Math.floor(from);
         if (from < 0)
             from += len;

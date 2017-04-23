@@ -55,6 +55,25 @@ module.exports = function (grunt) {
         }
     }
 
+    function collectFiles(filesForProcess, len, outputDir, files) {
+        for (var i = 0, l = files.length; i < l; i++){
+            var file = files[i];
+            var outFilePath = outputDir + file.substr(len);
+            var outFile = getPathWithoutExt(outFilePath) + '.css';
+            var item = {
+                fromFile: file,
+                outFile: outFile
+            };
+            filesForProcess.push(item);
+        }
+    }
+
+    function syncFormEach(arr, cb) {
+        for (var i = 0, l = arr.length; i < l; i++){
+            cb(arr[i], i);
+        }
+    }
+
     grunt.registerMultiTask('sass', 'Compile Sass to CSS', function () {
         var done = this.async();
         var opt = this.options({});
@@ -63,14 +82,25 @@ module.exports = function (grunt) {
         (libOpt.precision === undefined) && (libOpt.precision = 10);
 
         var outputDir = opt.outDir;
-        var sourceFiles = opt.sassDir + opt.files;
-        var len = opt.sassDir.length;
-        var files = grunt.file.expand({ filter: 'isFile'}, sourceFiles);
+        var inputDirs = opt.sassDir;
+        var filesForProcess = [];
 
-        asyncForEach(files, function(file, index, next){
-            var outFile = outputDir + file.substr(len);
-            outFile = getPathWithoutExt(outFile) + '.css';
-            doProcessSass(file, outFile, libOpt, next);
+        grunt.log.writeln('--- collect folders');
+        syncFormEach(inputDirs, function (val) {
+            if (val){
+                grunt.log.writeln(val);
+                var sourceFiles = val + opt.files;
+                var len = val.length;
+                var files = grunt.file.expand({ filter: 'isFile'}, sourceFiles);
+                collectFiles(filesForProcess, len, outputDir, files);
+            }
+        });
+
+        grunt.log.writeln('--- parsing files');
+        asyncForEach(filesForProcess, function(file, index, next){
+            var outFile = file.outFile;
+            var fromFile = file.fromFile;
+            doProcessSass(fromFile, outFile, libOpt, next);
         }, done);
     });
 };

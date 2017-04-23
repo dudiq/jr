@@ -9,6 +9,10 @@
  * */
 
 (function(app){
+    app.version = '0.4.1';
+    app.prefix = 'jr-';
+
+    var logger = app('logger')('app');
     var broadcast = app('broadcast');
     var systemEvs = broadcast.events('system', {
         onStartBegin: 'app-start-begin',
@@ -28,11 +32,11 @@
     // awaiting to start app. for example need load views, before run
     //
     // this method must be run before app started ( helper.onStartEnd() ). else it will be just simple function(){}
-    app.wait = function(){
+    app.wait = function(name){
         var pos = waitCallbacks.length;
         var callback;
         if (app.started){
-            app('errors').info('app', 'app.wait called after started app, is it ok?');
+            logger.info('app', 'app.wait called after started app, is it ok?');
             callback = function(){
                 //no need to start app again
                 //wait was called before app start
@@ -43,8 +47,21 @@
                 start();
             };
         }
+        callback._name = name;
         waitCallbacks.push(callback);
         return callback;
+    };
+
+    // for debug only
+    app._getWaitCallbacksNames = function () {
+        var ret = [];
+        for (var i = 0, l = waitCallbacks.length; i < l; i++){
+            var cb = waitCallbacks[i];
+            if (cb){
+                ret.push(cb._name);
+            }
+        }
+        return ret.join(',');
     };
 
     // for getting modules as callback

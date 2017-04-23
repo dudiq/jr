@@ -1,6 +1,5 @@
 (function(){
     var app = window.app;
-    var navi = app('navigation');
     var route = app('route');
     var helper = app('helper');
     var broadcast = app('broadcast');
@@ -30,6 +29,10 @@
     }
 
     function RouteCmdClass(params){
+        if (! (this instanceof RouteCmdClass)){
+            // for old way define route commander
+            return new RouteCmdClass(params);
+        }
         var pageId = params.pageId;
         if (pageId && !helper.isArray(pageId)){
             pageId = [pageId];
@@ -208,10 +211,10 @@
         }
 
         var removed = {};
-        for (var key in activeKeys){
-            if (!keys.hasOwnProperty(key)){
-                delete activeKeys[key];
-                removed[key] = true;
+        for (var sKey in activeKeys){
+            if (!keys.hasOwnProperty(sKey)){
+                delete activeKeys[sKey];
+                removed[sKey] = true;
             }
         }
 

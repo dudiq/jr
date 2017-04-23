@@ -1,6 +1,6 @@
 (function(){
     var app = window.app;
-    var errors = app('errors');
+    var logger = app('logger')('gestures');
 
     var collection = {};
 
@@ -8,7 +8,7 @@
         if (newGes){
             // setter
             if (collection[name]){
-                errors.error('gestures', 'gesture "' + name +'" already exists!');
+                logger.error('gesture "' + name +'" already exists!');
             } else {
                 collection[name] = newGes;
             }

@@ -1,125 +1,179 @@
 'use strict';
 
-var indexParser = require('./lib/index-html-parser');
-var replaceViews = require('./lib/replace-views');
+var indexParserLib = require('./lib/index-html-parser');
+var replaceViewsLib = require('./lib/replace-views');
+var indexTypes = indexParserLib.types;
+
+function getMinModules(grunt) {
+    var minifyFlag = grunt.option('minify');
+    var ret = false;
+    if (typeof minifyFlag == "string"){
+        var list = minifyFlag.split(',');
+        if (list.length){
+            ret = {};
+            list.map(function (item) {
+                ret[item] = true;
+            });
+        }
+    }
+    return ret;
+}
 
 module.exports = function (grunt) {
 
-    function getOptMap(optionName){
-        var excludedModules = {};
-        var excludedStr = grunt.option(optionName) || '';
-        var exList = excludedStr.split(',');
-        for (var i = 0, l = exList.length; i < l; i++){
-            var item = exList[i];
-            if (item){
-                excludedModules[exList[i]] = true;
-            }
-        }
-        return excludedModules;
-    }
-
-    function fillObjByArr(obj, arr2){
-        for (var i = 0, l = arr2.length; i < l; i++){
-            var item = arr2[i];
-            if (item.indexOf('.html') == -1 && item[item.length - 1] != '/'){
-                // fix folder set
-                item = item + '/';
-            }
-            obj[item] = true;
-        }
-    }
-
-    function getExcludedViews(units){
-        var ex = units.excludes;
-        var exViews = {};
-        for (var i = 0, l = units.length; i < l; i++){
-            var modules = units[i].modules();
-            for (var k = 0, j = modules.length; k < j; k++){
-                var mod = modules[k];
-                var name = mod.name();
-                if (ex[name]){
-                    var views = mod.views();
-                    fillObjByArr(exViews, views);
-                }
-            }
-        }
-        return exViews;
-    }
-
-    function removeFilesFromUnits(source, files){
+    function processExUnitFiles(source, files){
         for (var i = 0, l = files.length; i < l; i++){
             var file = files[i];
-            grunt.file.delete(source + '/' + file);
+            var path = source + '/' + file;
+            // grunt.file.delete(path);
+            // not delete file, just create empty, for do not showing errors in console
+            grunt.file.write(path, '');
         }
     }
 
-    function removeFilesByType(source, units, type){
+    function processExcludes(source, units, type){
         for (var i = 0, l = units.length; i < l; i++){
             var unit = units[i];
             var files = unit[type]();
-            removeFilesFromUnits(source, files);
+            processExUnitFiles(source, files);
         }
     }
-    
-    function setUglifyJsTask(dist, units){
+
+    function fillTaskValues(taskName, params){
+        var taskType =  params.type;
+        var dest = params.dest;
+        var units = params.units;
+        var modulesForMinify = params.modulesForMinify;
+
         var files = {};
-        for (var i = 0, l = units.length; i < l; i++){
-            var unit = units[i];
+        var replaceAll = !modulesForMinify;
+        units.map(function (unit) {
             var fType = unit.fileType();
-            if (fType == 'js'){
-                var key = unit.fileName();
-                var path = dist + '/' + key;
-                files[path] = path;
+            if (fType == taskType){
+                if (replaceAll){
+                    putFileToList(unit, dest, files);
+                } else {
+                    // single modules replace
+                    var modules = unit.modules();
+                    modules.map(function (module) {
+                        putFileToList(module, dest, files);
+                    });
+                }
             }
-        }
-        var uglifyOptions = grunt.config('uglify');
-        uglifyOptions.dist.files = files;
+        });
+        var taskOptions = grunt.config(taskName);
+        taskOptions.dist.files = files;
 
-        grunt.config('uglify', uglifyOptions);
+        grunt.config(taskName, taskOptions);
+    }
+    function putFileToList(unit, dist, files){
+        var key = unit.fileName();
+        var path = dist + '/' + key;
+        files[path] = path;
     }
 
-    function setCssMinTask(dist, units){
+    function setOptionForConcat(params) {
+        var source = params.source;
+        var dest = params.dest;
+        var units = params.units;
+        var modulesForMinify = params.modulesForMinify;
+
+        var replaceAll = !modulesForMinify;
         var files = {};
-        for (var i = 0, l = units.length; i < l; i++){
-            var unit = units[i];
-            var fType = unit.fileType();
-            if (fType == 'css'){
-                var key = unit.fileName();
-                var path = dist + '/' + key;
-                files[path] = path;
+        units.map(function (unit) {
+            if (replaceAll){
+                var key = dest + '/' + unit.fileName();
+                var pFiles = unit.processedFiles();
+                files[key] = getFilesForKey(source, pFiles);
+            } else {
+                // single
+                var modules = unit.modules();
+                modules.map(function (mod) {
+                    var key = dest + '/' + mod.fileName();
+                    var modFiles = mod.files();
+                    files[key] = getFilesForKey(source, modFiles);
+                });
             }
-        }
-        var cssminOptions = grunt.config('cssmin');
-        cssminOptions.dist.files = files;
+        });
 
-        grunt.config('cssmin', cssminOptions);
-    }
-
-    function getProcessedMapFiles(source, dest, units){
-        var files = {};
-
-        for (var i = 0, l = units.length; i < l; i++) {
-            var unit = units[i];
-            var key = dest + '/' + unit.fileName();
-            var pFiles = unit.processedFiles();
-            var filesKey = [];
-            for (var j = 0, k = pFiles.length; j < k; j++){
-                var fileKey = source + '/' + pFiles[j];
-                filesKey.push(fileKey);
-            }
-            files[key] = filesKey;
-        }
-        return files;
-    }
-
-    function setOptionForConcat(source, dest, units) {
-        var files = getProcessedMapFiles(source, dest, units);
         var options = grunt.config('concat');
         options.dist.files = files;
 
         grunt.config('concat', options);
     }
-    
+
+    function setCopyOptions(params) {
+        var source = params.source;
+        var dest = params.dest;
+        var units = params.units;
+        var modulesForMinify = params.modulesForMinify;
+
+        if (modulesForMinify){
+            var options = grunt.config('copy');
+            var filesInTask = options.minifiedModules.files;
+            units.map(function (unit) {
+                var pFiles = unit.processedFiles();
+                var fileToModMap = unit.filesMap();
+
+                pFiles.map(function (pFileSingle) {
+
+                    var node = fileToModMap[pFileSingle];
+                    var module = node.module;
+                    var modName = module.name();
+                    if (!modulesForMinify[modName]){
+                        var fileSrc = source + '/' + pFileSingle;
+                        var fileDest = dest + '/' + pFileSingle;
+                        var item = {
+                            // expand: true,
+                            follow: true,
+                            src: fileSrc,
+                            dest: fileDest
+                        };
+                        filesInTask.push(item);
+                    }
+                });
+
+            });
+            grunt.config('copy', options);
+        }
+    }
+
+    function getFilesForKey(source, pFiles) {
+        var filesKey = [];
+        for (var j = 0, k = pFiles.length; j < k; j++){
+            var fileKey = source + '/' + pFiles[j];
+            filesKey.push(fileKey);
+        }
+        return filesKey;
+    }
+
+    function processMinifyData(dest, source, units, modulesForMinify) {
+        fillTaskValues('uglify', {
+            type: indexTypes.js,
+            dest: dest,
+            units: units,
+            modulesForMinify: modulesForMinify
+        });
+        fillTaskValues('cssmin', {
+            type: indexTypes.css,
+            dest: dest,
+            units: units,
+            modulesForMinify: modulesForMinify
+        });
+        setOptionForConcat({
+            source: source,
+            dest: dest,
+            units: units,
+            modulesForMinify: modulesForMinify
+        });
+        setCopyOptions({
+            source: source,
+            dest: dest,
+            units: units,
+            modulesForMinify: modulesForMinify
+        });
+    }
+
     grunt.registerMultiTask('minify', 'Processing MINIFY for build', function () {
         grunt.log.subhead(' > start processing MINIFY actions');
         /**
@@ -128,7 +182,7 @@ module.exports = function (grunt) {
          * - `postcss`
          * - copy js, views, images, fonts, etc.. to .tmp dir
          * - copy index.html
-         * - `insertversion`
+         * - `insertVersion`
          *
          * process task
          * - parse index.html and join js, css files by modules
@@ -146,61 +200,57 @@ module.exports = function (grunt) {
         var source = this.data.src;
         var dest = this.data.dest;
         var replaceViewsOpt = this.data.replaceViews;
-        var excludedModules = getOptMap("exclude");
-        var includedModules = getOptMap("include");
 
-        var doMinifyCode = (grunt.option("minify") !== false); // true by default
+        var minifyFlag = grunt.option("minify");
         var doRevFiles = grunt.option("rev-files");
-        var minifyJs = (grunt.option('minifyJS') !== false); // true by default
+        var buildType = this.data.buildType;
 
-        if (!doRevFiles && doRevFiles !== false){
+        var doMinifyCode = (minifyFlag === false) ? false : true;
+
+        if (!doRevFiles && doRevFiles !== false &&
+            (minifyFlag === true || minifyFlag === undefined)){
             // for not defined `doRevFiles` use `doMinifyCode` flag value
             doRevFiles = doMinifyCode;
         }
 
         var tasks = [];
 
-        var fileOptions = {
-            encoding: 'utf8'
+        var inFlags = {
+            '--build-type=': buildType
         };
 
-        var indexHtml = grunt.file.read(source + '/index.html', fileOptions);
-        var parserOptions = {
-            excludes: excludedModules,
-            includes: includedModules,
-            excludeAll: (grunt.option("excludeAll") === true) // false by default
-        };
-        var units = indexParser(indexHtml, parserOptions);
+        var modulesForMinify = getMinModules(grunt);
+        var units = indexParserLib(grunt, {
+            source: source,
+            inFlags: inFlags,
+            modulesForMinify: modulesForMinify
+        });
+        replaceViewsLib(grunt, replaceViewsOpt, units);
 
-
-        var exViews = getExcludedViews(units);
-        replaceViews(replaceViewsOpt, exViews);
-        removeFilesByType(source, units, 'exFiles');
+        processExcludes(source, units, 'exFiles');
 
         if (doMinifyCode){
+            grunt.log.writeln('--- Started minify');
             var newHtml = units.html;
             grunt.file.write(source + '/index.html', newHtml);
 
-            minifyJs && setUglifyJsTask(dest, units);
-
-            setCssMinTask(dest, units);
-            setOptionForConcat(source, dest, units);
-            tasks.push('concat:dist');
-
-            grunt.log.writeln('--- Started minify');
+            processMinifyData(dest, source, units, modulesForMinify);
 
             tasks.push('concat:dist', 'uglify:dist', 'cssmin:dist');
+            if (modulesForMinify){
+                tasks.push('copy:minifiedModules');
+            }
         } else {
             // just copy all as is
-            tasks.push('copy:no_minify');
+            tasks.push('copy:withoutMinify');
         }
 
-        tasks.push('copy:root_tmp_files');
+        tasks.push('copy:rootFilesFromTmp');
 
         if (doRevFiles){
             // :todo last task. create rev files, update all files includes with new rev files using usemin task from yeoman
             //tasks.push('filerev:dist');
-            tasks.push('replace-after-rev');
+            tasks.push('replaceAfterRev');
         }
 
         grunt.task.run(tasks);

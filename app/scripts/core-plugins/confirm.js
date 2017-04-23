@@ -3,6 +3,7 @@
 
     var helper = app('helper');
     var translate = app('translate');
+    var templater = app('templater');
     var cordovaDevice = app('cordova-device');
     var deviceOs = app('device-os');
 
@@ -26,17 +27,19 @@
     }
 
     confirmPlugin.alert = function(msg){
+        var tMsg = templater.translate(msg);
         var title = translate.getTranslate('title');
         delay(function(){
             if (isNative && navigatorNotify) {
-                navigatorNotify.alert(msg, function(){}, title);
+                navigatorNotify.alert(tMsg, function(){}, title);
             } else {
-                alert(msg);
+                alert(tMsg);
             }
         });
     };
 
     confirmPlugin.confirm = function(msg, btns, onDone, onCancel){
+        var tMsg = templater.translate(msg);
         var title = translate.getTranslate('title');
         var yesMsg = translate.getTranslate('confirm.yes');
         var noMsg = translate.getTranslate('confirm.no');
@@ -49,14 +52,14 @@
         delay(function() {
             if (isNative && navigatorNotify) {
                 fixWindows8Position(true);
-                navigatorNotify.confirm(msg, function(btn){
+                navigatorNotify.confirm(tMsg, function(btn){
                     fixWindows8Position(false);
                     (btn == 1) ? onDone() : onCancel && onCancel();
                     onDone = null;
                     onCancel = null;
                 }, title, btns);
             } else {
-                if (windowConfirm(msg)) {
+                if (windowConfirm(tMsg)) {
                     onDone();
                 } else {
                     onCancel && onCancel();
@@ -68,6 +71,7 @@
     };
 
     confirmPlugin.prompt = function(msg, btns, onDone, onCancel){
+        var tMsg = templater.translate(msg);
         var title = translate.getTranslate('title');
         var yesMsg = translate.getTranslate('prompt.add');
         var noMsg = translate.getTranslate('prompt.cancel');
@@ -80,7 +84,7 @@
         delay(function(){
             if (isNative && navigatorNotify) {
                 fixWindows8Position(true);
-                navigatorNotify.prompt(msg, function(res){
+                navigatorNotify.prompt(tMsg, function(res){
                     fixWindows8Position(false);
                     if (res.buttonIndex == 1){
                         onDone(res.input1);
@@ -92,7 +96,7 @@
                 }, title, btns, '');
             } else {
                 var defStr = "";
-                var res = windowPrompt(msg, defStr);
+                var res = windowPrompt(tMsg, defStr);
                 (res !== null) ? onDone(res) : (onCancel && onCancel());
                 onDone = null;
             }
@@ -102,7 +106,7 @@
 
     function fixWindows8Position(showLast){
         if (isWindows){
-            !$body && ($body = $(document.body));
+            !$body && ($body = app('top-dom-elements').getBody());
             if (showLast){
                 $body.addClass(windowClassName);
             } else{

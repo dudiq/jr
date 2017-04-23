@@ -60,9 +60,10 @@
     function getBBVersion(userAgent){
         userAgent = userAgent.toLowerCase();
         var ret = '';
+        var Verposition;
         if (userAgent.indexOf("blackberry") >= 0) {
             if (userAgent.indexOf("version/") >= 0) { // ***User Agent in BlackBerry 6 and BlackBerry 7
-                var Verposition = userAgent.indexOf("version/") + 8;
+                Verposition = userAgent.indexOf("version/") + 8;
                 //document.write("Jorgesys  BB OS Version :: " + ua.substring(Verposition, Verposition + 3));
                 ret = userAgent.substring(Verposition, Verposition + 3);
             } else {// ***User Agent in BlackBerry Device Software 4.2 to 5.0
@@ -71,7 +72,7 @@
                 ret = SplitUA[1].substring(0, 3);
             }
         } else if (userAgent.indexOf('rim tablet') != -1) {
-            var Verposition = userAgent.indexOf("version/") + 8;
+            Verposition = userAgent.indexOf("version/") + 8;
             //document.write("Jorgesys  BB OS Version :: " + ua.substring(Verposition, Verposition + 3));
             ret = userAgent.substring(Verposition, Verposition + 3);
         } else {

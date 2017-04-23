@@ -1,34 +1,34 @@
 'use strict';
-
 /*
-* options:
-*
+ * options:
+ *
  `grunt server` - run developer server
-    `--port-reload=9000:35729` - set port:reloadPort for `grunt server` cmd
-    `--hostname=0.0.0.0` - set host IP. if value is 0.0.0.0, this server will be accessed from outside
+ `--server-port=9000` - set port for `grunt server` cmd, where localhost will be opened `localhost:9000` for example
+ `--hostname=0.0.0.0` - set host IP. if value is 0.0.0.0, this server will be accessed from outside
 
 
  `grunt build` - compile all src to `www` folder for phonegap build
 
-     `--build-type=dev` - default value. for DEVELOPMENT. used `dev-config.js`
-     `--build-type=release` - for PRODUCTION. used `dist-config.js`
-     `--build-type=corporate` - for CORPORATE. used `corp-config.js`
+ `--build-type=dev` - default value. for DEVELOPMENT. used `dev-config.js`
+ `--build-type=release` - for PRODUCTION. used `dist-config.js`
+ `--build-type=corporate` - for CORPORATE. used `corp-config.js`
 
-     `--build-version=x.x.x` - for define custom version of app. instead `package.json:version` field value
-     `--minify=false` - `true` by default. minify js, css files
-     `--rev-files=false` - `true` by default. static asset revisioning through file content hash
-     `--config-mixin=my-config.js` - for define own my-config.js file for build. keys and values from config-mixin will be used as primary.
-     `--web=true` - `false` by default. make web app, NOT cordova version.
-     `--config-xml=my-config.xml` - empty by default. for custom config.xml using
-     `--copy-static=false` - `true` by default. copy from `www-static/**` to `www/`
-     `--cordova-id=just.my.id` - set `id` value to config.xml. instead `package.json:cordova-id` field value
+ `--build-version=x.x.x` - for define custom version of app. instead `package.json:version` field value
+ `--minify=false|general,topStyles,diag,utests,etc...` - `true` by default. minify js, css files. also can be used with list of modules to minify
+ `--rev-files=false` - `true` by default. static asset revisioning through file content hash
+ `--config-mixin=my-config.js` - for define own my-config.js file for build. keys and values from config-mixin will be used as primary.
+ `--web=true` - `false` by default. make web app, NOT cordova version.
+ `--config-xml=my-config.xml` - empty by default. for custom config.xml using
+ `--copy-static=false` - `true` by default. copy from `www-static/**` to `www/`
+ `--cordova-id=just.my.id` - set `id` value to config.xml. instead `package.json:cordova-id` field value
 
-     `--exclude=module1,module2,etc...` - exclude modules for build
-     `--excludeAll=true` - `false` by default. exclude all defined modules. flag `--exclude` will be dropped.
+ `--include=module1,module5,etc...` - include modules
+ `--exclude=module1,module2,etc...` - exclude modules for build
+ `--excludeAll=true` - `false` by default. exclude all defined modules. flag `--exclude` will be dropped.
 
  *
-*
-* */
+ *
+ * */
 
 module.exports = function (grunt) {
     require('time-grunt')(grunt);
@@ -37,45 +37,94 @@ module.exports = function (grunt) {
     // load files from /tasks/* folder
     grunt.loadTasks('tasks');
 
-    // for production
-    var buildType = grunt.option("build-type");
+    var buildTypes = {
+        dev: 'dev',
+        release: 'release',
+        corporate: 'corporate'
+    };
+
+    var BT_DEV = buildTypes.dev;
+    var BT_CORPORATE = buildTypes.corporate;
+    var BT_RELEASE = buildTypes.release;
+    var PATH_APP = 'app';
+
+    var buildType = grunt.option("build-type") || BT_DEV;
+    if (grunt.option('release')){
+        // old keys support
+        buildType = BT_RELEASE;
+    }
+
+    var corporateName = grunt.option('corporate');
+    var corpPath = '';
+    if (corporateName){
+        corpPath = 'corporate/' + corporateName + '/app/';
+        grunt.log.write('using corporate "' + corporateName + '"');
+        grunt.log.writeln(' ');
+    }
+
+
+    var ownConfig;
+    if (grunt.option('config')){
+        //old keys
+        ownConfig = grunt.option('config');
+    }
 
     var copyStatic = (grunt.option("copy-static") !== false); // true by default
 
     var isWebVersion = grunt.option('web');
 
-    var configMixin = grunt.option("config-mixin");
+    var configMixinFile = grunt.option("config-mixin");
     var hostname = grunt.option("hostname") || '0.0.0.0';
 
     var configXml = grunt.option("config-xml") || 'config.xml';
 
 
     var port = 9000;
-    var reloadPort = 35729;
 
-    var portReload = grunt.option('port-reload');
-    if (portReload){
-        var prePortReload = portReload.split(':');
-        port = prePortReload[0];
-        reloadPort = prePortReload[1];
+    var serverPortOption = grunt.option('server-port');
+    if (serverPortOption){
+        port = serverPortOption;
+    }
+
+    function getPathForExtendVersion(configApp, corpPath) {
+        var extendFilesByBuildType = {};
+        extendFilesByBuildType[BT_DEV] = configApp + '/config-xml-extenders/dev/';
+        extendFilesByBuildType[BT_RELEASE] = configApp + '/config-xml-extenders/release/';
+        if (corpPath){
+            extendFilesByBuildType[BT_CORPORATE] = corpPath + 'config-xml-extenders/';
+        } else {
+            extendFilesByBuildType[BT_CORPORATE] = extendFilesByBuildType[BT_DEV];
+        }
+        var ret = extendFilesByBuildType[buildType];
+        if (!ret){
+            // use dev by default
+            ret = extendFilesByBuildType[BT_DEV];
+        }
+        return ret;
     }
 
     grunt.initConfig({
         jrconfig: {
             // configurable paths
-            app: 'app',
+            app: PATH_APP,
+            corporate: corpPath,
             dist: 'www',
             tmp: '.tmp'
         },
         notify: {
             postcss: {
                 options: {
-                    message: 'update completed'
+                    message: 'css updated'
                 }
             },
             build: {
                 options: {
                     message: 'build completed'
+                }
+            },
+            views: {
+                options: {
+                    message: 'views updated'
                 }
             }
         },
@@ -86,19 +135,30 @@ module.exports = function (grunt) {
             },
             styles: {
                 files: ['<%= jrconfig.app %>/styles/{,**/}*.css'],
-                tasks: ['copy:styles', 'postcss']
+                tasks: ['copy:compiledStyles', 'postcss']
             },
-            livereload: {
+            views: {
+                files: ['<%= jrconfig.app %>/views/**'],
+                tasks: ['updateViews', 'notify:views']
+            }
+        },
+        'updateViews': {
+            dev: {
                 options: {
-                    livereload: '<%= connect.options.livereload %>'
-                },
-                files: []
+                    src: '<%= jrconfig.app %>',
+                    from: '<%= jrconfig.app %>/scripts/core/templater-data.js',
+                    to: '<%= jrconfig.tmp %>/scripts/core/templater-data.js',
+                    replaceViews: {
+                        whereReplace: '<%= jrconfig.tmp %>/scripts/core/templater-data.js',
+                        viewsSrc: '<%= jrconfig.app %>/views/'
+                    }
+                }
             }
         },
         postcss: {
             options: {
                 processors: [
-                    require('autoprefixer')({browsers: ['> 5%', 'last 2 versions']}) // add vendor prefixes
+                    require('autoprefixer')({browsers: ['> 2%', 'last 5 versions']}) // add vendor prefixes
                 ]
             },
             dist: {
@@ -116,7 +176,7 @@ module.exports = function (grunt) {
             options: {
                 port: port,
                 hostname: hostname,
-                livereload: reloadPort
+                livereload: false //reloadPort
             },
             livereload: {
                 options: {
@@ -126,15 +186,10 @@ module.exports = function (grunt) {
                         '<%= jrconfig.app %>'
                     ]
                 }
-            },
-            dist: {
-                options: {
-                    base: '<%= jrconfig.dist %>'
-                }
             }
         },
         clean: {
-            def_configs: {
+            defaultConfigs: {
                 files: [
                     {
                         src: [
@@ -145,20 +200,11 @@ module.exports = function (grunt) {
                     }
                 ]
             },
-            cordova_js: {
+            cordovaJsFile: {
                 files: [
                     {
                         src: [
                             '<%= jrconfig.tmp %>/www/cordova.js'
-                        ]
-                    }
-                ]
-            },
-            config_xml: {
-                files:[
-                    {
-                        src: [
-                            '<%= jrconfig.tmp %>/www/config.xml'
                         ]
                     }
                 ]
@@ -179,7 +225,7 @@ module.exports = function (grunt) {
         },
         sass: {
             options: {
-                sassDir: '<%= jrconfig.app %>/styles/',
+                sassDir: ['<%= jrconfig.app %>/styles/', corpPath ? corpPath + 'styles/' : ''],
                 files: '**',
                 outDir: '<%= jrconfig.tmp %>/styles/',
                 libOptions: {}
@@ -187,32 +233,12 @@ module.exports = function (grunt) {
             dist: {},
             server: {}
         },
-        compass: {
-            options: {
-                sassDir: '<%= jrconfig.app %>/styles',
-                cssDir: '<%= jrconfig.tmp %>/styles',
-                generatedImagesDir: '<%= jrconfig.tmp %>/images/generated',
-                imagesDir: '<%= jrconfig.app %>/images',
-                javascriptsDir: '<%= jrconfig.app %>/scripts',
-                fontsDir: '<%= jrconfig.app %>/fonts',
-                //importPath: '<%= jrconfig.app %>/bower_components',
-                httpImagesPath: '/images',
-                httpGeneratedImagesPath: '/images/generated',
-                httpFontsPath: '/fonts',
-                relativeAssets: false
-            },
-            dist: {},
-            server: {
-                options: {
-                    debugInfo: true
-                }
-            }
-        },
         copy: {
-            www_static: {
+            wwwStatic: {
                 files: [
                     {
                         expand: true,
+                        follow: true,
                         cwd: 'www-static',
                         dest: '<%= jrconfig.dist %>',
                         src: [
@@ -222,31 +248,70 @@ module.exports = function (grunt) {
                 ]
             },
 
-            config_xml: {
+            cordovaConfigXml: {
                 src: '<%= jrconfig.app %>/' + configXml,
-                dest: '<%= jrconfig.tmp %>/www/config.xml'
+                dest: 'config.xml'
             },
 
-            config_dist: {
-                src: '<%= jrconfig.app %>/scripts/dist-config.js',
+            configDist: {
+                src: '<%= jrconfig.app %>/scripts/' + (ownConfig ? ownConfig : 'dist-config.js'),
                 dest: '<%= jrconfig.tmp %>/www/scripts/config.js'
             },
-            config_dev: {
-                src: '<%= jrconfig.app %>/scripts/dev-config.js',
+            configDev: {
+                src: '<%= jrconfig.app %>/scripts/' + (ownConfig ? ownConfig : 'dev-config.js'),
                 dest: '<%= jrconfig.tmp %>/www/scripts/config.js'
             },
-            config_corp: {
-                src: '<%= jrconfig.app %>/scripts/corp-config.js',
+            configCorporate: {
+                src: '<%= jrconfig.app %>/scripts/' + (ownConfig ? ownConfig : 'corp-config.js'),
                 dest: '<%= jrconfig.tmp %>/www/scripts/config.js'
             },
-            config_mixin: {
-                src: '<%= jrconfig.app %>/scripts/configs/' + configMixin,
+            mixinConfigFile: {
+                src: '<%= jrconfig.app %>/scripts/configs/' + configMixinFile,
                 dest: '<%= jrconfig.tmp %>/www/scripts/config-mixin.js'
             },
-            no_minify: {
+            corporate: {
+                files: [
+                    {
+                        src: '<%= jrconfig.corporate %>/configs/config-mixin.js',
+                        dest: '<%= jrconfig.tmp %>/www/scripts/config-mixin.js'
+                    },
+                    {
+                        expand: true,
+                        follow: true,
+                        cwd: '<%= jrconfig.corporate %>',
+                        dest: '<%= jrconfig.dist %>',
+                        src: [
+                            'images/**'
+                        ]
+                    },
+                    {
+                        expand: true,
+                        follow: true,
+                        cwd: '<%= jrconfig.corporate %>',
+                        dest: '<%= jrconfig.tmp %>/www',
+                        src: [
+                            'scripts/**'
+                        ]
+                    },
+                    {
+                        expand: true,
+                        follow: true,
+                        cwd: '<%= jrconfig.corporate %>/styles',
+                        dest: '<%= jrconfig.tmp %>/www/styles',
+                        src: '{,**/}**.css'
+                    }
+                ]
+            },
+            minifiedModules: {
+                //filled in minify task
+                files: []
+            },
+            withoutMinify: {
+                // called from minify task
                 files: [
                     {
                         expand: true,
+                        follow: true,
                         cwd: '<%= jrconfig.app %>',
                         dest: '<%= jrconfig.dist %>',
                         src: [
@@ -257,6 +322,7 @@ module.exports = function (grunt) {
                     },
                     {
                         expand: true,
+                        follow: true,
                         cwd: '<%= jrconfig.tmp %>/www',
                         dest: '<%= jrconfig.dist %>',
                         src: [
@@ -269,44 +335,51 @@ module.exports = function (grunt) {
             },
             js: {
                 expand: true,
+                follow: true,
                 cwd: '<%= jrconfig.app %>',
                 dest: '<%= jrconfig.tmp %>/www/',
                 src: [
                     '{,**/}**.js'
                 ]
             },
-            no_need_process_styles: {
+            stylesOnlyCSS: {
                 expand: true,
+                follow: true,
                 cwd: '<%= jrconfig.app %>/styles',
                 dest: '<%= jrconfig.tmp %>/styles/',
                 src: '{,**/}**.css'
             },
-            styles: {
+            compiledStyles: {
                 expand: true,
+                follow: true,
                 cwd: '<%= jrconfig.tmp %>/styles/',
                 dest: '<%= jrconfig.tmp %>/www/styles/',
                 src: '{,**/}**.css'
             },
             images: {
                 expand: true,
+                follow: true,
                 cwd: '<%= jrconfig.app %>/images',
                 dest: '<%= jrconfig.dist %>/images',
                 src: '{,**/}**.{png,jpg,jpeg,gif,webp,svg}'
             },
             fonts: {
                 expand: true,
+                follow: true,
                 cwd: '<%= jrconfig.app %>/fonts',
                 dest: '<%= jrconfig.dist %>/fonts',
                 src: '**'
             },
             views: {
                 expand: true,
+                follow: true,
                 cwd: '<%= jrconfig.app %>/views',
                 dest: '<%= jrconfig.tmp %>/www/views',
                 src: '**'
             },
-            root_tmp_files: {
+            rootFilesFromTmp: {
                 expand: true,
+                follow: true,
                 dot: false,
                 cwd: '<%= jrconfig.tmp %>/www',
                 dest: '<%= jrconfig.dist %>',
@@ -314,8 +387,9 @@ module.exports = function (grunt) {
                     '*'
                 ]
             },
-            dist_files: {
+            otherFiles: {
                 expand: true,
+                follow: true,
                 dot: true,
                 cwd: '<%= jrconfig.app %>',
                 dest: '<%= jrconfig.tmp %>/www',
@@ -325,15 +399,13 @@ module.exports = function (grunt) {
                     '.htaccess'
                 ]
             }
-
-
         },
         concat: {
             dist: {
                 files: {} // will be redefined in minify task
             }
         },
-        'replace-after-rev': {
+        replaceAfterRev: {
             dist: {
                 options: {
                     method: 'md5',
@@ -345,7 +417,7 @@ module.exports = function (grunt) {
                         where: 'styles/**',
                         list: ['fonts/**', 'images/**']
                     },
-                        {
+                    {
                         where: ['index.html', 'robots.txt'],
                         list: ['styles/**', 'scripts/**']
                     }
@@ -366,58 +438,62 @@ module.exports = function (grunt) {
             dist: {
                 src: '<%= jrconfig.tmp %>/www',
                 dest: '<%= jrconfig.dist %>',
+                buildType: buildType,
                 replaceViews: {
-                    what: '<%= jrconfig.tmp %>/www/scripts/core/templater-data.js',
-                    where: '<%= jrconfig.tmp %>/www/views/'
+                    cleanSrc: true,
+                    whereReplace: '<%= jrconfig.tmp %>/www/scripts/core/templater-data.js',
+                    viewsSrc: '<%= jrconfig.tmp %>/www/views/'
                 }
             }
         },
-        insertversion:{
+        insertVersion:{
             dist: {
                 src: '<%= jrconfig.tmp %>/www/scripts/core-plugins/build-version.js',
-                parseXml: '<%= jrconfig.tmp %>/www/config.xml'
+                inputXmlPath: 'config.xml',
+                extendFilesPath: getPathForExtendVersion(PATH_APP, corpPath)
             }
+        },
+        iconsSplashes: {
+            dist: { }
         }
     });
 
     grunt.registerTask('server', function (target) {
-        if (target === 'dist') {
-            return grunt.task.run(['build', 'connect:dist:keepalive']);
-        }
-
         grunt.task.run([
             'clean:server',
             'sass:server',
-            'copy:styles',
+            'copy:compiledStyles',
+            'updateViews:dev',
             'postcss',
             'connect:livereload',
             'watch'
         ]);
     });
 
-    var defaultTasks = [
+    var defaultTasksForBuild = [
         // drop all
         'clean:dist',
 
         // prepare css
         'sass:dist',
-        'copy:no_need_process_styles',
+        'copy:stylesOnlyCSS',
         'postcss', // compiled to <%= jrconfig.tmp %>/styles
-        'copy:styles',
+        'copy:compiledStyles',
 
         // prepare others
         'copy:images',
         'copy:js',
         'copy:fonts',
         'copy:views',
-        'copy:dist_files',
-        'copy:config_xml',
-        'clean:def_configs',
-        'insertversion'
+        'copy:otherFiles',
+        'copy:cordovaConfigXml',
+        'copy:corporate',
+        'clean:defaultConfigs',
+        'insertVersion'
     ];
 
     grunt.registerTask('build', 'Default build', function () {
-        runTasks.call(this, defaultTasks);
+        runTasks.call(this, defaultTasksForBuild);
     });
 
     grunt.registerTask('default', [
@@ -428,23 +504,23 @@ module.exports = function (grunt) {
         // copy config.js to config.tmp
         var beforeTasks = [];
 
-        var mainConfig = 'DEV';
+        var mainConfigTitle = 'DEV';
         // prepare config.js as defined flags
-        if (buildType == 'release') {
-            beforeTasks.push('copy:config_dist');
-            mainConfig = 'PROD';
-        } else if (buildType == 'corporate'){
-            beforeTasks.push('copy:config_corp');
-            mainConfig = 'CORPORATE';
+        if (buildType == BT_RELEASE) {
+            beforeTasks.push('copy:configDist');
+            mainConfigTitle = 'PROD';
+        } else if (buildType == BT_CORPORATE){
+            beforeTasks.push('copy:configCorporate');
+            mainConfigTitle = 'CORPORATE';
         } else {
-            beforeTasks.push('copy:config_dev');
+            beforeTasks.push('copy:configDev');
         }
 
         grunt.log.write('using ');
-        grunt.log.write(mainConfig['yellow'].bold);
+        grunt.log.write(mainConfigTitle['yellow'].bold);
         grunt.log.writeln(' config');
 
-        configMixin && beforeTasks.push('copy:config_mixin');
+        configMixinFile && beforeTasks.push('copy:mixinConfigFile');
 
         // put them
         tasks.push.apply(tasks, beforeTasks);
@@ -454,15 +530,17 @@ module.exports = function (grunt) {
 
         defineCopyConfigs(tasks);
 
-        copyStatic && tasks.push('copy:www_static');
+        copyStatic && tasks.push('copy:wwwStatic');
 
-        // cleanup code for web version
-        var cleanTask = isWebVersion ? 'clean:config_xml' : 'clean:cordova_js';
-        tasks.push(cleanTask);
+        // cleanup code for mobile version
+        !isWebVersion && tasks.push('clean:cordovaJsFile');
 
         tasks.push('minify');
 
         //last task
+        tasks.push('updateViews:dev');
+        !isWebVersion && tasks.push('iconsSplashes');
+
         tasks.push('notify:build');
 
         var outStr = 'tasks for run: ';

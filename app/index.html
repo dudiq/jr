@@ -17,15 +17,25 @@
 
     <!-- unit(css, styles/styles.css) -->
 
-    <link rel="stylesheet" href="styles/jr-core/jr.css">
-    <link rel="stylesheet" href="styles/jr-core/jr-notify.css">
-    <link rel="stylesheet" href="styles/jr-core/jr-overflow.css">
-    <link rel="stylesheet" href="styles/jr-core/jr-page-popup.css">
-    <link rel="stylesheet" href="styles/jr-core/jr-swipes.css">
-    <link rel="stylesheet" href="styles/jr-core/jr-loading.css">
-    <link rel="stylesheet" href="styles/jr-core/jr-keyboard-popup.css">
-    <link rel="stylesheet" href="styles/jr-core/jr-fix-container.css">
-    <!-- endunit -->
+    <!-- module(jr) -->
+    <link rel="stylesheet" href="styles/jr/jr.css">
+    <link rel="stylesheet" href="styles/jr/jr-notify.css">
+    <link rel="stylesheet" href="styles/jr/jr-overflow.css">
+    <link rel="stylesheet" href="styles/jr/jr-page-popup.css">
+    <link rel="stylesheet" href="styles/jr/jr-swipes.css">
+    <link rel="stylesheet" href="styles/jr/jr-keyboard-popup.css">
+    <link rel="stylesheet" href="styles/jr/jr-fix-container.css">
+    <link rel="stylesheet" href="styles/jr/jr-loading.css">
+    <!-- endmodule -->
+
+    <!-- module(topStyles) -->
+
+    <link rel="stylesheet" href="styles/boot.css">
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/my-app.css">
+
+    <!-- endmodule -->
+
 
     <!-- unit(css, styles/styles2.css) -->
         <!-- module(myModuleName) -->
@@ -34,9 +44,6 @@
         <link rel="stylesheet" href="styles/pages/page-gesture.css">
 
         <!-- endmodule -->
-
-    <link rel="stylesheet" href="styles/main.css">
-    <link rel="stylesheet" href="styles/my-app.css">
 
 
     <!-- endunit -->
@@ -79,12 +86,11 @@
 
 <script src="scripts/core/main.js"></script>
 <script src="scripts/jr-config.js"></script>
-<script src="scripts/core/errors.js"></script>
+<script src="scripts/core/logger.js"></script>
 <script src="scripts/core/deprecate.js"></script>
 <script src="scripts/core/broadcast.js"></script>
 <script src="scripts/core/app.js"></script>
 <script src="scripts/core/helper.js"></script>
-<script src="scripts/core-plugins/mod-require.js"></script>
 <script src="scripts/core/cookie.js"></script>
 <script src="scripts/core/suspend.js"></script>
 <script src="scripts/core/browser-storage.js"></script>
@@ -92,18 +98,21 @@
 <script src="scripts/core/translate.js"></script>
 <script src="scripts/langs/ru.js"></script>
 <script src="scripts/langs/en.js"></script>
+<script src="scripts/core/translate-starter.js"></script>
 
 <script src="scripts/core/templater.js"></script>
 <script src="scripts/core/templater-data.js"></script>
 
-<script src="scripts/core/navigation.js"></script>
+<script src="scripts/core-plugins/mod-require.js"></script>
+<script src="scripts/core-plugins/on-callbacks.js"></script>
+<script src="scripts/core-plugins/top-dom-elements.js"></script>
+
 <script src="scripts/core/route.js"></script>
-
 <script src="scripts/core/pages.js"></script>
-
 <script src="scripts/core/page-auth.js"></script>
-
 <script src="scripts/core/page.js"></script>
+
+<script src="scripts/core/navigation.js"></script>
 
 <script src="scripts/core/http.js"></script>
 <script src="scripts/core/storage.js"></script>
@@ -120,24 +129,6 @@
 <script src="scripts/core-plugins/time-mod/en.js"></script>
 <script src="scripts/core-plugins/time-mod/ru.js"></script>
 <script src="scripts/core-plugins/build-version.js"></script>
-
-<script src="scripts/core-plugins/loading.js"></script>
-<script src="scripts/core-plugins/case-numbers.js"></script>
-<script src="scripts/core-plugins/device-os.js"></script>
-<script src="scripts/core-plugins/route-commander.js"></script>
-<script src="scripts/core-plugins/cordova-device.js"></script>
-<script src="scripts/core-plugins/notify.js"></script>
-<script src="scripts/core-plugins/overflow.js"></script>
-<script src="scripts/core-plugins/cookie-ls-mix-adapter.js"></script>
-<!--<script src="scripts/core-plugins/page-popup.js"></script>-->
-<script src="scripts/core-plugins/page-popup-modal.js"></script>
-<script src="scripts/core-plugins/keyboard-popup.js"></script>
-<script src="scripts/core-plugins/remember-page.js"></script>
-<script src="scripts/core-plugins/page-change-fix-clicks.js"></script>
-<script src="scripts/core-plugins/confirm.js"></script>
-<script src="scripts/core-plugins/close-back.js"></script>
-<script src="scripts/core-plugins/lang-sub.js"></script>
-<script src="scripts/core-plugins/progress.js"></script>
 
 <script src="scripts/core-plugins/watch-scope/watch-scope.js"></script>
 <script src="scripts/core-plugins/watch-scope/parent-watch.js"></script>
@@ -164,18 +155,34 @@
 <script src="scripts/core-plugins/gestures/swipe-bottom.js"></script>
 <script src="scripts/core-plugins/gestures/swipe-lr.js"></script>
 
-<script src="scripts/plugins/on-callbacks.js"></script>
-<script src="scripts/plugins/cordova-camera.js"></script>
-<script src="scripts/plugins/hashes.js"></script>
-<script src="scripts/plugins/validate.js"></script>
-<script src="scripts/plugins/bootstrap-dropdown.js"></script>
-<script src="scripts/plugins/android-dialer.js"></script>
-<script src="scripts/plugins/debounce.js"></script>
-<script src="scripts/plugins/object-template.js"></script>
-<script src="scripts/plugins/portion.js"></script>
-<script src="scripts/plugins/data-serialize.js"></script>
+<script src="scripts/core-plugins/loading.js"></script>
+<script src="scripts/core-plugins/case-numbers.js"></script>
+<script src="scripts/core-plugins/device-os.js"></script>
+<script src="scripts/core-plugins/route-commander.js"></script>
+<script src="scripts/core-plugins/cordova-device.js"></script>
+<script src="scripts/core-plugins/notify.js"></script>
+<script src="scripts/core-plugins/overflow.js"></script>
+<script src="scripts/core-plugins/cookie-ls-mix-adapter.js"></script>
+<script src="scripts/core-plugins/page-popup.js"></script>
+<script src="scripts/core-plugins/page-popup-modal.js"></script>
+<script src="scripts/core-plugins/keyboard-popup.js"></script>
+<script src="scripts/core-plugins/remember-page.js"></script>
+<script src="scripts/core-plugins/page-change-fix-clicks.js"></script>
+<script src="scripts/core-plugins/confirm.js"></script>
+<script src="scripts/core-plugins/close-back.js"></script>
+<script src="scripts/core-plugins/lang-sub.js"></script>
+<script src="scripts/core-plugins/progress.js"></script>
+
 <script src="scripts/plugins/time-info.js"></script>
+<script src="scripts/plugins/android-dialer.js"></script>
+<script src="scripts/plugins/cordova-camera.js"></script>
+<script src="scripts/plugins/debounce.js"></script>
+<script src="scripts/plugins/hashes.js"></script>
+<script src="scripts/plugins/open-app-by-url.js"></script>
+<script src="scripts/plugins/validate.js"></script>
+<script src="scripts/plugins/data-serialize.js"></script>
 <script src="scripts/plugins/show-more.js"></script>
+<!--<script src="scripts/plugins/dom-helpers.js"></script>-->
 
 
 <!--communication between jr and my app-->
@@ -205,6 +212,7 @@
     <!-- endmodule -->
 
     <!-- exModule(utests) -->
+    <!-- --build-type=dev -->
     <!-- views(tester-page.html) -->
     <script src="scripts/tests/tester-page.js"></script>
     <script src="scripts/tests/tester.js"></script>

@@ -1,6 +1,6 @@
 (function(){
     var app = window.app;
-    var errors = app('errors');
+    var logger = app('logger')('watch-css');
 
     app('watch-scope')('css', {
         init: function(){
@@ -12,7 +12,7 @@
                 rules = JSON.parse(jsonRules);
             } catch(e){
                 rules = null;
-                errors.error('css-watch', 'something wrong with css rules, check it, before define', e);
+                logger.error('something wrong with css rules, check it, before define', e);
             }
 
             this.rules = rules;

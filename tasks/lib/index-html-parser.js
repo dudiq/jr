@@ -4,6 +4,7 @@ var T_DEF = 'none';
 var T_JS = 'js';
 var T_CSS = 'css';
 
+var ModuleType = 'module';
 var ExModuleType = 'exModule';
 
 var viewsReg = '<!--\\s*?views\\(.*?\\)';
@@ -22,6 +23,22 @@ var fileTypeGetsMap = {
     }
 };
 
+var isArray = (function () {
+    // Use compiler's own isArray when available
+    if (Array.isArray) {
+        return Array.isArray;
+    }
+
+    // Retain references to variables for performance
+    // optimization
+    var objectToStringFn = Object.prototype.toString,
+        arrayToStringResult = objectToStringFn.call([]);
+
+    return function (subject) {
+        return objectToStringFn.call(subject) === arrayToStringResult;
+    };
+}());
+
 function ModuleClass(modType, text) {
     this._startWord = '';
     this._moduleType = modType;
@@ -35,6 +52,8 @@ function ModuleClass(modType, text) {
     this._filesMap = {};
     this._processedFiles = [];
     this._exFiles = [];
+    this._root = null;
+    this._isExcluded = false;
 }
 
 var p = ModuleClass.prototype;
@@ -46,12 +65,26 @@ p.name = function (val) {
     return this._name;
 };
 
+p.setRoot = function (val) {
+    this._root = val;
+};
+
 p.processedFiles = function () {
     return this._processedFiles;
 };
 
 p.exFiles = function () {
     return this._exFiles;
+};
+
+p.isExcluded = function () {
+    var ret = this._isExcluded;
+    ret = ret || (this._moduleType == ExModuleType);
+    return ret;
+};
+
+p.setExcluded = function () {
+    this._isExcluded = true;
 };
 
 p.filesMap = function () {
@@ -62,10 +95,9 @@ p.startWord = function () {
     return this._startWord;
 };
 
-p.getTag = function () {
+p.getTag = function (fileName) {
     var ret = '';
     var type = this._fileType;
-    var fileName = this._fileName;
     if (type == T_JS) {
         ret = '<script src="' + fileName + '"></script>';
     } else if (type == T_CSS) {
@@ -87,9 +119,22 @@ p.fileType = function (val) {
 
 p.fileName = function (val) {
     if (val !== undefined) {
+        // set
         this._fileName = val;
     }
-    return this._fileName;
+
+    // get for unit
+    var ret = this._fileName;
+
+    // get for module
+    if (this._root){
+        var rootFileName = this._root.fileName();
+        var path = getPathFromFile(rootFileName);
+        var ext = this.fileType();
+        ret = path + '/' + this.name() + '.' + ext;
+    }
+
+    return ret;
 };
 
 p.files = function (val) {
@@ -145,17 +190,31 @@ p.modules = function () {
     return this._modules;
 };
 
-p.findModules = function () {
+p.findModules = function (inFlags) {
     var self = this;
     var hereModules = this._modules;
     var fType = this.fileType();
-    fillByType('module', this.text(), function (module) {
+    fillByType([ModuleType, ExModuleType], this.text(), function (module) {
+        module.setRoot(self);
         processModuleFile(module, fType, self);
         hereModules.push(module);
-    });
-    fillByType(ExModuleType, this.text(), function (module) {
-        processModuleFile(module, fType, self);
-        hereModules.push(module);
+        if (inFlags && !module.isExcluded()){
+            var moduleText = module.text();
+            for (var key in inFlags){
+                // key, flag, option - for example
+                // key == '--build-type='
+                // flag == 'dev'
+                // option is '--build-type=dev'
+                var flag = inFlags[key];
+                var option = key + flag;
+                if (moduleText.indexOf(key) != -1){
+                    if (moduleText.indexOf(option) == -1){
+                        // exclude module, if NOT --build-type=dev
+                        module.setExcluded();
+                    }
+                }
+            }
+        }
     });
 };
 
@@ -178,7 +237,6 @@ p.setModuleStart = function (module) {
             }
         }
     }
-
 };
 
 function processModuleFile(module, fType, parent) {
@@ -271,6 +329,16 @@ function getViews(text) {
 }
 
 function fillByType(modType, text, cb) {
+    if (isArray(modType)){
+        modType.map(function (item) {
+            fillSingleByType(item, text, cb);
+        });
+    } else {
+        fillSingleByType(modType, text, cb);
+    }
+}
+
+function fillSingleByType(modType, text, cb) {
     var data = getTextBlocks(text, modType);
     for (var i = 0, l = data.length; i < l; i++) {
         var node = data[i];
@@ -316,24 +384,48 @@ function processUnitFile(node) {
     }
 }
 
-function getHtml(arr, text) {
+function getHtml(arr, text, modList) {
     var ret = text;
-    for (var i = 0, l = arr.length; i < l; i++) {
-        var unit = arr[i];
-        var startWord = unit.startWord();
-        var unitTag = unit.getTag();
-        var unitText = unit.text();
-        ret = ret.replace(startWord, unitTag);
-        ret = ret.replace(unitText, '');
-        ret = ret.replace('endunit -->', '');
+    var replaceAll = isEmptyObject(modList);
+    arr.map(function (unit) {
+        var fileName = unit.fileName();
+        if (replaceAll){
+            var startWord = unit.startWord();
+            var unitTag = unit.getTag(fileName);
+            var unitText = unit.text();
+            ret = ret.replace(startWord, unitTag);
+            ret = ret.replace(unitText, '');
+            ret = ret.replace('endunit -->', '');
+        } else {
+            // replace only modules in modList
+            var mods = unit.modules();
+            mods.map(function (item) {
+                var name = item.name();
+                if (modList[name]){
+                    // need replace
+                    var whatReplace = item.text();
+                    var unitFileName = item.fileName();
+                    var toReplace = '(' + name + ') --> \n' + item.getTag(unitFileName) + '\n<!-- ';
+                    ret = ret.replace(whatReplace, toReplace);
+                }
+            });
+        }
+    });
+    return ret;
+}
 
-    }
+function getPathFromFile(file) {
+    var path = (file + '').split('/');
+    path.pop();
+    var ret = path.join('/');
     return ret;
 }
 
 function isEmptyObject(obj) {
-    for (var key in obj){
-        return false;
+    if (obj){
+        for (var key in obj){
+            return false;
+        }
     }
     return true;
 }
@@ -349,8 +441,8 @@ function processReturnFiles(unit, opt, retEx) {
     var isIncludesEmpty = isEmptyObject(includes);
     var files = unit.files();
     var map = unit.filesMap();
-    var retFiles = unit._processedFiles;
-    var exFiles = unit._exFiles;
+    var retFiles = unit.processedFiles();
+    var exFiles = unit.exFiles();
     var excludeAll = (opt.excludeAll === true); //false by default
     retFiles.length = 0;
     exFiles.length = 0;
@@ -360,17 +452,17 @@ function processReturnFiles(unit, opt, retEx) {
         var mod = fMap.module;
         if (mod) {
             var name = mod.name();
-            var modType = mod.modType();
-            if (modType == ExModuleType && !includes[name]){
+            var isExcluded = mod.isExcluded();
+            if (isExcluded && !includes[name]){
                 // need drop
-                pushToDrop(retEx, exFiles, name, file)
+                pushToDrop(retEx, exFiles, name, file);
             } else if (excludeAll || (excludes[name] && !includes[name])) {
                 // need drop
-                pushToDrop(retEx, exFiles, name, file)
+                pushToDrop(retEx, exFiles, name, file);
             } else if (isIncludesEmpty || includes[name]){
                 retFiles.push(file);
             } else {
-                pushToDrop(retEx, exFiles, name, file)
+                pushToDrop(retEx, exFiles, name, file);
             }
         } else {
             retFiles.push(file);
@@ -378,21 +470,51 @@ function processReturnFiles(unit, opt, retEx) {
     }
 }
 
-function findUnits(text, opt) {
-    opt = opt || {};
-    opt.excludes = opt.excludes || {};
-    opt.includes = opt.includes || {};
+function getOptMap(grunt, optionName){
+    var optionModules = {};
+    var str = grunt.option(optionName) || '';
+    var list = str.split(',');
+    for (var i = 0, l = list.length; i < l; i++){
+        var item = list[i];
+        if (item){
+            optionModules[list[i]] = true;
+        }
+    }
+    return optionModules;
+}
+
+module.exports = function (grunt, params) {
+    var source = params.source;
+    var inFlags = params.inFlags;
+    var modulesForMinify = params.modulesForMinify;
+
+    var excludedModules = getOptMap(grunt, "exclude");
+    var includedModules = getOptMap(grunt, "include");
+
+    var text = grunt.file.read(source + '/index.html', {
+        encoding: 'utf8'
+    });
+    var opt = {
+        excludes: excludedModules,
+        includes: includedModules,
+        excludeAll: (grunt.option("excludeAll") === true) // false by default
+    };
+
     var ret = [];
     var retEx = {};
+
     fillByType('unit', text, function (node) {
         processUnitFile(node);
-        node.findModules();
+        node.findModules(inFlags);
         ret.push(node);
         processReturnFiles(node, opt, retEx);
     });
-    ret.html = getHtml(ret, text);
+    ret.html = getHtml(ret, text, modulesForMinify);
     ret.excludes = retEx;
     return ret;
-}
+};
 
-module.exports = findUnits;
+module.exports.types = {
+    js: T_JS,
+    css: T_CSS
+};

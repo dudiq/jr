@@ -1,0 +1,6 @@
+<host name="my-dev-site.com" scheme="https">
+    <path url="*" />
+</host>
+<host name="my-dev-site-second.com" scheme="https">
+    <path url="*" />
+</host>

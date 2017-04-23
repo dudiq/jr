@@ -2,86 +2,113 @@
 
 var grunt = require('grunt');
 
-module.exports = function (options, excludes) {
-    options = options || {};
-    excludes = excludes || {};
+function fillObjByArr(obj, arr2){
+    for (var i = 0, l = arr2.length; i < l; i++){
+        var item = arr2[i];
+        if (item.indexOf('.html') == -1 && item[item.length - 1] != '/'){
+            // fix folder set
+            item = item + '/';
+        }
+        obj[item] = true;
+    }
+}
 
-    function isExcluded(fileName){
-        var ret = false;
-        if (excludes[fileName + '.html']){
-            // file exclude
-            ret = true;
+function getExcludedViews(units){
+    var ex = units.excludes;
+    var exViews = {};
+    for (var i = 0, l = units.length; i < l; i++){
+        var modules = units[i].modules();
+        for (var k = 0, j = modules.length; k < j; k++){
+            var mod = modules[k];
+            var name = mod.name();
+            if (ex[name]){
+                var views = mod.views();
+                fillObjByArr(exViews, views);
+            }
+        }
+    }
+    return exViews;
+}
+
+function isExcluded(fileName, excludes){
+    var ret = false;
+    if (excludes[fileName + '.html']){
+        // file exclude
+        ret = true;
+    } else {
+        // folder exclude
+        for (var key in excludes){
+            if (fileName.indexOf(key) == 0){
+                ret = true;
+            }
+        }
+    }
+    return ret;
+}
+
+function getReplaceContent(grunt, excludes, where){
+    grunt.log.writeln('VIEWS: start replace processes...');
+    var fileOptions = {
+        encoding: 'utf8'
+    };
+
+    var files = where + '**/*.html';
+
+    var templates = grunt.file.expand(files);
+
+    var data = {};
+
+    for (var i = 0, l = templates.length; i < l; i++) {
+        var fileName = templates[i];
+        var fileKeyPre = fileName.replace(/.html$/i, "");
+        var fileKey = fileKeyPre.replace(where, "");
+        if (isExcluded(fileKey, excludes)){
+            // do not process this view
+            var text = '--- replaced for ignored:' + fileName;
+            grunt.log.writeln(text['blue'].bold);
         } else {
-            // folder exclude
-            for (var key in excludes){
-                if (fileName.indexOf(key) == 0){
-                    ret = true;
-                }
-            }
+            var content = grunt.file.read(fileName, fileOptions);
+
+            content = content.split('\n').join('');
+            content = content.split('\r').join('');
+
+            data[fileKey] = content;
+            //: todo check fileKey value
+            grunt.log.writeln('--- replaced for :' + fileName);
         }
-        return ret;
     }
 
-    function getReplaceContent(where){
-        grunt.log.writeln('start replace processes...');
-        var fileOptions = {
-            encoding: 'utf8'
-        };
+    var replaceContent = "=" + JSON.stringify(data);
 
-        var files = where + '**/*.html';
+    //                      grunt.log.writeln('---' + replaceContent);
 
-        var templates = grunt.file.expand(files);
+    return replaceContent;
+}
 
-        var data = {};
+module.exports = function (grunt, options, units) {
+    var excludes = units ? getExcludedViews(units) : {};
 
-        for (var i = 0, l = templates.length; i < l; i++) {
-            var fileName = templates[i];
-            var fileKeyPre = fileName.replace(/.html$/i, "");
-            var fileKey = fileKeyPre.replace(where, "");
-            if (isExcluded(fileKey)){
-                // do not process this view
-                var text = '--- replaced for ignored:' + fileName;
-                grunt.log.writeln(text['blue'].bold);
-            } else {
-                var content = grunt.file.read(fileName, fileOptions);
+    options = options || {};
 
-                content = content.split('\n').join('');
-                content = content.split('\r').join('');
+    grunt.log.subhead(' > start processing VIEWS for build');
+    var viewsSrc = options.viewsSrc;
 
-                data[fileKey] = content;
-                //: todo check fileKey value
-                grunt.log.writeln('--- replaced for :' + fileName);
-            }
-        }
+    var toReplace = getReplaceContent(grunt, excludes, viewsSrc);
 
-        var replaceContent = "=" + JSON.stringify(data);
-
-        //                      grunt.log.writeln('---' + replaceContent);
-
-        return replaceContent;
-    }
-
-    function templateReplacements(filePath, where, ex) {
-        var file = grunt.file.read(filePath);
-
+    // file replace
+    var filePath = options.whereReplace;
+    if (filePath){
         var whatReplace = ';//{{replaceData}}';
-        var toReplace = getReplaceContent(where, ex);
-
+        var file = grunt.file.read(filePath);
         file = file.replace(whatReplace, toReplace);
 
         grunt.file.write(filePath, file);
-        grunt.log.ok('VIEWS replaced');
+        grunt.log.ok('VIEWS: replaced');
+
     }
-
-
-
-    function start() {
-        grunt.log.subhead(' > start processing VIEWS for build');
-        var filePath = options.what;
-        var where = options.where;
-        templateReplacements(filePath, where, excludes);
-        grunt.file.delete(where);
+    if (options.cleanSrc) {
+        grunt.file.delete(viewsSrc);
+        grunt.log.ok('VIEWS: src is cleaned');
     }
-
-    start();
+    return toReplace;
 };

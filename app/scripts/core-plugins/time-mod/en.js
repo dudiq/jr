@@ -19,13 +19,13 @@
             11: 'dec'
         },
         'week': {
-            0: 'saturday',
+            0: 'sunday',
             1: 'monday',
             2: 'tuesday',
             3: 'wednesday',
             4: 'thursday',
             5: 'friday',
-            6: 'sunday'
+            6: 'saturday'
         },
         'month-f': {
             0: 'January',

@@ -21,17 +21,22 @@
 
     // getting message TEXT for give it to user
     function getMessage(code, text){
-        return text + '('+ code + ')';
+        var ret = text;
+        if (code !== undefined && code !== null){
+            ret += ' (' + code + ')';
+        }
+        return ret;
     }
 
     // processing data when responce was given. fail or done - nevermind
     // this is processing all data
-    function processDataResponse(returnData, data, xhr){
+    var processDataResponse = function (returnData, data, xhr){
+        var parsed;
         if (data){
             if (typeof data == "string") {
                 //processing string
                 try {
-                    var parsed = JSON.parse(data);
+                    parsed = JSON.parse(data);
                     returnData.response = parsed;
                 } catch(e){
                     returnData.message = "{{system.errorHttpParse}}";
@@ -46,7 +51,7 @@
             //all is wrong and bad....
             returnData.error = true;
             try {
-                var parsed = JSON.parse(xhr.responseText);
+                parsed = JSON.parse(xhr.responseText);
                 if (parsed && parsed.description){
                     returnData.message = getMessage(xhr.status, parsed.description);
                 }
@@ -58,8 +63,7 @@
                 returnData.response = data;
             }
         }
-
-    }
+    };
 
     // define response from server and call callback
     function onResponse(context, def, data, clientError, xhr, returnRaw){

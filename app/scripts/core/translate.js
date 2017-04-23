@@ -13,30 +13,31 @@
     var helper = app('helper');
     var broadcast = app('broadcast');
     var translateEvs = broadcast.events('translate', {
-        onLangSet: 'onLangSet',
-        onWordsProcessed: 'onWordsProcessed'
+        onLangSet: 'onLangSet'
     });
 
     var logger = app('logger')('translate');
     var navLang = (navigator.language || navigator.userLanguage).substring(0, 2).toLowerCase();
     var defaultLang = (navLang == 'en' || navLang == 'ru') ? navLang : 'en';
     var currLang = defaultLang;
-    var currentWords;
+    var currentWords = {};
     var collection = {};
     var processed = {};
     var $body;
 
     var translate = app('translate', function(key, values){
-        if (collection[key]){
-            logger.error('"' + key + '" already defined');
-        } else {
-            collection[key] = values;
+        if (values){
+            if (collection[key]){
+                logger.error('"' + key + '" already defined');
+            } else {
+                collection[key] = values;
+            }
         }
         return collection[key];
     });
 
     //create new translated words by lang and return it
-    function process(){
+    function setCurrentWords(){
         var words = collection[currLang] || {};
         var processWords = words;
         if (!processed[currLang]){
@@ -45,7 +46,11 @@
             collection[currLang] = processWords;
         }
 
-        return helper.clone(processWords);
+        var newWords = helper.clone(processWords);
+        helper.clearObject(currentWords);
+        for (var key in newWords){
+            currentWords[key] = newWords[key];
+        }
     }
 
     function getSingleTranslate(key){
@@ -68,7 +73,7 @@
     // set substitute processed words
     // they was used for replace translates
     translate.setSubstitute = function(processedWords){
-        if (currentWords){
+        if (!helper.isEmpty(currentWords)){
             for (var key in processedWords){
                 currentWords[key] = processedWords[key];
             }
@@ -85,15 +90,13 @@
             $body.removeClass('jr-lang-' + currLang);
             currLang = lang;
             $body.addClass('jr-lang-' + currLang);
-            cleanCurrentWords();
-            currentWords = process();
-            broadcast.trig(translateEvs.onWordsProcessed, currLang);
+            setCurrentWords();
             broadcast.trig(translateEvs.onLangSet, currLang);
         }
     };
 
     // getting translated hash array words for core using only
-    translate._words = function(){
+    translate.getWordsAsList = function(){
         return currentWords;
     };
 
@@ -138,9 +141,11 @@
     // start point for translate words,
     // started in templater module
     translate._start = function(){
-        cleanCurrentWords();
-        onStart();
-        currentWords = process();
+        if (collection[navLang]){
+            currLang = navLang;
+            defineBody();
+        }
+        setCurrentWords();
 
         // set cap for do not start after first start
         translate._start = function(){};
@@ -171,20 +176,6 @@
         }
         return words;
     };
-
-    function cleanCurrentWords(){
-        if (currentWords){
-            currentWords = {};
-        }
-    }
-
-    function onStart(){
-        if (collection[navLang]){
-            currLang = navLang;
-            cleanCurrentWords();
-            defineBody();
-        }
-    }
 
     function defineBody(){
         !$body && ($body = $(document.body));

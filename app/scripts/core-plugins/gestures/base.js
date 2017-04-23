@@ -5,7 +5,6 @@
 
     var evStart = "mousedown";
     var evStop = "mouseup";
-    var evCancel = "touchcancel";
     var evLeave = "mouseleave";
     var evMove = "mousemove";
 
@@ -14,7 +13,6 @@
     if (touchSupport){
         evStart = "touchstart";
         evStop = "touchend";
-        evCancel = "touchcancel";
         evLeave = "touchleave";
         evMove = "touchmove";
     }
@@ -247,13 +245,11 @@
         }
     };
 
-    function init(el){
+    function init(){
 
-        !body && (body = document.body) && ($body = $(document.body));
-
-
-        var tapped = false;
-        var mouse = this._mouse = {
+        !body && (body = document.body) && ($body = app('top-dom-elements').getBody());
+        
+        this._mouse = {
             // start position
             sx: 0,
             sy: 0,

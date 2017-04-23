@@ -9,7 +9,7 @@
 
     if (canBind){
         helper.onStart(function(){
-            $(document).on("click", "a", function(ev){
+            app('top-dom-elements').getDocument().on("click", "a", function(ev){
                 var target = $(this);
                 var href = target.prop('href');
                 if (href && href.indexOf('#') == -1){

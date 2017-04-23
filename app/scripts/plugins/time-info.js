@@ -13,7 +13,7 @@
     function getNowMS(){
         return (new Date()).getTime();
     }
-    
+
     helper.extendClass(TimeInfoClass, {
         startTimePiece: function () {
             var ret = getNowMS();
@@ -42,6 +42,21 @@
             var total = getTotal.call(this, start, end);
             return total;
         },
+        getNumberTotal: function (start, end) {
+            var startTime = start !== undefined ? start : this._startTime;
+            var endTime = end !== undefined ? end : this._endTime;
+            var dx = endTime - startTime;
+            return dx;
+        },
+        getShortDetails: function () {
+            var timerInfo = this.getFullTimerInfo();
+            var details = {
+                time: timerInfo.total,
+                n: timerInfo.portions
+            };
+            var ret = JSON.stringify(details);
+            return ret;
+        },
         getFullTimerInfo: function (start, end) {
             var total = this.getTimeTotal(start, end);
             var ret = {
@@ -54,7 +69,7 @@
             return ret;
         }
     });
-    
+
     function getTotal(start, end) {
         var startTime = start !== undefined ? start : this._startTime;
         var endTime = end !== undefined ? end : this._endTime;

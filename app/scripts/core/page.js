@@ -109,6 +109,17 @@
             this._toTop();
         },
 
+        getProp: function (key) {
+            var ret;
+            var val = this._props[key];
+            if (typeof val == "function"){
+                logger.warn('trying to get not defined initial property of page:', key);
+            } else {
+                ret = val;
+            }
+            return ret;
+        },
+
         // called once, when page created
         init: function () {
             // can be redefined
@@ -178,7 +189,9 @@
             logger.error('page id is not defined!');
         }
 
-        this.viewId = params.viewId || id;
+        this._props = params;
+
+        this.viewId = params.viewId = params.viewId || id;
 
         // for get this template only for dev
         var templater = app('templater');
@@ -194,7 +207,7 @@
         }
 
         this.alias = alias;
-        
+
         this.drawn = false;
         this.shown = false;
         this.content = null;
@@ -215,7 +228,7 @@
             }
         }
     }
-    
+
     app('pages').createClass(null, 'base', PageClass);
 
 })(window.app);

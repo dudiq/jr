@@ -36,6 +36,10 @@
 
     var $body = $(document.body);
 
+    function triggerJrAfterClick(ev) {
+        $body.trigger('jrafterclick', ev);
+    }
+
     function triggerJrDefferedEvent(){
         clearTimeout(deferredTimerId);
         deferredTimerId = setTimeout(function(){
@@ -118,7 +122,7 @@
     function bindMouseDown($this){
         var self = this;
         $this.on(mouseDown, function(ev){
-            triggerJrDefferedEvent();
+            triggerJrDefferedEvent(ev);
             if (!self.work && !preventStart){
                 self.work = true;
                 self.posx = self.posEx = getX(ev);
@@ -133,6 +137,9 @@
                     }, self.longTapDelay);
                 }
             }
+            if (self.handleWhenDown){
+                triggerJrAfterClick(ev);
+            }
         });
     }
 
@@ -143,7 +150,7 @@
             self.moved = false;
         });
     }
-    
+
     function bindMouseMove($this){
         var self = this;
         $this.on(mouseMove, function(ev){
@@ -185,11 +192,19 @@
                     process = false;
                 }
 
+                if (process){
+                    var nodeName = ev.target.nodeName.toLowerCase();
+                    if (nodeName == 'input' || nodeName == 'textarea'){
+                        process = false;
+                    }
+                }
+
                 if (!process){
                     dropWorks();
 
                     if (!self.moved){
                         callHandler.call(self, ev, 'jrclick', arguments);
+                        triggerJrAfterClick(ev);
                     }
                     self.moved = true;
                     if (self.longClickTimeout){
@@ -199,7 +214,7 @@
             }
         });
     }
-    
+
     function JrClickClass(params, namespace, handle){
         clickId ++;
         params = params || {};
@@ -251,7 +266,7 @@
         }
         $this.off(".sys-jrclick");
     }
-    
+
     $.event.special.jrclick = {
         setup: function(data, namespaces, handle){
             var inst = new JrClickClass(data, namespaces, handle);

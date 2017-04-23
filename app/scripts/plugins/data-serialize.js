@@ -3,7 +3,7 @@
 
     var C_SELECTORS = 'input, select, textarea';
 
-    var dataSerialize = app('data-serialize', function(content, map){
+    app('data-serialize', function(content, map){
         var res;
         if (map === undefined){
             // getter

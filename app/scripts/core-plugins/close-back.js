@@ -1,6 +1,5 @@
 (function(){
     var app = window.app;
-    var route = app('route');
     var helper = app('helper');
     var confirmPlugin = app('confirm');
     var translate = app('translate');
@@ -27,9 +26,9 @@
         CONST_MAX_CLICKS = val;
     };
 
-    function closeHandler(){
+    var closeHandler = function (){
         // cap
-    }
+    };
 
     function closeApp(){
         pathHash.clear();
@@ -97,7 +96,7 @@
         });
 
         // route.register('/__drop__', function () {
-            // processing back click to terminate app
+        // processing back click to terminate app
         // });
     }
 
