@@ -1,6 +1,10 @@
 JR
 =
 
+> ended at 2018. this was a great days of development and this project is **ENDED** thank to all, who helped with this big deal.
+
+> most modules now are separated libs and live of own live.
+
 This is javascript framework to create simple Single Page Applications (SPA)
 
 #### consist of ####
