@@ -1,0 +1,11 @@
+<div class="ui-list ui-list-expenses">
+    <div class="uia-empty" jr-watch="css-class-name(isEmpty)" data-call="callShowPopup">
+        {{empty.expense}}
+    </div>
+    <div class="ui-list-container" jr-watch="repeat(items)" >
+        {{include(./ui-list-expenses-item)}}
+    </div>
+    <div class="uia-empty ui-show-more" jr-watch="css-class-name(haveMore)" data-call="callShowMore">
+        <span class="uia-link_decoration">{{expense.showMore}}</span>
+    </div>
+</div>

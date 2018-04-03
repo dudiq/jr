@@ -13,10 +13,10 @@
         it('multi checking of "on", "off" and "trig" methods', function(done){
             var count = 0;
 
-            function checkEvents(){
+            var checkEvents = function(){
                 assert.equal(count, 2);
                 checkEvents = function(){}; //drop this method
-            }
+            };
 
             function secondCheck(){
                 assert.equal(count, 3);
@@ -47,7 +47,7 @@
             assert.equal(count, 3);
             setTimeout(function(){
                 // all events must be called and map in broadcast must be clean
-                assert.equal(!!bc.map['test-case1'], false);
+                assert.equal(!!bc.getAllEvents['test-case1'], false);
                 done();
             }, 100);
         });
@@ -97,8 +97,8 @@
 
 
                 var binded = 0;
-                for (var key in newbc.map){
-                    var targets = newbc.map[key];
+                for (var key in newbc.getAllEvents()){
+                    var targets = newbc.getAllEvents()[key];
                     for (var i = 0, l = targets.length; i < l; i++){
                         if (!targets[i]._dirty){
                             binded++;
@@ -136,13 +136,14 @@
                 var onTime = new Date();
                 // try to trigger 1000 points
                 var pointsTrig = 1000;
-                for (var i = 0; i <= pointsTrig; i++){
+                for (var j = 0; j <= pointsTrig; j++){
                     (function(i){
                         var params = {
-                            date : new Date()
+                            date : new Date(),
+                            i: i
                         };
                         opsbc.trig('test', params);
-                    })(i);
+                    })(j);
                 }
 
                 var trigTime = new Date();
@@ -171,7 +172,7 @@
                 ev1: 'ev1'
             });
 
-            assert.equal(evs && evs.ev1, 'test1#ev1');
+            assert.equal(evs && evs.ev1, 'test1_^_ev1');
         });
 
         it('ev2 must be undefined', function () {

@@ -3,12 +3,11 @@
     var tester = app('tester');
 
     var assert = tester.assert;
-    var logger = tester.logger;
 
     tester.block('checking, that DOM is ok for tests', function(it){
         var templater = app('templater');
         it('templater should return content. checking templater.set() also', function(done){
-            var data = templater.get('overflow');
+            var data = templater.get('scripts/core-plugins/overflow/overflow');
             assert.equal((data && (data.length >= 10)), true);
             done();
         });

@@ -1,0 +1,26 @@
+@import "../../../../../styles/variables";
+
+.ui-tabs {
+    @include no-selection-children();
+    display: inline-block;
+    .tab-item {
+        display: inline-block;
+        @include set-color-theme('color', 'bgDefaultLightColor');
+        @include set-color-theme('background-color', 'bgDarkLightColor');
+
+        height: 36px;
+        line-height: 36px;
+        border-top-left-radius: $border-radius-small;
+        border-top-right-radius: $border-radius-small;
+        padding: 0 15px;
+        text-transform: uppercase;
+        margin-right: 4px;
+
+        cursor: pointer;
+    }
+
+    .active {
+        @include set-color-theme('color', 'bgDarkLightColor');
+        @include set-color-theme('background-color', 'bgDefaultLightColor');
+    }
+}

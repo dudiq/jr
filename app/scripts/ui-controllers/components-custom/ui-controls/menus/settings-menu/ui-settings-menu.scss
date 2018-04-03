@@ -1,0 +1,29 @@
+@import "../../../../../../styles/variables";
+
+
+.ui-settings-menu {
+    position: fixed;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1;
+
+    .ui-popup-menu {
+        left: auto;
+        bottom: 0;
+        overflow-y: auto;
+        right: 0;
+        max-width: 230px;
+        border: none;
+        padding-left: $margin-small;
+        padding-top: $margin-small;
+        @include set-color-theme(background, clr-third);
+        @include set-color-theme-sub(box-shadow, clr-shadow, '-5px 5px 10px 0px', '');
+    }
+
+    .ui-bottom-place {
+        position: absolute;
+        bottom: 0;
+    }
+}

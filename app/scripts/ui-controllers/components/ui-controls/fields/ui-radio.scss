@@ -1,0 +1,79 @@
+@import "../../../../../styles/variables";
+
+.ui-radio {
+    padding: $padding-small 0;
+
+    input {
+        display: none;
+    }
+
+    label {
+        cursor: pointer;
+        padding-right: 35px;
+        position: relative;
+        display: block;
+    }
+
+    input[type="checkbox"], input[type="radio"] {
+        position: absolute;
+        visibility: hidden !important;
+    }
+
+    input[type="checkbox"] + label,
+    input[type="radio"] + label {
+
+        &:before,
+        &:after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            margin-top: -7.5px;
+            box-sizing: border-box;
+        }
+
+        &:before {
+
+            width: 30px;
+            height: 15px;
+            right: 0;
+            @include set-color-theme(background, clr-separator);
+            //background: #fff;
+            //border: 1px solid #e4e3e1;
+            border-radius: 15px;
+        }
+
+        &:after {
+            width: 21px;
+            height: 21px;
+            right: 14px;
+            margin-top: -10px;
+            //background: #BDBDBD;
+            @include set-color-theme(background, clr-disable);
+            border-radius: 50%;
+            transition: all 200ms ease-out;
+            @include set-color-theme-sub(box-shadow, clr-shadow, '2px 2px 10px 0px', '');
+        }
+    }
+
+    input[type="checkbox"]:checked,
+    input[type="radio"]:checked {
+        + label {
+            //@include set-color-theme(color, clr-sub-primary);
+
+            &:after {
+                right: -4px;
+                @include set-color-theme(background, clr-sub-primary);
+                //background: #FF9800;
+            }
+        }
+    }
+    //input[type="checkbox"]:checked + label,
+    //input[type="radio"]:checked + label {
+    //
+    //    &:after {
+    //        right: 0px;
+    //        background: #FF9800;
+    //    }
+    //}
+
+}

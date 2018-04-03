@@ -1,0 +1,34 @@
+@import "variables";
+
+.ui-spinner {
+    margin: 0 auto;
+    @include set-spin(2000ms);
+
+    text-align: center;
+    font-size: $text-size-hard;
+
+}
+
+.is-spin-half-sec {
+    @include set-spin(500ms);
+}
+
+.is-spin-sec {
+    @include set-spin(1000ms);
+}
+
+.is-spin-2-sec {
+    @include set-spin(2000ms);
+}
+
+// overrides
+
+.jr-overflow-screen {
+    .ui-spinner {
+        position: absolute;
+        top: 50%;
+        left: 75%;
+        margin-top: 30px;
+        margin-left: -15px;
+    }
+}

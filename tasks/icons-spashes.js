@@ -5,17 +5,18 @@ module.exports = function (grunt) {
         if (!grunt.option('use-default-icons')){
             grunt.log.subhead(' > start set images for build');
             var corporateName = grunt.option('corporate');
+            var prefix = grunt.option('image-set-prefix') || '';
             var corpPath = corporateName ? 'corporate/' + corporateName + '/' : '';
 
 
 
             var iconSet = {
                 cmd: 'cordova-icon',
-                args: ['--config=config.xml', '--icon=' + corpPath + 'image-set/icon.png']
+                args: ['--config=config.xml', '--icon=' + corpPath + 'image-set/' + prefix + 'icon.png']
             };
             var splashSet = {
                 cmd: 'cordova-splash',
-                args: ['--config=config.xml', '--splash=' + corpPath + 'image-set/splash.png']
+                args: ['--config=config.xml', '--splash=' + corpPath + 'image-set/' + prefix +'splash.png']
             };
 
             var done = this.async();

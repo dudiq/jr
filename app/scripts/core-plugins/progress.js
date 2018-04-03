@@ -152,7 +152,7 @@
             toTranslate += '.title';
         }
 
-        title = translate.getTranslate(toTranslate);
+        title = translate(toTranslate);
         ev.title = title;
     }
 

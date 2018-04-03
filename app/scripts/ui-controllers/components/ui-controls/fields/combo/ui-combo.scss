@@ -1,0 +1,13 @@
+@import "../../../../../../styles/variables";
+
+.ui-combo {
+    min-width: 80px;
+    max-width: 120px;
+    select {
+        font-size: $text-size;
+        @include set-color-theme(color, clr-invert);
+        background: transparent;
+        border: none;
+        width: 100%;
+    }
+}

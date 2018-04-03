@@ -19,10 +19,10 @@
             }
             var ed = new Date();
             var totalTime = helper.getTimeInterval(st.getTime(), ed.getTime());
-            logger.log(title, 'processed time:', totalTime);
+            logger.info(title, 'processed time:', totalTime);
         },
         runBlock: function () {
-            
+
         }
     });
 })(window.app);

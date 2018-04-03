@@ -1,0 +1,11 @@
+
+.jr-keyboard-popup-helper{
+  display: none;
+  width: 100%;
+}
+
+.is-keyboard-shown{
+  .jr-keyboard-popup-helper{
+    display: block;
+  }
+}

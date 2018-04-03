@@ -1,6 +1,6 @@
 (function(){
     var hasTouch = ("ontouchend" in document);
-        
+
     var mouseUp = hasTouch ? "touchend" : "mouseup";
     var mouseMove = hasTouch ? "touchmove" : "mousemove";
     var mouseDown = hasTouch ? "touchstart" : "mousedown";
@@ -14,10 +14,10 @@
             .match(/-(moz|webkit|ms)-/) || (styles.OLink === '' && ['', 'o'])
             )[1];
 
-        return '-' + browserMatch + '-';
+        return browserMatch;
     })();
 
-    var CSS3_TRANSFORM = browserPrefix + 'transform';
+    var CSS3_TRANSFORM = '-' + browserPrefix + '-transform';
 
 
     function getId(){

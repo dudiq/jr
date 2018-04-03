@@ -27,7 +27,7 @@
 
     var deviceObject = {};
 
-    app('cordova-device', {
+    var cordovaDevice = app('cordova-device', {
         // return cordova device object or empty object, if not defined
         getDevice: function () {
             return deviceObject;
@@ -105,9 +105,17 @@
     }
 
 
-    helper.onDomReady(function () {
+    app.onDomReady(function () {
         isDomReady = true;
         checkDeviceReady();
     });
+
+    if (helper.isNative){
+        // if app is native, just need to wait until all processes will be inited for correct work of all modules
+        cordovaDevice.onReady(function(){
+            navigator.splashscreen && navigator.splashscreen.hide();
+        });
+    }
+
 
 })();

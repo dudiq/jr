@@ -1,0 +1,38 @@
+@import "../../../../../../styles/variables";
+
+.ui-bar-grid {
+    margin: $margin-normal auto;
+    max-width: $screen-big;
+    .items {
+
+    }
+    .ui-bar {
+        text-align: right;
+        padding-bottom: $margin-small;
+        //background-color: red;
+    }
+    .ui-bar_title {
+        float: left;
+    }
+
+    .ui-bar_node {
+        .ui-bar {
+            padding-left: $margin-normal;
+            @include set-color-theme(color, clr-sub-primary);
+        }
+    }
+
+    .ui-bar-parent {
+        font-size: $text-size-big;
+    }
+
+    .ui-parent-item:first-child {
+        // is total
+        padding-bottom: $margin-big;
+        font-size: $text-size-hard;
+    }
+
+    .ui-parent-item {
+        padding-bottom: $margin-normal;
+    }
+}

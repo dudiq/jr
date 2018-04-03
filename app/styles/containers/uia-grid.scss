@@ -1,0 +1,49 @@
+@import "../variables";
+
+@mixin make-grid($name, $total) {
+    @for $i from 1 through $total {
+        .#{$name}-#{$total}-#{$i} {
+            width: $i / $total * 100%;
+        }
+    }
+}
+
+.uia-grid {
+    display: table;
+    table-layout: fixed;
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.uia-grid-row {
+    display: table-row;
+}
+
+.uia-grid-cell {
+    display: table-cell;
+    + .uia-grid-cell {
+        padding-left: $marginNormal;
+    }
+}
+
+.uia-grid-cell-vertical-middle {
+    vertical-align: middle;
+}
+
+@include make-grid('uia-grid-x', 12);
+
+@include make-grid('uia-grid-x', 8);
+
+@include make-grid('uia-grid-x', 4);
+
+@media screen and (max-width: $screen-hard) {
+    .uia-grid-resistive {
+        .uia-grid-cell {
+            padding-left: 0;
+            display: block;
+            + .uia-grid-cell {
+                padding-top: $marginNormal;
+            }
+        }
+    }
+}

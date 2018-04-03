@@ -1,0 +1,30 @@
+
+$dark-primary: #212121;
+$dark-secondary: #303030;
+$dark-third: #3C3C3C;
+$dark-separator: #4D4D4D;
+$dark-four: #828282;
+$dark-disable: #bababa;
+$dark-invert: #e0e0e0;
+
+$dark-sub-primary: #009688;
+$dark-sub-secondary: #ffffff;
+
+$theme-dark: (
+    // new
+    clr-primary: $dark-primary,
+    clr-secondary: $dark-secondary,
+    clr-third: $dark-third,
+    clr-four: $dark-four,
+    clr-invert: $dark-invert,
+
+
+    clr-separator: $dark-separator,
+    clr-disable: $dark-disable,
+
+    clr-shadow: $dark-primary,
+
+    clr-sub-primary: $dark-sub-primary,
+    clr-sub-secondary: $dark-sub-secondary
+
+)

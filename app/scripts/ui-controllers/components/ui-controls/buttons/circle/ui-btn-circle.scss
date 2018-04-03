@@ -1,0 +1,40 @@
+@import "../../../../../../styles/variables";
+
+$edge-value: 20px;
+
+.ui-circle-btn {
+    position: absolute;
+    right: $edge-value;
+    bottom: $edge-value;
+    width: $btn-height-circle;
+    height: $btn-height-circle;
+    border-radius: $btn-height-circle;
+    line-height: $btn-height-circle;
+    text-align: center;
+    cursor: pointer;
+    display: table;
+    @include set-color-theme('background-color', clr-sub-primary);
+    @include set-color-theme('color', clr-sub-secondary);
+    @include set-color-theme-sub('box-shadow', clr-shadow, '2px 2px 5px 2px', '');
+    transition: all $defaultDelay ease;
+    z-index: 2;
+
+    .circle-btn-icon {
+        font-size: $text-size-hard;
+        display: table-cell;
+        vertical-align: middle;
+    }
+
+}
+
+.ui-circle-btn + .ui-circle-btn {
+    right: ($edge-value * 2) + $btn-height-circle;
+}
+
+.is-keyboard-shown, .jr-animate {
+    .ui-circle-btn {
+        // todo add animate for hide btn
+        transform: scale(0);
+        //display: none;
+    }
+}

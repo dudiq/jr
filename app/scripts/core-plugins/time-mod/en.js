@@ -27,6 +27,15 @@
             5: 'friday',
             6: 'saturday'
         },
+        'short-week': {
+            0: 'su',
+            1: 'mo',
+            2: 'tu',
+            3: 'we',
+            4: 'th',
+            5: 'fr',
+            6: 'sa'
+        },
         'month-f': {
             0: 'January',
             1: 'February',

@@ -1,0 +1,24 @@
+.ui-upload-btn {
+    position: relative;
+    overflow: hidden;
+
+    .btn-link-upload-content{
+        display: inline-block;
+        left: 0;
+        right: 0;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        overflow: hidden;
+    }
+    .input-file{
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 200%;
+        opacity: 0.001;
+        letter-spacing: 20em;
+        height: 100%;
+    }
+
+}

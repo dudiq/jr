@@ -1,0 +1,19 @@
+@import "../variables";
+.ui-editing-trans {
+    transition: all $defaultDelay ease-in-out;
+    position: relative;
+    z-index: 1;
+}
+.ui-editing {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 0;
+}
+.ui-edit-btn {
+    display: inline-block;
+}
+.ui-edit-btn {
+    cursor: pointer;
+    text-align: center;
+}

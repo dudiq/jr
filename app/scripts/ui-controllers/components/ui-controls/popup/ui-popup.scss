@@ -1,0 +1,56 @@
+@import "../../../../../styles/variables";
+.ui-popup {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 5;
+
+    .top-header {
+        height: $header-height;
+        border-bottom: 1px solid;
+        @include set-color-theme(border-bottom-color, clr-separator);
+    }
+
+    .content-place {
+        position: absolute;
+        left: 10px;
+        right: 10px;
+        top: 20px;
+        z-index: 5;
+        border-radius: $border-radius-small;
+        padding: $padding-smaller;
+        @include set-color-theme-sub('box-shadow', clr-shadow, '0px 0px 2px 1px', '');
+        @include set-color-theme('background-color', clr-primary);
+    }
+
+    .content-place-wrap {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .header-title {
+        display: inline-block;
+        padding-right: 30px;
+        padding-left: 10px;
+        font-size: $text-size-bigger;
+    }
+
+    .header-close-btn {
+        cursor: pointer;
+        position: absolute;
+        padding: $padding-small;
+        right: 0;
+        top: 0;
+    }
+
+    .child-plane {
+        top: $top-height;
+    }
+}

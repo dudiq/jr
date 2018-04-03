@@ -1,0 +1,47 @@
+@import "../../../../../../styles/variables";
+
+.ui-month-coins {
+
+    border-bottom: 1px solid;
+    @include set-color-theme(border-bottom-color, clr-separator);
+
+    .content {
+        @include set-color-theme(background, clr-third);
+        white-space: nowrap;
+        display: table;
+        width: 100%;
+    }
+
+    .ui-item {
+        width: 33%;
+        display: table-cell;
+        text-align: center;
+        padding: 10px 0;
+        //border-right: 1px solid;
+        //@include set-color-theme(border-right-color, clr-separator);
+    }
+
+    .ui-item:last-child {
+        border-right: none;
+    }
+
+    .money {
+        font-size: $text-size-big;
+        font-weight: bold;
+        @include current-day-indicator(clr-invert);
+    }
+
+    .hint {
+        @include set-color-theme(color, clr-four);
+    }
+
+    .is-today {
+        .hint {
+            @include current-day-indicator(clr-invert);
+        }
+    }
+
+    //.is-keyboard-shown & {
+    //    transform: translate3d(0, 100%, 0);
+    //}
+}

@@ -1,0 +1,43 @@
+@import "../variables";
+
+.helper-hide {
+    display: none;
+}
+
+.helper-inline-block {
+    display: inline-block;
+}
+
+.helper-float-right {
+    float: right;
+}
+
+.helper-float-left {
+    float: left;
+}
+
+.helper-position-relative {
+    position: relative;
+}
+
+.uia-overflow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: $opacity-overflow;
+    @include set-color-theme(background, clr-primary);
+}
+
+.uia-empty {
+    padding: 20px 10px;
+    text-align: center;
+    @include set-color-theme(color, clr-disable);
+}
+
+.uia-link_decoration {
+    cursor: pointer;
+    @include set-color-theme(color, clr-sub-primary);
+    text-decoration: underline;
+}

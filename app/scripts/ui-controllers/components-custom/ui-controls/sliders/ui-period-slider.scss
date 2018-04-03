@@ -1,0 +1,38 @@
+@import "../../../../../styles/variables";
+
+.ui-period-slider {
+    max-width: $screen-big;
+    margin: 0 auto;
+    white-space: nowrap;
+    table-layout: fixed;
+    width: 100%;
+    display: table;
+    .ui-item:first-child {
+        cursor: pointer;
+        width: $btn-height;
+    }
+    .ui-item {
+        font-size: $text-size-bigger;
+        display: table-cell;
+        text-align: center;
+        padding: 10px 0;
+        border-right: 1px solid;
+        @include set-color-theme(border-right-color, clr-separator);
+    }
+
+    .ui-item:last-child {
+        cursor: pointer;
+        border-right: 0;
+        width: $btn-height;
+    }
+    &.is-end {
+        .ui-item:last-child {
+            opacity: $opacity-disabled;
+            @include set-color-theme(color, clr-disable);
+        }
+    }
+
+    .ui-period-view {
+        font-size: $text-size-bigger;
+    }
+}

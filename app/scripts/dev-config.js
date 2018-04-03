@@ -1,15 +1,8 @@
-(function(){
-    var app = window.app;
-
-    // config for DEV version
+(function(app){
 
     app('app-config', {
 
-        // example
-        server: {
-            enable: true
-        }
     });
 
 
-})();
+})(window.app);

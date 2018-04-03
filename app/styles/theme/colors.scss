@@ -1,0 +1,7 @@
+@import "colors-light";
+@import "colors-dark";
+
+$themeColors: (
+    dark: $theme-dark,
+    light: $theme-light
+);

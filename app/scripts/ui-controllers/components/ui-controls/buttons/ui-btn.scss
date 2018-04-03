@@ -1,0 +1,39 @@
+@import "../../../../../styles/variables";
+
+.uia-btn, .ui-flat-btn, .ui-btn-second {
+    + .uia-btn, + .ui-flat-btn, + .ui-btn-second {
+        margin-left: $btn-padding;
+    }
+
+    @include no-selection();
+    @include default-btn-styles();
+    @include set-color-theme(background-color, clr-sub-primary);
+    border-radius: $border-radius-small;
+    font-size: $text-size-small;
+    .ui-btn-icon {
+        font-size: $icon-size;
+        height: $btn-height;
+        line-height: $btn-height;
+        float: left;
+    }
+    .ui-btn-title {
+        float: left;
+    }
+    .ui-btn-icon[class^="x-icon-"] + .ui-btn-title:not(:empty),
+    .ui-btn-icon[class*=" x-icon-"] + .ui-btn-title:not(:empty) {
+        padding-left: $btn-padding;
+    }
+    &:active {
+        @include set-color-theme-sub(box-shadow, clr-shadow, '1px 0px 6px 2px', '');
+    }
+}
+
+.ui-flat-btn {
+    margin: 0 $btn-padding-small;
+    @include set-color-theme-value(background-color, transparent);
+}
+
+.ui-btn-second {
+    @include set-color-theme('background-color', 'btnBgSecondColor');
+    @include set-color-theme('color', 'btnTitleSecondColor');
+}

@@ -1,10 +1,4 @@
-/*
- * templater module for processing templates, translate and give it to other modules
- *
- * */
-(function(){
-    var app = window.app;
-    var translate = app('translate');
+(function(app){
     var helper = app('helper');
     var logger = app('logger')('templater');
 
@@ -13,15 +7,9 @@
     var linkToParentMap = {};
     var parentsDelimiter = '*';
     var extRawTemplates = {};
-    var includesReg = new RegExp("\{\{include\(.*?\)\}\}", "ig");
+    var includesReg = new RegExp('{{include(.*?)}}', 'ig');
 
     app('templater', {
-        // translate template by defined words in translate module
-        translate: function (template) {
-            var translateWords = translate.getWordsAsList();
-            var newTpl = helper.replaceInText(template, translateWords);
-            return newTpl;
-        },
         setSubstitute: function (struct) {
             var toRecompile = {};
             var listTplIds = [];
@@ -50,15 +38,15 @@
             toRecompile = null;
 
             // redraw pages if detected
-            var pageViewIds = getPagesViewId();
+            var pageTplPaths = getPagesTplPaths();
             var toRedrawPages = [];
             if (listTplIds.length){
                 for (var i = 0, l = listTplIds.length; i < l; i++){
-                    var viewId = listTplIds[i];
-                    var pageId = pageViewIds[viewId];
+                    var tplPath = listTplIds[i];
+                    var pageId = pageTplPaths[tplPath];
                     if (pageId){
                         toRedrawPages.push(pageId);
-                        delete pageViewIds[viewId];
+                        delete pageTplPaths[tplPath];
                     }
                 }
             }
@@ -104,13 +92,13 @@
         }
     });
 
-    function getPagesViewId() {
-        var pagesViewIdsMap = {};
+    function getPagesTplPaths() {
+        var pagesTplPathsMap = {};
         var pages = app('pages');
         pages.map(function (key, page) {
-            pagesViewIdsMap[page.viewId] = key;
+            pagesTplPathsMap[page._tplPath] = key;
         });
-        return pagesViewIdsMap;
+        return pagesTplPathsMap;
     }
 
     function collectForRecompile(struct, toRecompile) {
@@ -192,15 +180,34 @@
         return iName;
     }
 
+    function getAbsolutePath(value, root) {
+        var ret = value;
+        if (value[0] == '.') {
+            var parents = root.split('/');
+            if (value[1] == '/') {
+                // just up;
+                parents.pop();
+                value = value.substring(2);
+            }
+            if (value[1] == '.' && value[2] == '/') {
+                var vals = value.split('../');
+                value = vals[vals.length - 1];
+                parents.length = parents.length - (vals.length - 1);
+            }
+            ret = parents.join('/') + "/" + value;
+        }
+        return ret;
+    }
+
     // use this '/' for include files, don't use '\' for include in views
     // processing {{includes()}} in text
-    function processIncludes(text, preRepeats, parents){
+    function processIncludes(text, preRepeats, parents, root){
         var map = findIncludes(text);
         var newParents = '';
         for (var key in map){
             var mapItem = map[key];
-            var mapValue = mapItem.value;
-            var tpl = getViewById(mapItem.value, mapItem.args);
+            var absolutePath = getAbsolutePath(mapItem.value, root);
+            var tpl = getViewById(absolutePath, mapItem.args);
             if (preRepeats[key]){
 //                recursive include!!!
                 includesReg.lastIndex = 0;
@@ -210,15 +217,15 @@
                 break;
             } else {
 
-                if (linkToParentMap[mapValue]){
-                    linkToParentMap[mapValue] = linkToParentMap[mapValue] + parentsDelimiter + parents;
+                if (linkToParentMap[absolutePath]){
+                    linkToParentMap[absolutePath] = linkToParentMap[absolutePath] + parentsDelimiter + parents;
                 } else {
-                    linkToParentMap[mapValue] = parents;
+                    linkToParentMap[absolutePath] = parents;
                 }
-                newParents = parents + parentsDelimiter + mapValue;
+                newParents = parents + parentsDelimiter + absolutePath;
 
                 preRepeats[key] = true;
-                var processed = processIncludes(tpl, preRepeats, newParents);
+                var processed = processIncludes(tpl, preRepeats, newParents, absolutePath);
                 delete preRepeats[key];
                 text = helper.replaceInText(text, key, processed);
             }
@@ -246,11 +253,11 @@
             var startPreRepeats = {};
             startPreRepeats['{{include(' + id +')}}'] = true;
 
-            compiledTpl = processIncludes(data, startPreRepeats, id);
+            compiledTpl = processIncludes(data, startPreRepeats, id, id);
             compiledTemplates[id] = compiledTpl;
         }
 
         return compiledTpl;
     }
 
-})();
+})(window.app);

@@ -1,0 +1,19 @@
+<div class="ui-category-tree">
+    <div class="uia-empty" jr-watch="css-class-name(isEmpty)">
+        {{empty.cats}}
+    </div>
+    <div jr-watch="repeat(items)" >
+        <div class="ui-category-item">
+            <div class="ui-cat ui-cat-parent" jr-watch="data-attr(id, id)" data-call="callItemClick">
+                <div class="ui-cat_title" jr-watch="html(title)"></div>
+                {{include(views/edit-blocks/edit-blocks-3)}}
+            </div>
+            <div class="ui-cat_node" jr-watch="repeat(nodes)">
+                <div class="ui-cat ui-cat-child" jr-watch="data-attr(id, id)" data-call="callItemClick">
+                    <div class="ui-cat_title" jr-watch="html(title)"></div>
+                    {{include(views/edit-blocks/edit-blocks-2)}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

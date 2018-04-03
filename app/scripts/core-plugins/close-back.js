@@ -32,7 +32,7 @@
 
     function closeApp(){
         pathHash.clear();
-        var mainTitle = translate.getTranslate("closeBack");
+        var mainTitle = translate("closeBack");
         confirmPlugin.confirm(mainTitle, closeHandler, function(){
             // cancel processing
             pathHash.clear();
@@ -104,7 +104,7 @@
         defineCloseBack();
     }
 
-    helper.onStart(function(){
+    app.onStart(function(){
 
         if (navigator.app && navigator.app.exitApp) {
             closeHandler = navigator.app.exitApp;

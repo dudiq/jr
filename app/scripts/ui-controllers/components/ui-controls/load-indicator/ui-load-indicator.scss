@@ -1,0 +1,47 @@
+@import "../../../../../styles/variables";
+
+
+$indicatorHeight: 3px;
+
+.ui-load-indicator {
+    pointer-events: none;
+    position: fixed;
+    z-index: 10;
+
+    top: 0;
+    left: 0;
+    right: 0;
+
+    .bar {
+        @include set-color-theme('background', 'loadIndiBg');
+        width: 100%;
+        height: $indicatorHeight;
+        transition: transform 0.5s ease-in-out;
+        transform: translate3d(-100%, 0, 0);
+    }
+
+    .peg {
+        display: block;
+        position: absolute;
+        right: 0;
+        width: 200px;
+        height: 100%;
+        border-bottom-left-radius: 200px 2px;
+        box-shadow: 0 0 10px $loadIndiBg, 0 0 5px $loadIndiBg;
+        opacity: 1.0;
+    }
+
+    &.hidden {
+        .bar {
+            transform: translate3d(0%, -$indicatorHeight * 4, 0);
+        }
+    }
+
+    &.start {
+        .bar {
+            transition: none !important;
+            transform: translate3d(-100%, -$indicatorHeight, 0);
+        }
+    }
+
+}

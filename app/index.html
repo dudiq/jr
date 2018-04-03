@@ -1,57 +1,121 @@
-<!doctype html>
+﻿<!DOCTYPE html>
+<html>
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>JR!</title>
-    <meta name="description" content="">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <title>{{appTitle}}</title>
+
+    <meta http-equiv="Content-Security-Policy" content="">
+
+    <meta http-equiv="Cache-Control" content="max-age=0" />
+    <meta http-equiv="Cache-Control" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <meta http-equiv="Expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+    <meta http-equiv="Pragma" content="no-cache" />
+
+    <meta name="description" content=""/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
     <meta name="format-detection" content="telephone=no">
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+    <link rel="icon" type="image/icon" href="favicon.ico" />
 
-    <meta http-equiv="cache-control" content="max-age=0" />
-    <meta http-equiv="cache-control" content="no-cache" />
-    <meta http-equiv="expires" content="0" />
-    <meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
-    <meta http-equiv="pragma" content="no-cache" />
-
-
-    <!-- unit(css, styles/styles.css) -->
+    <!-- unit(css, styles/main.css) -->
 
     <!-- module(jr) -->
-    <link rel="stylesheet" href="styles/jr/jr.css">
-    <link rel="stylesheet" href="styles/jr/jr-notify.css">
-    <link rel="stylesheet" href="styles/jr/jr-overflow.css">
-    <link rel="stylesheet" href="styles/jr/jr-page-popup.css">
-    <link rel="stylesheet" href="styles/jr/jr-swipes.css">
-    <link rel="stylesheet" href="styles/jr/jr-keyboard-popup.css">
-    <link rel="stylesheet" href="styles/jr/jr-fix-container.css">
-    <link rel="stylesheet" href="styles/jr/jr-loading.css">
+    <link rel="stylesheet" type="text/css" href="styles/jr.scss">
+
+
+    <link rel="stylesheet" type="text/css" href="scripts/core-plugins/jqueries/notify/notify.scss">
+    <link rel="stylesheet" href="scripts/core-plugins/jqueries/overflow/overflow.scss">
+    <link rel="stylesheet" href="scripts/core-plugins/jqueries/gestures/swipes.scss">
+    <link rel="stylesheet" href="scripts/core-plugins/jqueries/keyboard-popup/keyboard-popup.scss">
+    <link rel="stylesheet" href="scripts/core-plugins/jqueries/page-click-fix/jr-fix-container.scss">
+    <link rel="stylesheet" href="scripts/core-plugins/loading/loading.scss">
     <!-- endmodule -->
 
-    <!-- module(topStyles) -->
+    <!-- module(rootStyles) -->
+    <link rel="stylesheet" href="styles/main-loading.scss">
+
+    <link rel="stylesheet" href="styles/app-logos.scss">
 
     <link rel="stylesheet" href="styles/boot.css">
-    <link rel="stylesheet" href="styles/main.css">
-    <link rel="stylesheet" href="styles/my-app.css">
+
+    <link rel="stylesheet" href="styles/style.css">
+
+    <link rel="stylesheet" href="styles/platforms/windows.scss">
+
+    <link rel="stylesheet" href="styles/main.scss">
+    <link rel="stylesheet" href="styles/spinner.scss">
 
     <!-- endmodule -->
 
 
-    <!-- unit(css, styles/styles2.css) -->
-        <!-- module(myModuleName) -->
+    <!-- module(components) -->
 
-        <link rel="stylesheet" href="styles/pages/page-popup.css">
-        <link rel="stylesheet" href="styles/pages/page-gesture.css">
+    <link rel="stylesheet" href="scripts/ui-controllers/components/ui-controls/buttons/ui-btn.scss">
+    <link rel="stylesheet" href="scripts/ui-controllers/components/ui-controls/buttons/circle/ui-btn-circle.scss">
+    <link rel="stylesheet" href="scripts/ui-controllers/components/ui-controls/buttons/upload/ui-btn-upload.scss">
 
-        <!-- endmodule -->
+    <link rel="stylesheet" href="scripts/ui-controllers/components/ui-controls/fields/ui-form.scss">
+    <link rel="stylesheet" href="scripts/ui-controllers/components/ui-controls/fields/ui-input.scss">
+    <link rel="stylesheet" href="scripts/ui-controllers/components/ui-controls/fields/ui-radio.scss">
+    <link rel="stylesheet" href="scripts/ui-controllers/components/ui-controls/fields/combo/ui-combo.scss">
 
+    <link rel="stylesheet" href="scripts/ui-controllers/components/ui-controls/load-indicator/ui-load-indicator.scss">
+
+
+    <link rel="stylesheet" href="scripts/ui-controllers/components/ui-controls/popup/ui-popup.scss">
+    <link rel="stylesheet" href="scripts/ui-controllers/components/ui-controls/menus/ui-popup-menu.scss">
+
+    <link rel="stylesheet" href="styles/containers/sliders.scss">
+    <link rel="stylesheet" href="styles/containers/notify.scss">
+    <link rel="stylesheet" href="styles/containers/absolute-page.scss">
+
+    <link rel="stylesheet" href="scripts/ui-controllers/components/ui-controls/tabs/ui-tabs.scss">
+
+    <link rel="stylesheet" href="styles/containers/uia-content.scss">
+    <link rel="stylesheet" href="styles/containers/uia-grid.scss">
+
+
+    <link rel="stylesheet" href="scripts/ui-controllers/components/ui-controls/lists/ui-list.scss">
+    <link rel="stylesheet" href="scripts/ui-controllers/components/ui-controls/lists/ui-filter.scss">
+    <!-- endmodule -->
+
+    <!-- module(componentsCustom) -->
+    <link rel="stylesheet" href="scripts/ui-controllers/components-custom/ui-controls/containers/ui-display.scss">
+    <link rel="stylesheet" href="scripts/ui-controllers/components-custom/ui-controls/lists/cat-list/ui-categories.scss">
+    <link rel="stylesheet" href="scripts/ui-controllers/components-custom/ui-controls/lists/bar-grid/ui-bar-grid.scss">
+    <link rel="stylesheet" href="scripts/ui-controllers/components-custom/ui-controls/containers/cat-select/ui-cat-select.scss">
+    <link rel="stylesheet" href="scripts/ui-controllers/components-custom/ui-controls/containers/month-coins/ui-month-coins.scss">
+    <link rel="stylesheet" href="scripts/ui-controllers/components-custom/ui-controls/containers/page-menu/ui-page-menu.scss">
+    <link rel="stylesheet" href="scripts/ui-controllers/components-custom/ui-controls/containers/page-title/ui-page-title.scss">
+
+    <link rel="stylesheet" href="scripts/ui-controllers/components-custom/ui-controls/lists/expense-list/ui-list-expenses.scss">
+    <link rel="stylesheet" href="scripts/ui-controllers/components-custom/ui-controls/menus/ui-user-menu.scss">
+    <link rel="stylesheet" href="scripts/ui-controllers/components-custom/ui-controls/menus/top-menu/ui-top-menu.scss">
+    <link rel="stylesheet" href="scripts/ui-controllers/components-custom/ui-controls/menus/settings-menu/ui-settings-menu.scss">
+    <link rel="stylesheet" href="scripts/ui-controllers/components-custom/ui-controls/sliders/ui-period-slider.scss">
+    <!-- endmodule -->
+
+    <!-- module(pages) -->
+    <link rel="stylesheet" href="scripts/ui-controllers/pages/expense/expense.scss">
+    <link rel="stylesheet" href="scripts/ui-controllers/pages/categories/categories.scss">
+    <link rel="stylesheet" href="scripts/ui-controllers/pages/settings/settings.scss">
+    <!-- endmodule -->
+
+
+    <!-- module(helpers) -->
+    <link rel="stylesheet" href="styles/uia/helpers.scss">
+    <link rel="stylesheet" href="styles/edit-items/ui-editing.scss">
+    <!-- endmodule -->
 
     <!-- endunit -->
+
 </head>
 <body>
-
 <script>
     (function(){for(var a=(navigator.language||navigator.userLanguage).substring(0,2).toLowerCase(),g="jr-lang-"+("en"==a||"ru"==a?a:"en"),a="jr-lang-"+a,d=document.body,e=d.className.split(" "),b=[],c=0,h=e.length;c<h;c++){var f=e[c];f!=g&&b.push(f)}b.push(a);d.className=b.join(" ")})();
+    window._startTime = (new Date).getTime();
 </script>
 <!--[if lte IE 10]>
 <p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a></p>
@@ -60,175 +124,327 @@
 </script>
 <![endif]-->
 <!-- Add your site or application content here -->
-<div class="jr-container" id="mainContainer">
-</div>
+<div class="jr-container" id="mainContainer"></div>
+<div class="jr-main-slider" id="mainSlider"></div>
+<div class="jr-top-slider" id="topSlider"></div>
+<div class="jr-bottom-slider" id="bottomSlider"></div>
+<div class="jr-portals" id="portals"></div>
 
-<!-- prepare view of app loading -->
 <div class="jr-loading">
-    <div class="jr-loading-progress"></div>
-    <div class="jr-loading-text">Loading...</div>
+    <div class="container-indicator">
+        <!--<div class="app-logo"></div>-->
+        <div class="ui-spinner x-icon-load"></div>
+        <div class="jr-loading-text">...</div>
+    </div>
 </div>
 
 <script src="cordova.js"></script>
 
 <!-- unit(js, scripts/scripts.js) -->
 
+<!-- module(jrVendors) -->
 <script src="scripts/core/js-overwrites.js"></script>
 
-<script src="scripts/vendors/jquery-2.2.1.min.js"></script>
+<script src="scripts/vendors/broadcast.js"></script>
+<script src="scripts/vendors/browser-storage.js"></script>
+
+<script src="scripts/vendors/winstore-jscompat.js"></script>
+<script src="scripts/vendors/jquery-3.2.1.min.js"></script>
 <script src="scripts/vendors/jquery.address-1.6.min.js"></script>
-<script src="scripts/vendors/jquery-jr-click.js"></script>
 <script src="scripts/vendors/jquery-jr-dnd.js"></script>
-
-
-<!--tabbale for overflow plugin-->
 <script src="scripts/vendors/jquery.tabbable.js"></script>
+<script src="scripts/vendors/jrclick-lite.js"></script>
+<script src="scripts/vendors/lz-string.min.js"></script>
+<!-- endmodule -->
+
+
+<!-- module(core) -->
 
 <script src="scripts/core/main.js"></script>
-<script src="scripts/jr-config.js"></script>
 <script src="scripts/core/logger.js"></script>
-<script src="scripts/core/deprecate.js"></script>
 <script src="scripts/core/broadcast.js"></script>
-<script src="scripts/core/app.js"></script>
 <script src="scripts/core/helper.js"></script>
-<script src="scripts/core/cookie.js"></script>
-<script src="scripts/core/suspend.js"></script>
+<script src="scripts/core/dom/dom.js"></script>
+<script src="scripts/core/dom/ready.js"></script>
+<script src="scripts/core/dom/manipulate.js"></script>
+<script src="scripts/core/dom/events.js"></script>
+<script src="scripts/core/app.js"></script>
 <script src="scripts/core/browser-storage.js"></script>
+<script src="scripts/core-plugins/time-info.js"></script>
 
 <script src="scripts/core/translate.js"></script>
 <script src="scripts/langs/ru.js"></script>
 <script src="scripts/langs/en.js"></script>
+
 <script src="scripts/core/translate-starter.js"></script>
+
 
 <script src="scripts/core/templater.js"></script>
 <script src="scripts/core/templater-data.js"></script>
 
-<script src="scripts/core-plugins/mod-require.js"></script>
-<script src="scripts/core-plugins/on-callbacks.js"></script>
-<script src="scripts/core-plugins/top-dom-elements.js"></script>
+<!-- end main -->
 
-<script src="scripts/core/route.js"></script>
-<script src="scripts/core/pages.js"></script>
-<script src="scripts/core/page-auth.js"></script>
-<script src="scripts/core/page.js"></script>
+<script src="scripts/jr-config.js"></script>
 
-<script src="scripts/core/navigation.js"></script>
+<script src="scripts/core-plugins/main/app-addons.js"></script>
+<script src="scripts/core-plugins/main/suspend.js"></script>
+<script src="scripts/core-plugins/main/mod-require.js"></script>
+<script src="scripts/core-plugins/main/on-callbacks.js"></script>
+<script src="scripts/core-plugins/jqueries/top-dom-elements.js"></script>
 
-<script src="scripts/core/http.js"></script>
-<script src="scripts/core/storage.js"></script>
+<script src="scripts/core-plugins/main/route.js"></script>
+<script src="scripts/core-plugins/main/pages.js"></script>
+<script src="scripts/core-plugins/main/page-auth.js"></script>
+<script src="scripts/core-plugins/main/page.js"></script>
 
-<script src="scripts/core/route-start.js"></script>
+<script src="scripts/core-plugins/main/navigation.js"></script>
 
-<!-- plugins define -->
+<script src="scripts/core-plugins/main/http.js"></script>
+<script src="scripts/core-plugins/main/storage.js"></script>
+
+<!-- endmodule -->
+
+
+<!-- module(coreApp) -->
+
+<script src="scripts/my-app/multi-user/user-route.js"></script>
+
+<script src="scripts/core-plugins/main/route-start.js"></script>
+
 <script src="scripts/config.js"></script>
-<script src="scripts/config-mixin.js"></script>
-<script src="scripts/rename-to-app-name/config-my-processing.js"></script>
-<script src="scripts/core/config-processing.js"></script>
+<script src="scripts/my-app/consts.js"></script>
+<script src="scripts/my-app/system-browser-storage.js"></script>
+<script src="scripts/my-app/app-env.js"></script>
 
+<!-- users env -->
+<script src="scripts/my-app/multi-user/current-ns-class.js"></script>
+<script src="scripts/my-app/multi-user/multi-user.js"></script>
+
+<!-- config processors -->
+<script src="scripts/config-mixin.js"></script>
+<script src="scripts/my-app/config-my-processing.js"></script>
+
+<script src="scripts/core-plugins/main/config-processing.js"></script>
+<!-- endmodule -->
+
+
+<!-- module(extends) -->
+<script src="scripts/my-app/interceptor/error-interceptor.js"></script>
+
+<script src="scripts/plugins/mongo-guid.js"></script>
+
+<script src="scripts/my-app/extends/merge-entry.js"></script>
+<script src="scripts/my-app/data-model/promise.js"></script>
+
+<!-- endmodule -->
+
+<!-- module(corePlugins) -->
 <script src="scripts/core-plugins/time-mod/time-mod.js"></script>
 <script src="scripts/core-plugins/time-mod/en.js"></script>
 <script src="scripts/core-plugins/time-mod/ru.js"></script>
+<script src="scripts/core-plugins/time-mod/mods.js"></script>
+<script src="scripts/core-plugins/time-mod/starter.js"></script>
+
 <script src="scripts/core-plugins/build-version.js"></script>
 
-<script src="scripts/core-plugins/watch-scope/watch-scope.js"></script>
-<script src="scripts/core-plugins/watch-scope/parent-watch.js"></script>
-<script src="scripts/core-plugins/watch-scope/base-watch.js"></script>
-<script src="scripts/core-plugins/watch-scope/watchers/change.js"></script>
-<script src="scripts/core-plugins/watch-scope/watchers/repeat.js"></script>
-<script src="scripts/core-plugins/watch-scope/watchers/css.js"></script>
-<script src="scripts/core-plugins/watch-scope/watchers/css-class-name.js"></script>
-<script src="scripts/core-plugins/watch-scope/watchers/bg-img.js"></script>
-<script src="scripts/core-plugins/watch-scope/watchers/bg-color.js"></script>
-<script src="scripts/core-plugins/watch-scope/watchers/data-attr.js"></script>
-<script src="scripts/core-plugins/watch-scope/watchers/a-href.js"></script>
-<script src="scripts/core-plugins/watch-scope/watchers/time-processor.js"></script>
-<script src="scripts/core-plugins/watch-scope/watchers/translate.js"></script>
-<script src="scripts/core-plugins/watch-scope/watchers/html.js"></script>
 
-<script src="scripts/core-plugins/gestures/plugin.js"></script>
-<script src="scripts/core-plugins/gestures/base.js"></script>
+<script src="scripts/core-plugins/jqueries/watch-scope/watch-scope.js"></script>
+<script src="scripts/core-plugins/jqueries/watch-scope/parent-watch.js"></script>
+<script src="scripts/core-plugins/jqueries/watch-scope/base-watch.js"></script>
+<script src="scripts/core-plugins/jqueries/watch-scope/watchers/change.js"></script>
+<script src="scripts/core-plugins/jqueries/watch-scope/watchers/repeat.js"></script>
+<script src="scripts/core-plugins/jqueries/watch-scope/watchers/css.js"></script>
+<script src="scripts/core-plugins/jqueries/watch-scope/watchers/css-class-name.js"></script>
+<script src="scripts/core-plugins/jqueries/watch-scope/watchers/bg-img.js"></script>
+<script src="scripts/core-plugins/jqueries/watch-scope/watchers/bg-color.js"></script>
+<script src="scripts/core-plugins/jqueries/watch-scope/watchers/data-attr.js"></script>
+<script src="scripts/core-plugins/jqueries/watch-scope/watchers/a-href.js"></script>
+<script src="scripts/core-plugins/jqueries/watch-scope/watchers/time-processor.js"></script>
+<script src="scripts/core-plugins/jqueries/watch-scope/watchers/translate.js"></script>
+<script src="scripts/core-plugins/jqueries/watch-scope/watchers/html.js"></script>
 
-<script src="scripts/core-plugins/gestures/swipe.js"></script>
-<script src="scripts/core-plugins/gestures/swipe-left.js"></script>
-<script src="scripts/core-plugins/gestures/swipe-right.js"></script>
-<script src="scripts/core-plugins/gestures/swipe-top.js"></script>
-<script src="scripts/core-plugins/gestures/swipe-bottom.js"></script>
-<script src="scripts/core-plugins/gestures/swipe-lr.js"></script>
 
-<script src="scripts/core-plugins/loading.js"></script>
+<script src="scripts/core-plugins/loading/loading.js"></script>
 <script src="scripts/core-plugins/case-numbers.js"></script>
 <script src="scripts/core-plugins/device-os.js"></script>
 <script src="scripts/core-plugins/route-commander.js"></script>
 <script src="scripts/core-plugins/cordova-device.js"></script>
-<script src="scripts/core-plugins/notify.js"></script>
-<script src="scripts/core-plugins/overflow.js"></script>
-<script src="scripts/core-plugins/cookie-ls-mix-adapter.js"></script>
-<script src="scripts/core-plugins/page-popup.js"></script>
-<script src="scripts/core-plugins/page-popup-modal.js"></script>
-<script src="scripts/core-plugins/keyboard-popup.js"></script>
+<script src="scripts/core-plugins/jqueries/notify/notify.js"></script>
+<script src="scripts/core-plugins/jqueries/overflow/overflow.js"></script>
+<script src="scripts/core-plugins/jqueries/keyboard-popup/keyboard-popup.js"></script>
 <script src="scripts/core-plugins/remember-page.js"></script>
-<script src="scripts/core-plugins/page-change-fix-clicks.js"></script>
+<script src="scripts/core-plugins/jqueries/page-click-fix/page-change-fix-clicks.js"></script>
 <script src="scripts/core-plugins/confirm.js"></script>
 <script src="scripts/core-plugins/close-back.js"></script>
-<script src="scripts/core-plugins/lang-sub.js"></script>
-<script src="scripts/core-plugins/progress.js"></script>
+<script src="scripts/core-plugins/debounce.js"></script>
+<script src="scripts/core-plugins/jqueries/data-serialize.js"></script>
+<script src="scripts/core-plugins/themes.js"></script>
+<script src="scripts/core-plugins/jqueries/material-input.js"></script>
+<!-- endmodule -->
 
-<script src="scripts/plugins/time-info.js"></script>
-<script src="scripts/plugins/android-dialer.js"></script>
-<script src="scripts/plugins/cordova-camera.js"></script>
-<script src="scripts/plugins/debounce.js"></script>
-<script src="scripts/plugins/hashes.js"></script>
-<script src="scripts/plugins/open-app-by-url.js"></script>
+<!-- module(plugins) -->
+<!-- plugins -->
+
+
+<script src="scripts/plugins/app-settings-init.js"></script>
+<script src="scripts/plugins/nat-sort.js"></script>
 <script src="scripts/plugins/validate.js"></script>
-<script src="scripts/plugins/data-serialize.js"></script>
-<script src="scripts/plugins/show-more.js"></script>
-<!--<script src="scripts/plugins/dom-helpers.js"></script>-->
+<script src="scripts/ui-controllers/components/ui-controls/lists/show-more.js"></script>
+<!-- endmodule -->
+
+<!-- module(refactor) -->
+
+<script src="scripts/ui-controllers/components/base/classes.js"></script>
+<script src="scripts/ui-controllers/components/base/data-processor.js"></script>
+<script src="scripts/ui-controllers/components/base/translates/translate-attrs.js"></script>
+
+<script src="scripts/ui-controllers/components/base/init.js"></script>
+
+<script src="scripts/ui-controllers/components/base/parse/components.js"></script>
+<script src="scripts/ui-controllers/components/base/parse/void-elements.js"></script>
+<script src="scripts/ui-controllers/components/base/parse/stringify.js"></script>
+<script src="scripts/ui-controllers/components/base/parse/parse-tag.js"></script>
+<script src="scripts/ui-controllers/components/base/parse/parse.js"></script>
+
+<script src="scripts/ui-controllers/components/base/basic-roots.js"></script>
+<script src="scripts/refactor/animation-frame.js"></script>
+<script src="scripts/refactor/navi/slider.js"></script>
+
+<script src="scripts/ui-controllers/components/base/base.js"></script>
+<script src="scripts/ui-controllers/components/base/portal.js"></script>
+<script src="scripts/ui-controllers/components/ui-controls/pages/page.js"></script>
+
+<script src="scripts/refactor/start-point.js"></script>
+
+<script src="scripts/ui-controllers/components/ui-controls/pages/bb-pages.js"></script>
+
+<!-- endmodule -->
 
 
-<!--communication between jr and my app-->
-<script src="scripts/rename-to-app-name/user.js"></script>
-<script src="scripts/rename-to-app-name/my-app-name.js"></script>
+<!-- module(appData) -->
+<script src="scripts/my-app/auto-login.js"></script>
+<script src="scripts/my-app/my-app.js"></script>
+<script src="scripts/my-app/app-start.js"></script>
 
-<script src="scripts/services/http-process.js"></script>
-<script src="scripts/services/services.js"></script>
-<script src="scripts/services/request.js"></script>
-<script src="scripts/services/remote-check-service.js"></script>
+<script src="scripts/my-app/input-money-parser.js"></script>
+<script src="scripts/my-app/extends/watch-day.js"></script>
+<script src="scripts/my-app/extends/watch-money.js"></script>
 
-<!--<script src="scripts/drop.me.js"></script>-->
+<!-- endmodule -->
 
-<!-- directives -->
+<!-- module(storage) -->
+<script src="scripts/my-app/file/utils.js"></script>
+<script src="scripts/my-app/file/cordova-file.js"></script>
+<!-- endmodule -->
 
-<!--init page instances (controllers)-->
-<script src="scripts/pages/login.js"></script>
-<script src="scripts/pages/main.js"></script>
-<script src="scripts/pages/second.js"></script>
+<!-- module(dataModel)
 
-    <!-- module(myModuleName) -->
-    <!-- views(pages/tree.html, pages/tree/, pages/thr.html, pages/popup.html, pages/gestures.html) -->
-    <script src="scripts/pages/tree.js"></script>
-    <script src="scripts/pages/thr.js"></script>
-    <script src="scripts/pages/popup-page.js"></script>
-    <script src="scripts/pages/gestures.js"></script>
-    <!-- endmodule -->
+<!-- collections -->
 
-    <!-- exModule(utests) -->
-    <!-- --build-type=dev -->
-    <!-- views(tester-page.html) -->
-    <script src="scripts/tests/tester-page.js"></script>
-    <script src="scripts/tests/tester.js"></script>
-    <script src="scripts/tests/cases/core/dom-is-ok.js"></script>
-    <script src="scripts/tests/cases/core/broadcast.js"></script>
-    <script src="scripts/tests/cases/core/helper.js"></script>
-    <script src="scripts/tests/cases/core/browser-storage.js"></script>
-    <script src="scripts/tests/cases/core/main.js"></script>
-    <script src="scripts/tests/cases/core/route-cmd.js"></script>
-    <script src="scripts/tests/cases/core/suspend.js"></script>
-    <script src="scripts/tests/cases/core/watch-scope.js"></script>
+<script src="scripts/my-app/data-model/storage/data-scheme.js"></script>
+<script src="scripts/my-app/data-model/migrates/migrates.js"></script>
+
+<script src="scripts/my-app/data-model/storage/sqlite-db.js"></script>
+<script src="scripts/my-app/data-model/storage/sql-storage-api.js"></script>
+
+<script src="scripts/my-app/data-model/data-event.js"></script>
+<script src="scripts/my-app/data-model/colls/maker.js"></script>
+<script src="scripts/my-app/data-model/colls/coll-pouch.js"></script>
+<script src="scripts/my-app/data-model/colls/coll-expense.js"></script>
+<script src="scripts/my-app/data-model/colls/coll-category.js"></script>
+<script src="scripts/my-app/data-model/colls/coll-period.js"></script>
 
 
-    <script src="scripts/tests/bench.js"></script>
-    <!-- endexModule -->
+<!--this collection must be last-->
+
+
+<!-- endmodule -->
+
+<!-- module(ui) -->
+
+<script src="scripts/ui-controllers/components/ui-controls/tabs/ui-tabs.js"></script>
+<script src="scripts/ui-controllers/components/ui-controls/load-indicator/ui-load-indicator.js"></script>
+
+<script src="scripts/ui-controllers/components/ui-controls/popup/ui-popup.js"></script>
+<script src="scripts/ui-controllers/components/ui-controls/lists/ui-list.js"></script>
+<script src="scripts/ui-controllers/components/ui-controls/menus/ui-popup-menu.js"></script>
+<script src="scripts/ui-controllers/components/ui-controls/lists/ui-filter.js"></script>
+
+<script src="scripts/ui-controllers/components/ui-controls/buttons/ui-btn.js"></script>
+<script src="scripts/ui-controllers/components/ui-controls/buttons/circle/ui-btn-circle.js"></script>
+<script src="scripts/ui-controllers/components/ui-controls/buttons/upload/ui-btn-upload.js"></script>
+
+<script src="scripts/ui-controllers/components/ui-controls/fields/combo/ui-combo.js"></script>
+<script src="scripts/ui-controllers/components/ui-controls/fields/ui-input.js"></script>
+<script src="scripts/ui-controllers/components/ui-controls/fields/ui-input-search.js"></script>
+<script src="scripts/ui-controllers/components/ui-controls/fields/ui-input-email.js"></script>
+<script src="scripts/ui-controllers/components/ui-controls/fields/ui-input-password.js"></script>
+
+<script src="scripts/ui-controllers/data-processor/app-settings.js"></script>
+
+<script src="scripts/ui-controllers/data-processor/pouches.js"></script>
+<script src="scripts/ui-controllers/data-processor/expense.js"></script>
+<script src="scripts/ui-controllers/data-processor/categories.js"></script>
+<script src="scripts/ui-controllers/data-processor/list-editing.js"></script>
+<script src="scripts/ui-controllers/data-processor/analytic.js"></script>
+<script src="scripts/ui-controllers/data-processor/export-import.js"></script>
+<script src="scripts/ui-controllers/data-processor/page-menu.js"></script>
+
+<script src="scripts/my-app/data-model/storage/category-defaults.js"></script>
+<script src="scripts/my-app/data-model/migrates/detector.js"></script>
+
+
+<script src="scripts/ui-controllers/components-custom/ui-controls/lists/cat-list/ui-categories.js"></script>
+<script src="scripts/ui-controllers/components-custom/ui-controls/lists/bar-grid/ui-bar-grid.js"></script>
+<script src="scripts/ui-controllers/components-custom/ui-controls/lists/expense-list/ui-list-expenses.js"></script>
+<script src="scripts/ui-controllers/components-custom/ui-controls/containers/cat-select/ui-cat-select.js"></script>
+<script src="scripts/ui-controllers/components-custom/ui-controls/containers/month-coins/ui-month-coins.js"></script>
+<script src="scripts/ui-controllers/components-custom/ui-controls/containers/page-menu/ui-page-menu.js"></script>
+<script src="scripts/ui-controllers/components-custom/ui-controls/containers/page-title/ui-page-title.js"></script>
+
+
+<script src="scripts/ui-controllers/components-custom/ui-controls/menus/ui-user-menu.js"></script>
+<script src="scripts/ui-controllers/components-custom/ui-controls/menus/top-menu/ui-top-menu.js"></script>
+<script src="scripts/ui-controllers/components-custom/ui-controls/menus/settings-menu/ui-settings-menu.js"></script>
+<script src="scripts/ui-controllers/components-custom/ui-controls/sliders/ui-period-slider.js"></script>
+
+
+<script src="scripts/ui-controllers/pages/expense/expense.js"></script>
+<script src="scripts/ui-controllers/pages/categories/categories.js"></script>
+<script src="scripts/ui-controllers/pages/analytic/analytic.js"></script>
+<script src="scripts/ui-controllers/pages/bottom/bottom.js"></script>
+<script src="scripts/ui-controllers/pages/top/top.js"></script>
+<script src="scripts/ui-controllers/pages/settings/settings.js"></script>
+
+<!-- endmodule -->
+
+
+<!-- module(last) -->
+<script src="scripts/core-plugins/last-module.js"></script>
+<!-- endmodule -->
+
+<!-- exModule(utests) -->
+
+<!--core test cases-->
+<script src="scripts/tests/tester-page.js"></script>
+<script src="scripts/tests/tester.js"></script>
+
+<script src="scripts/tests/cases/core/dom-is-ok.js"></script>
+<script src="scripts/tests/cases/core/broadcast.js"></script>
+<script src="scripts/tests/cases/core/helper.js"></script>
+<script src="scripts/tests/cases/core/main.js"></script>
+<script src="scripts/tests/cases/core/route-cmd.js"></script>
+<script src="scripts/tests/cases/core/suspend.js"></script>
+<script src="scripts/tests/cases/core/watch-scope.js"></script>
+
+<!--test cases-->
+<script src="scripts/tests/cases/collections/test-promise.js"></script>
+
+
+<script src="scripts/tests/bench.js"></script>
+<!-- endexModule -->
 
 <!-- endunit -->
+
 </body>
 </html>

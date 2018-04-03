@@ -1,0 +1,9 @@
+@import "variables";
+
+.app-logo {
+    @include default-bg-img-props('../images/logo.svg');
+}
+
+.person-logo{
+    @include default-bg-img-props('../images/person.svg');
+}

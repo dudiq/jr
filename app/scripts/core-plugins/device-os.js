@@ -1,7 +1,23 @@
-(function(){
+(function () {
     var app = window.app;
 
-    var deviceOs = app('device-os', {});
+    var deviceOs = app('device-os', {
+        TYPE_NOT_DEFINED: 'not-defined',
+        TYPE_IOS: 'ios',
+        TYPE_ANDROID: 'android',
+        TYPE_WINDOWS: 'windows',
+        TYPE_BB: 'blackberry',
+        TYPE_WP: 'wp',
+        device: function () {
+            return osDevice;
+        },
+        os: function () {
+            return osType;
+        },
+        version: function () {
+            return osVersion;
+        }
+    });
 
     var userAgent = (navigator.userAgent).toLowerCase();
 
@@ -9,12 +25,6 @@
     var osVersion = '';
     var osDevice = '';
 
-    deviceOs.TYPE_NOT_DEFINED = 'not-defined';
-    deviceOs.TYPE_IOS = 'ios';
-    deviceOs.TYPE_ANDROID = 'android';
-    deviceOs.TYPE_WINDOWS = 'windows';
-    deviceOs.TYPE_BB = 'blackberry';
-    deviceOs.TYPE_WP = 'wp';
 
     function getAndroidVersion() {
         var ret = '';
@@ -23,41 +33,41 @@
         return ret;
     }
 
-    function getWPVersion(){
+    function getWPVersion() {
         var ret = '';
         var match = userAgent.match(/windows phone\s([0-9\.]*)/);
         ret = match ? match[1] : ret;
         return ret;
     }
 
-    function getIosVersion(){
+    function getIosVersion() {
         var ret = '';
-        var macIndex = userAgent.indexOf( 'mac os ' );
-        if (macIndex != -1){
+        var macIndex = userAgent.indexOf('mac os ');
+        if (macIndex != -1) {
             var pieces = userAgent.split(';');
-            for (var i = 0, l = pieces.length; i < l; i++){
+            for (var i = 0, l = pieces.length; i < l; i++) {
                 var item = pieces[i];
-                var pos = item.indexOf( 'mac os ' );
-                if (pos != -1){
+                var pos = item.indexOf('mac os ');
+                if (pos != -1) {
                     ret = item.substring(pos + 7).replace('_', '.');
                     break;
                 }
             }
         } else {
-            var uaindex = userAgent.indexOf( 'os ' );
-            ret = userAgent.substr( uaindex + 3, 3 ).replace( '_', '.' );
+            var uaindex = userAgent.indexOf('os ');
+            ret = userAgent.substr(uaindex + 3, 3).replace('_', '.');
         }
         return ret;
     }
 
-    function getWindowsVersion(){
+    function getWindowsVersion() {
         var ret = '';
         var match = userAgent.match(/windows nt\s([0-9\.]*)/);
         ret = match ? match[1] : ret;
         return ret;
     }
 
-    function getBBVersion(userAgent){
+    function getBBVersion(userAgent) {
         userAgent = userAgent.toLowerCase();
         var ret = '';
         var Verposition;
@@ -84,21 +94,21 @@
     }
 
     var osTypes = {
-        'android' : deviceOs.TYPE_ANDROID,
-        'iphone|ipad|ipod' : deviceOs.TYPE_IOS,
-        '(windows phone)' : deviceOs.TYPE_WP,
-        '(mac os)|(mac_powerpc)|(macintosh)' : deviceOs.TYPE_IOS,
-        '(windows nt)' : deviceOs.TYPE_WINDOWS,
-        '(bb10)|(blackberry)|(rim tablet)' : deviceOs.TYPE_BB
+        'android': deviceOs.TYPE_ANDROID,
+        'iphone|ipad|ipod': deviceOs.TYPE_IOS,
+        '(windows phone)': deviceOs.TYPE_WP,
+        '(mac os)|(mac_powerpc)|(macintosh)': deviceOs.TYPE_IOS,
+        '(windows nt)': deviceOs.TYPE_WINDOWS,
+        '(bb10)|(blackberry)|(rim tablet)': deviceOs.TYPE_BB
     };
 
-    function defineOsType(){
+    function defineOsType() {
         osType = deviceOs.TYPE_NOT_DEFINED;
         var reg;
         for (var key in osTypes) {
             var type = osTypes[key];
             reg = new RegExp(key, 'i');
-            if (reg.test(userAgent)){
+            if (reg.test(userAgent)) {
                 osType = type;
                 break;
             }
@@ -107,39 +117,17 @@
         reg = null;
     }
 
-    function defineOsVersion(){
-        switch (osType){
-            case deviceOs.TYPE_ANDROID:
-                osVersion = getAndroidVersion();
-                break;
-            case deviceOs.TYPE_IOS:
-                osVersion = getIosVersion();
-                break;
-            case deviceOs.TYPE_WP:
-                osVersion = getWPVersion();
-                break;
-            case deviceOs.TYPE_WINDOWS:
-                osVersion = getWindowsVersion();
-                break;
-            case deviceOs.TYPE_BB:
-                osVersion = getBBVersion();
-                break;
-//            case deviceOs.TYPE_NOT_DEFINED:
-//                break;
-        }
+
+    function defineOsVersion() {
+        var types = {};
+        types[deviceOs.TYPE_ANDROID] = getAndroidVersion;
+        types[deviceOs.TYPE_IOS] = getIosVersion;
+        types[deviceOs.TYPE_WP] = getWPVersion;
+        types[deviceOs.TYPE_WINDOWS] = getWindowsVersion;
+        types[deviceOs.TYPE_BB] = getBBVersion;
+
+        types[osType] && (osVersion = types[osType]());
     }
-
-    deviceOs.device = function(){
-        return osDevice;
-    };
-
-    deviceOs.os = function(){
-        return osType;
-    };
-
-    deviceOs.version = function(){
-        return osVersion;
-    };
 
     defineOsType();
     defineOsVersion();

@@ -1,0 +1,14 @@
+@import "colors";
+@import "sizes";
+@import "../theme/mixin-theme";
+
+@mixin defaut-popup-menu(){
+    border-radius: $border-radius-small;
+    border: 1px solid;
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 5;
+    @include set-color-theme('background-color', 'popupMenuBg');
+    @include set-color-theme('border-color', 'popupMenuBorder');
+}

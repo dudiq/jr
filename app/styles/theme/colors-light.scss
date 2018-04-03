@@ -1,0 +1,30 @@
+
+$light-primary: #e0e0e0;
+$light-secondary: #d1d1d1;
+$light-third: #c4c4c4;
+$light-separator: #b3b3b3;
+$light-four: #828282;
+$light-disable: #bababa;
+$light-invert: #212121;
+
+$light-sub-primary: #009688;
+$light-sub-secondary: #ffffff;
+
+$theme-light: (
+    // new
+    clr-primary: $light-primary,
+    clr-secondary: $light-secondary,
+    clr-third: $light-third,
+    clr-four: $light-four,
+    clr-invert: $light-invert,
+
+
+    clr-separator: $light-separator,
+    clr-disable: $light-disable,
+
+    clr-shadow: $light-four,
+
+    clr-sub-primary: $light-sub-primary,
+    clr-sub-secondary: $light-sub-secondary
+
+)

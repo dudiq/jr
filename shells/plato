@@ -1,0 +1,3 @@
+!#/usr/bin/sh
+cd ..
+plato -r -d reports/plato -x "app/scripts/vendors" app/*

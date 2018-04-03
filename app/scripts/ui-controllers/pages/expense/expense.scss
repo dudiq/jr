@@ -1,0 +1,32 @@
+@import "../../../../styles/variables";
+
+.ui-page-expense {
+    .ui-circle-btn {
+        margin-bottom: 60px;
+    }
+
+    .ui-list-expenses {
+        margin-bottom: 130px;
+    }
+
+    .ui-accept-value-btn {
+        display: none;
+    }
+
+    .show-keypad {
+        .ui-accept-value-btn {
+            display: inline-block;
+        }
+    }
+    .uia-content {
+        //margin-top: $top-menu-height;
+    }
+
+    //.ui-month-coins {
+    //    z-index: 2;
+    //    position: absolute;
+    //    top: $top-menu-height;
+    //    left: 0;
+    //    right: 0;
+    //}
+}

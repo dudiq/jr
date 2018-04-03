@@ -31,22 +31,26 @@ module.exports = function (grunt) {
 
 
     function replaceData(filePath, obj){
-        var file = grunt.file.read(filePath);
+        if (grunt.file.exists(filePath)){
+            var file = grunt.file.read(filePath);
 
-        var outStrDebug = "";
-        for (var key in toReplace){
-            var item = toReplace[key];
-            var value = obj[key];
-            if (key != 'revision'){
-                value = value + ',';
+            var outStrDebug = "";
+            for (var key in toReplace){
+                var item = toReplace[key];
+                var value = obj[key];
+                if (key != 'revision'){
+                    value = value + ',';
+                }
+                outStrDebug += key + ":" + value + "\n";
+                file = file.replace(item, value);
             }
-            outStrDebug += key + ":" + value + "\n";
-            file = file.replace(item, value);
-        }
 
-        grunt.log.writeln(outStrDebug);
-        grunt.file.write(filePath, file);
-        grunt.log.ok('version changed');
+            grunt.log.writeln(outStrDebug);
+            grunt.file.write(filePath, file);
+            grunt.log.ok('version changed');
+        } else {
+            grunt.log.ok('file does not exist, skipping write version to plugin');
+        }
     }
 
     function createExtendFileVar(filePath){
@@ -96,7 +100,9 @@ module.exports = function (grunt) {
             var file = grunt.file.read(path);
 
             file = replaceStringVars(file, strings);
-            file = replaceExtendFilesVars(file, extendFilesPath);
+            if (grunt.file.isDir(extendFilesPath)) {
+                file = replaceExtendFilesVars(file, extendFilesPath);
+            }
 
             grunt.file.write(path, file);
             grunt.log.ok('config.xml parsed, version changed');

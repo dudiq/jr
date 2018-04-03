@@ -1,0 +1,117 @@
+@import "sizes";
+@import "../theme/mixin-theme";
+
+@import "mixin-groups";
+@import "mixin-popup-menu";
+
+@mixin rotate( $degrees ) {
+    transform: rotate(#{$degrees}deg);
+
+    filter: progid:DXImageTransform.Microsoft.Matrix(sizingMethod='auto expand', M11=#{cos($degrees)}, M12=-#{sin($degrees)}, M21=#{sin($degrees)}, M22=#{cos($degrees)});
+    -ms-filter: "progid:DXImageTransform.Microsoft.Matrix(sizingMethod='auto expand', M11=#{cos($degrees)}, M12=-#{sin($degrees)}, M21=#{sin($degrees)}, M22=#{cos($degrees)})";
+    zoom: 1;
+}
+
+@mixin no-selection() {
+    user-select: none;
+}
+
+@mixin no-selection-children() {
+    @include no-selection();
+    & * {
+        @include no-selection();
+    }
+}
+
+@mixin drop-outline() {
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0) !important;
+    outline: none !important;
+}
+
+@mixin app-font() {
+    font-family: 'fnav1';
+    speak: none;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+
+    /* Better Font Rendering =========== */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+@mixin default-btn-styles() {
+    @include no-selection();
+    @include set-color-theme('color', clr-sub-secondary);
+    font-weight: $btn-font-weight;
+    white-space: nowrap;
+    padding: 0 $btn-padding;
+    display: inline-block;
+    height: $btn-height;
+    line-height: $btn-height; //for vertical align
+    box-sizing: border-box;
+    background-color: transparent;
+    cursor: pointer;
+    outline: none;
+    text-transform: uppercase;
+    &.disabled, &.disabled:hover {
+        cursor: default;
+        @include set-color-theme('background', clr-disable);
+    }
+    &.active {
+        @include set-color-theme('background-color', 'bgDefaultLightColor');
+        @include set-color-theme('color', 'bgDefaultColor');
+        border: 1px solid transparent;
+    }
+}
+
+@mixin default-bg-img-props($url) {
+    background-image: url($url);
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+}
+
+@mixin text-overflow() {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+@mixin set-spin( $duration ) {
+    animation-name: spin;
+    animation-duration: $duration;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+}
+
+@mixin shaking ($duration ){
+    animation-name: shaking;
+    animation-duration: $duration;
+    transform-origin:50% 50%;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+
+}
+
+@mixin set-max-display() {
+    margin: 0 auto;
+    position: relative;
+    max-width: $screen-hard;
+}
+
+@mixin current-day-indicator($clr) {
+    &:after {
+        content: '';
+        display: inline-block;
+        width: 5px;
+        height: 5px;
+        border-radius: 5px;
+        margin-left: -5px;
+        position: relative;
+        left: 10px;
+        margin-bottom: 2px;
+        @include set-color-theme(background-color, $clr);
+    }
+}

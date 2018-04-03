@@ -56,7 +56,7 @@ JR structure and etc...
 >>`config-prcessing` - for detect changes of config. and apply new config to app
 >>`cookie` - for access to cookies
 >>`deprecate` - for indicate deprecated methods or plugins or something else
->>`errors` - for logging errors or warnings or just logs into console output (for debug in dev and production)
+>>`logger` - for logging errors or warnings or just logs into console output (for debug in dev and production)
 >>`helper` - all helpers what you need to write own code
 >>`http` - AJAX calls.
 >>`js-overwrites` - methods what JR needs in javascript

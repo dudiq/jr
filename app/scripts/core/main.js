@@ -51,7 +51,7 @@
         //defined components in module instance
         var components = {};
 
-        function moduleC(name, component, params){
+        function moduleC(name, component, methods, params){
             //set/get components
             if (typeof name == "string"){
                 if (component !== undefined){
@@ -66,6 +66,11 @@
                         : (isEmptyObject(component))
                             ? new Mod()
                             : component;
+                    if (methods){
+                        for (var key in methods){
+                            newComp[key] = methods[key];
+                        }
+                    }
 
                     components[name] = newComp;
                     onModDefined(moduleC, name, newComp);
@@ -107,7 +112,7 @@
                 app.onModuleDefined(mod, ns, callback);
             });
         } else {
-            var definedMod = parent(name, undefined, {silent: true});
+            var definedMod = parent(name, undefined, undefined, {silent: true});
             if (definedMod){
                 // mod defined
                 callback(definedMod);

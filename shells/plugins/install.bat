@@ -1,12 +1,11 @@
-call cd ..
-call cd ..
-
 call cordova plugin add cordova-plugin-splashscreen
-call cordova plugin add cordova-plugin-network-information
+#call cordova plugin add cordova-plugin-network-information
 call cordova plugin add cordova-plugin-dialogs
 call cordova plugin add cordova-plugin-device
-call cordova plugin add cordova-plugin-battery-status
+#call cordova plugin add cordova-plugin-battery-status
 call cordova plugin add cordova-plugin-statusbar
-call cordova plugin add cordova-plugin-inappbrowser
 call cordova plugin add cordova-plugin-vibration
-call cordova plugin add cordova-plugin-camera
+call cordova plugin add https://github.com/litehelpers/Cordova-sqlite-storage
+call cordova plugin add cordova-plugin-file
+call cordova plugin add http://github.com/mobiconsoft/cordova-filechooser.git
+#call cordova plugin add https://github.com/leecrossley/cordova-plugin-transport-security.git

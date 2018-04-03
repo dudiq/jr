@@ -1,0 +1,13 @@
+<div class="ui-list">
+    <div class="ui-list-container" jr-watch="repeat(items)" >
+        <div class="ui-list-item" data-call="callItemClick">
+            <span jr-watch="html(value)"></span>
+            <span class="ui-list-title" jr-watch="html(title)"></span>
+        </div>
+    </div>
+    <div class="ui-list-show-more" jr-watch='css(isAllShown, {"true": "helper-hide"})'>
+        <div jr-watch="data-attr(pos, pos)" data-call="callShowMore">
+            {{loading.loadMore}}
+        </div>
+    </div>
+</div>

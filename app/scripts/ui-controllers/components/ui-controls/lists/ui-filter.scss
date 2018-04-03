@@ -1,0 +1,41 @@
+@import "../../../../../styles/variables";
+
+
+$_filterDefHeight: $field-height;
+
+.ui-filter {
+    height: $_filterDefHeight;
+
+    @include set-color-theme('background-color', 'bgDefaultLightColor');
+    @include set-color-theme('color', 'titleColor');
+    border-radius: $border-radius-small;
+
+    display: table;
+    width: 100%;
+
+    .ui-filter-list {
+        display: block;
+        float: left;
+        border-radius: $border-radius-small;
+    }
+
+    .ui-filter-item {
+        @include default-group-item();
+        height: $_filterDefHeight;
+        line-height: $_filterDefHeight;
+        width: auto;
+        display: inline-block;
+        float: left;
+    }
+
+    .ui-filter-set {
+        float: right;
+        width: $_filterDefHeight;
+        height: $_filterDefHeight;
+        text-align: center;
+        line-height: $_filterDefHeight;
+        @include set-color-theme('color', 'titleColor');
+        @include set-color-theme('border-left-color', 'btnSplitterColor');
+        cursor: pointer;
+    }
+}

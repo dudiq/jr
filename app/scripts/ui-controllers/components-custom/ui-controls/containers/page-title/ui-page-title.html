@@ -1,0 +1,25 @@
+<div class="ui-page-title">
+    <div class="content">
+        <div class="ui-item" >
+            {{expense.t}}
+        </div>
+        <div class="ui-item" >
+            {{analytic.t}}
+        </div>
+        <div class="ui-item" >
+            {{categories.t}}
+        </div>
+        <div class="ui-item" >
+            {{settings.t}}
+        </div>
+        <ui-combo>
+            <optgroup id="pouches-list" label="{{pageMenu.pouches}}">
+                <option value="default">{{pageMenu.def}}</option>
+            </optgroup>
+            <optgroup label="-">
+                <option value="action-add">{{pageMenu.add}}</option>
+                <option value="action-remove">{{pageMenu.remove}}</option>
+            </optgroup>
+        </ui-combodiv>
+    </div>
+</div>

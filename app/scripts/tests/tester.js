@@ -93,7 +93,7 @@
         assert: assert
     });
 
-    function ItBlockClass(name, cb) {
+    function ItBlockClass(name) {
         this._cases = [];
         this._runCases = [];
         this._index = 0;
@@ -272,7 +272,7 @@
     /// process continue run tests
     if (!helper.isEmpty(currentSession) && currentSession.lastProcessed){
         // continue run
-        helper.onStartEnd(function () {
+        app.onStartEnd(function () {
 
             // timeout needed for correct processing all other modules
             setTimeout(function () {

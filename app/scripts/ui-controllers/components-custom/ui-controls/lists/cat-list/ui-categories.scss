@@ -1,0 +1,53 @@
+@import "../../../../../../styles/variables";
+
+.ui-category-tree {
+    margin: 0 auto;
+    max-width: $screen-big;
+
+    .ui-cat_title {
+        padding: $padding-normal;
+    }
+    .ui-category-item:first-child .ui-cat_title.ui-cat-parent {
+        border-top: none;
+    }
+    .ui-cat-parent {
+        font-size: $text-size-bigger;
+        .ui-cat_title {
+            padding-top: $padding-bigger;
+            padding-left: $padding-big;
+        }
+        .ui-edit-btn {
+            line-height: 68px;
+        }
+    }
+    .ui-cat-child {
+        .ui-cat_title {
+            padding-left: $padding-big * 2;
+        }
+    }
+    .ui-cat {
+        position: relative;
+        border-bottom: 1px solid;
+        @include set-color-theme(border-color, clr-separator);
+    }
+    .ui-cat:last-child{
+        border-bottom: none;
+    }
+
+    .ui-cat_node .ui-category-item_title {
+        font-size: $text-size;
+    }
+    .ui-cat_title {
+        @include set-color-theme(background, clr-third);
+        @include set-color-theme(border-color, clr-separator);
+    }
+    .ui-edit-btn {
+        height: 54px;
+        width: 54px;
+        line-height: 54px;
+        font-size: $text-size-hard;
+    }
+
+    @include create-editing-transform('ui-cat-parent', 'ui-cat_title', -170px);
+    @include create-editing-transform('ui-cat-child', 'ui-cat_title', -124px);
+}

@@ -1,0 +1,17 @@
+<div class="ui-item-expense"
+     jr-watch="data-attr(id, id)" data-call="callItemClick"
+>
+    <div class="ui-exp-item" jr-watch="wday(time)">
+        <div class="uia-grid">
+            <div class="uia-grid-cell">
+                <div class="ui-item-cat"><span jr-watch="html(catTitle)"></span><span jr-watch="html(catSubTitle)"></span></div>
+                <div class="ui-item-desc" jr-watch="html(desc)"></div>
+            </div>
+            <div class="uia-grid-cell">
+                <div class="ui-item-cost" jr-watch="money(cost)"></div>
+                <div class="ui-item-time" jr-watch='time-processor(time, sweek, dd sm | h:m)'></div>
+            </div>
+        </div>
+    </div>
+    {{include(views/edit-blocks/edit-blocks-2)}}
+</div>

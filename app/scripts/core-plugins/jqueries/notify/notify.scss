@@ -1,0 +1,13 @@
+.jr-notify-container {
+    position: fixed;
+    bottom: 0;
+    left: 10%;
+    right: 10%;
+    z-index: 10;
+
+    .jr-notify-item {
+        width: 100%;
+        min-height: 20px;
+        margin: 0 auto;
+    }
+}

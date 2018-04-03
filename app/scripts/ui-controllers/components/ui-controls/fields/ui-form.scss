@@ -1,0 +1,11 @@
+@import "../../../../../styles/variables";
+.ui-form-block {
+    margin-bottom: $margin-normal;
+}
+.ui-form-title {
+    font-size: $text-size-big;
+    margin-bottom: $margin-smaller;
+}
+.ui-form-content {
+    margin: 0 $margin-normal;
+}

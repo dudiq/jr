@@ -1,0 +1,44 @@
+<div class="uia-absolute-page">
+    <div class="uia-content">
+        <div class="ui-settings-place">
+            <div class="ui-form-block">
+                <div class="ui-form-title">{{settings.theme}}</div>
+                <div class="ui-form-content">
+                    <div class="ui-radio" data-processor="app-settings.theme.default" >
+                        <input type="radio" id="theme-dark" name="theme" />
+                        <label for="theme-dark">{{theme.dark}}</label>
+                    </div>
+                    <div class="ui-radio" data-processor="app-settings.theme.light" >
+                        <input type="radio" id="theme-light" name="theme" />
+                        <label for="theme-light">{{theme.light}}</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ui-form-block">
+                <div class="ui-form-title">{{settings.langs}}</div>
+                <div class="ui-form-content">
+                    <div class="ui-radio" data-processor="app-settings.lang.en" >
+                        <input type="radio" id="lang-en" name="lang" />
+                        <label for="lang-en">English</label>
+                    </div>
+                    <div class="ui-radio" data-processor="app-settings.lang.ru" >
+                        <input type="radio" id="lang-ru" name="lang" />
+                        <label for="lang-ru">Русский</label>
+                    </div>
+                </div>
+            </div>
+            <div class="ui-form-block">
+                <div class="ui-form-title">{{settings.migrate}}</div>
+                <div class="ui-form-content">
+                    <div>
+                        <ui-btn-upload data-select-file="migrate.fileImport">import</ui-btn-upload>
+                    </div>
+                    <div>
+                        <ui-btn data-processor="migrate.export">export</ui-btn>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

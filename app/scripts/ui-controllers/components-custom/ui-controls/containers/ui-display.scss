@@ -1,0 +1,6 @@
+@import "../../../../../styles/variables";
+
+
+.ui-display{
+    @include set-max-display();
+}

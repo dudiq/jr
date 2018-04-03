@@ -1,0 +1,58 @@
+@import "colors";
+
+$themeDefault: 'dark';
+$themeDelay: 0.3s;
+
+@mixin set-color-theme($prop, $key){
+    @include set-color-theme-sub($prop, $key, '', '');
+}
+
+@function get-color-by-theme($theme, $colorName){
+    $colors: map-get($themeColors, $theme);
+    $ret: map-get($colors, $colorName);
+    @return $ret;
+}
+
+@mixin set-color-theme-value($prop, $value){
+    @each $theme, $themeColors in $themeColors {
+        @if $theme == $themeDefault {
+            #{$prop}: #{$value}
+        } @else {
+            .theme-#{$theme} & {
+                #{$prop}: #{$value}
+            }
+        }
+    }
+}
+
+@mixin set-color-theme-sub($prop, $key, $prefix, $posix) {
+    @each $theme, $themeColors in $themeColors {
+        @each $colorKey, $colorValue in $themeColors {
+            @if $colorKey == $key {
+                @if $theme == $themeDefault {
+                    #{$prop}: #{$prefix} $colorValue #{$posix};
+                } @else {
+                    .theme-#{$theme} & {
+                        #{$prop}: #{$prefix} $colorValue #{$posix};
+                    }
+                }
+            }
+        }
+    }
+}
+
+@mixin make-theme-transition(){
+    @each $theme, $themeColors in $themeColors {
+
+        @if $theme == $themeDefault {
+            .theme-animate.theme- * {
+                transition: all $themeDelay ease;
+            }
+        } @else {
+            .theme-animate.theme-#{$theme} * {
+                transition: all $themeDelay ease;
+            }
+        }
+    }
+}
+

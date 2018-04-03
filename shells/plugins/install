@@ -1,13 +1,14 @@
 !#/usr/bin/sh
 cd ..
 cd ..
-
 cordova plugin add cordova-plugin-splashscreen
-cordova plugin add cordova-plugin-network-information
+#cordova plugin add cordova-plugin-network-information
 cordova plugin add cordova-plugin-dialogs
 cordova plugin add cordova-plugin-device
-cordova plugin add cordova-plugin-battery-status
+#cordova plugin add cordova-plugin-battery-status
 cordova plugin add cordova-plugin-statusbar
-cordova plugin add cordova-plugin-inappbrowser
 cordova plugin add cordova-plugin-vibration
-cordova plugin add cordova-plugin-camera
+cordova plugin add https://github.com/litehelpers/Cordova-sqlite-storage
+cordova plugin add cordova-plugin-file
+cordova plugin add http://github.com/mobiconsoft/cordova-filechooser.git
+#cordova plugin add https://github.com/leecrossley/cordova-plugin-transport-security.git

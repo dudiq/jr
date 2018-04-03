@@ -1,0 +1,45 @@
+@import "../../../../../../styles/variables";
+
+@mixin make-active($idx) {
+    .active-#{$idx} {
+        .ui-item:nth-child(#{$idx}) {
+            @include set-color-theme(color, clr-invert);
+        }
+    }
+
+}
+
+.ui-page-menu {
+    z-index: 2;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    font-size: $text-size-small;
+    @include set-color-theme-sub(box-shadow, clr-shadow, '0px -7px 10px 0px', '');
+
+    .content {
+        @include set-color-theme(background, clr-third);
+        white-space: nowrap;
+    }
+
+    .ui-item {
+        transition: color $delayFast ease-in-out;
+        width: 24%;
+        display: inline-block;
+        text-align: center;
+        padding: 10px 0;
+        border-right: 1px solid;
+        @include set-color-theme(color, clr-four);
+        @include set-color-theme(border-right-color, clr-separator);
+    }
+
+    .ui-item:last-child {
+        border-right: none;
+    }
+
+    @include make-active(1);
+    @include make-active(2);
+    @include make-active(3);
+    @include make-active(4);
+}

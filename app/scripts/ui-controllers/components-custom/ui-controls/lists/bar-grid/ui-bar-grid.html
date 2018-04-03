@@ -1,0 +1,17 @@
+<div class="ui-bar-grid">
+    <div class="items" jr-watch="repeat(items)">
+        <div class="ui-parent-item" jr-watch="data-attr(id, id)" data-call="callItemClick">
+            <div class="ui-bar ui-bar-parent">
+                <div class="ui-bar_title" jr-watch="html(title)"></div>
+                <div class="ui-bar_cost" jr-watch="money(cost)"></div>
+            </div>
+            <div class="ui-bar_node" jr-watch="repeat(nodes)">
+                <div class="ui-bar" jr-watch="data-attr(id, id)" data-call="callSubItemClick">
+                    <div class="ui-bar_title" jr-watch="html(title)"></div>
+                    <div class="ui-bar_cost" jr-watch="money(cost)"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

@@ -1,0 +1,11 @@
+.os-type-windows {
+    //need to on windows platform scroll
+    //disable zoom in dashboard
+    body {
+        height: 100%;
+        -ms-content-zooming: none;
+    }
+
+    height: 100%;
+    overflow: hidden;
+}

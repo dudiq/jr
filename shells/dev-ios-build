@@ -1,0 +1,4 @@
+!#/usr/bin/sh
+cd ..
+grunt build
+cordova build ios

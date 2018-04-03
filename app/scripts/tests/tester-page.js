@@ -4,7 +4,7 @@
 
     app('pages').create({
         id: 'tester-page',
-        viewId: 'tester-page',
+        tplPath: 'scripts/tests/tester-page',
         weight: 99999,
         hasAccess: function(){
             return true;

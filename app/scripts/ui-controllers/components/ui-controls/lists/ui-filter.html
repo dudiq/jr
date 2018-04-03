@@ -1,0 +1,10 @@
+<div class="ui-filter">
+    <div class="ui-filter-list" jr-watch="repeat(filters)">
+        <div class="ui-filter-item" jr-watch="html(title); css-class-name(className)" data-call="onPreItemClick">
+            <span jr-watch="html(title)"></span>
+            <span jr-watch="html(desc)"></span>
+        </div>
+    </div>
+    <div class="ui-filter-set x-icon-filter" data-call="onSetFilters">
+    </div>
+</div>

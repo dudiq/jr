@@ -1,0 +1,18 @@
+@import "../../../../../styles/variables";
+
+.ui-list {
+    .ui-list-container {
+
+    }
+
+    .ui-list-item {
+        padding: $paddingNormal;
+    }
+    .ui-list-item:last-child {
+        border-bottom: none;
+    }
+
+    .ui-list-show-more {
+
+    }
+}

@@ -1,0 +1,11 @@
+node_modules/*
+app_res/*
+platforms/*
+plugins/*
+shells/*
+tasks/*
+www/*
+.tmp/*
+app/scripts/vendors/*
+!app/scripts/vendors/jquery-jr-click.js
+!app/scripts/vendors/jquery-jr-dnd.js

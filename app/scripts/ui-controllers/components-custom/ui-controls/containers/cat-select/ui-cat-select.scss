@@ -1,0 +1,149 @@
+@import "../../../../../../styles/variables";
+
+$pad-width: 70px;
+.ui-cat-select {
+
+    max-width: $screen-big;
+    margin: 0 auto;
+
+    .ui-cat {
+        min-height: 10px;
+        //border: 1px solid gray;
+        margin: 2px;
+        display: inline-block;
+    }
+    .ui-cat_title {
+        padding: $padding-small;
+        cursor: pointer;
+    }
+    .ui-category-item {
+        display: inline-block;
+    }
+    .ui-cat_node {
+        display: none;
+        @include set-color-theme(color, clr-disable);
+    }
+    .sub-cat-selected {
+        @include set-color-theme(color, clr-sub-secondary);
+    }
+
+    &.item-selected {
+        .ui-category-item {
+            display: none;
+        }
+        .cat-selected {
+            display: block;
+        }
+    }
+
+    .cat-selected {
+        .ui-cat-parent {
+            display: block;
+            border-color: transparent;
+            font-size: $text-size-bigger;
+            .ui-cat_title:before {
+                content: "... ";
+            }
+        }
+
+        .ui-cat_node {
+            display: inline-block;
+        }
+    }
+
+    .ui-cost-view {
+        min-height: $field-height;
+        width: ($pad-width * 4) - 4;
+        margin: 0 auto;
+        @include set-color-theme(background-color, clr-secondary);
+        @include set-color-theme-sub('box-shadow', clr-shadow, '0px 0px 10px 1px', 'inset');
+    }
+    .ui-cost-current {
+        font-size: $text-size-bigger;
+        margin: 0 $margin-smaller;
+        margin-bottom: 0;
+        text-align: right;
+    }
+    .ui-cost-total {
+        @include set-color-theme(color, clr-disable);
+        margin: 0 $margin-smaller;
+        font-size: $text-size-small;
+        text-align: right;
+        margin-right: $margin-small;
+        min-height: $text-size-bigger;
+    }
+    .ui-cost-sums {
+        @include set-color-theme(color, clr-disable);
+        font-size: $text-size-small;
+        min-height: $text-size-bigger;
+        text-align: right;
+        margin-right: $margin-small;
+    }
+    .ui-keypad {
+        width: $pad-width * 4;
+        margin: 0 auto;
+        @include no-selection();
+        border-radius: $border-radius-big;
+    }
+    .pad-block {
+        display: none;
+        .ui-input {
+            margin: 0 auto;
+            position: relative;
+            display: block;
+            padding: 10px;
+        }
+    }
+
+    .ui-keypad-row {
+        div {
+            display: table-cell;
+            text-align: center;
+            border: 1px solid;
+            width: $pad-width;
+            height: 50px;
+            line-height: 50px;
+            box-sizing: border-box;
+            font-size: $text-size-big;
+            cursor: pointer;
+            @include set-color-theme(border-color, clr-primary);
+            @include set-color-theme(background-color, clr-third);
+        }
+    }
+    div.ui-keypad-clear {
+        font-size: $text-size-bigger;
+        @include set-color-theme(background-color, clr-secondary);
+    }
+    div.ui-keypad-sub-btn {
+        font-size: $text-size-bigger;
+        @include set-color-theme(background-color, clr-separator);
+    }
+    div.ui-keypad-add,
+    div.ui-keypad-edit {
+        width: 140px;
+        @include set-color-theme(background-color, clr-sub-primary);
+        @include set-color-theme(color, clr-sub-secondary);
+    }
+
+    &.show-keypad {
+        .pad-block {
+            display: block;
+        }
+    }
+
+    div.ui-keypad-edit {
+        display: none;
+    }
+    &.is-editing {
+        .ui-keypad-edit {
+            display: table-cell;
+        }
+        .ui-keypad-add {
+            display: none;
+        }
+        .ui-keypad-plus {
+            opacity: $opacity-disabled;
+            @include set-color-theme('color', clr-disable);
+        }
+    }
+}

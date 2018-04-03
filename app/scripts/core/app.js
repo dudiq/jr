@@ -9,7 +9,7 @@
  * */
 
 (function(app){
-    app.version = '0.4.1';
+    app.version = '0.5.1';
     app.prefix = 'jr-';
 
     var logger = app('logger')('app');
@@ -28,6 +28,18 @@
     var waitCallbacks = [];
 
     var startPrevented = !!window.preventJr;
+
+    // for debug only
+    app._getWaitCallbacksNames = function () {
+        var ret = [];
+        for (var i = 0, l = waitCallbacks.length; i < l; i++){
+            var cb = waitCallbacks[i];
+            if (cb){
+                ret.push(cb._name);
+            }
+        }
+        return ret.join(',');
+    };
 
     // awaiting to start app. for example need load views, before run
     //
@@ -52,18 +64,6 @@
         return callback;
     };
 
-    // for debug only
-    app._getWaitCallbacksNames = function () {
-        var ret = [];
-        for (var i = 0, l = waitCallbacks.length; i < l; i++){
-            var cb = waitCallbacks[i];
-            if (cb){
-                ret.push(cb._name);
-            }
-        }
-        return ret.join(',');
-    };
-
     // for getting modules as callback
     app.modules = function(modules, callback){
         var returnModules = [];
@@ -73,12 +73,35 @@
         callback.apply(app, returnModules);
     };
 
+
+    app.onStart = function (cb) {
+        if (app.started) {
+            cb();
+        } else {
+            broadcast.one(systemEvs.onStartBegin, cb);
+        }
+    };
+
+    app.onStartEnd = function (cb) {
+        if (app.startEnd) {
+            cb();
+        } else {
+            broadcast.one(systemEvs.onStartEnd, cb);
+        }
+    };
+
+    app.onDomReady = function (cb) {
+        if (app.domReady) {
+            cb();
+        } else {
+            broadcast.one(systemEvs.onDomReady, cb);
+        }
+    };
+
     // start application before all loaded
     function start(){
-        if (!startPrevented && checkReady() && !app.started && app.domReady) {
-            var helper = app('helper');
-            (!helper.isMobile && !helper.isNative) && $(document.body).addClass('jr-desktop');
-            waitCallbacks.clear();
+        if (!startPrevented && isWaitCallbacksDone() && !app.started && app.domReady) {
+            waitCallbacks.length = 0;
             app.started = true;
 
             // process all onStart
@@ -95,7 +118,7 @@
     }
 
     // check that all awaiting callbacks was called for run app
-    function checkReady(){
+    function isWaitCallbacksDone(){
         var ready = true;
         for (var i = 0, l = waitCallbacks.length; i < l; i++){
             if (waitCallbacks[i]){
@@ -107,10 +130,14 @@
 
 
     //initial dom ready state for call run OWN app
-    $(document).ready(function(){
+    // dom Ready init
+
+
+    app._onDomReady(function(){
         app.domReady = true;
         broadcast.trig(systemEvs.onDomReady);
         !startPrevented && start();
     });
+
 
 })(window.app);

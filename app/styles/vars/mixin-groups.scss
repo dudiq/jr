@@ -1,0 +1,54 @@
+@import "colors";
+@import "sizes";
+@import "../theme/mixin-theme";
+
+@mixin default-group() {
+    display: table;
+    vertical-align: middle;
+    width: 100%;
+    table-layout: fixed;
+    border: 1px solid;
+    border-radius: $border-radius-small;
+
+    @include set-color-theme('border-color', 'btnGroupBorderColor');
+
+    & > * {
+        display: table-cell;
+        width: 100%;
+        text-align: center;
+    }
+}
+
+@mixin default-group-item() {
+    @include set-color-theme('background-color', 'bgDefaultLightColor');
+    @include set-color-theme('color', 'titleColor');
+    padding: 0 0.8em;
+
+    width: 50px; // min width of item in group
+    @include text-overflow();
+
+    &:not(:first-child) {
+        border-left: 1px solid;
+        @include set-color-theme('border-left-color', 'btnSplitterColor');
+    }
+
+    &.active {
+        @include set-color-theme('background-color', 'bgDarkLightColor');
+        @include set-color-theme('color', 'bgDefaultLightColor');
+        border-top: none;
+        border-bottom: none;
+    }
+    @include group-item-borders();
+}
+
+@mixin group-item-borders(){
+    border-radius: 0;
+    &:first-child:not(:last-child) {
+        border-top-left-radius: $border-radius-small;
+        border-bottom-left-radius: $border-radius-small;
+    }
+    &:last-child:not(:first-child) {
+        border-top-right-radius: $border-radius-small;
+        border-bottom-right-radius: $border-radius-small;
+    }
+}

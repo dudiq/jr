@@ -38,6 +38,6 @@ IE9+, Android 4.x, IOS 5.x, Chrome 30+, FF 4+
 
 ## License
 
-MIT (c) 2017 dudiq
+MIT (c) 2018 dudiq
 
 created at https://stackedit.io/

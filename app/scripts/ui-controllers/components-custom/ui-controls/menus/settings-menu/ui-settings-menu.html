@@ -1,0 +1,22 @@
+<div class="ui-settings-menu">
+    <div class="ui-popup-menu">
+
+        <div class="ui-settings-place">
+            <div>
+                <ui-btn data-processor="app-settings.theme.light" data-init='{"title": "{{theme.light}}"}'></ui-btn>
+                <ui-btn data-processor="app-settings.theme.default" data-init='{"title": "{{theme.dark}}"}'></ui-btn>
+            </div>
+
+            <div>
+                <ui-btn data-processor="app-settings.lang.en" data-init='{"title": "English"}'></ui-btn>
+                <ui-btn data-processor="app-settings.lang.ru" data-init='{"title": "Русский"}'></ui-btn>
+            </div>
+            <div class="ui-bottom-place">
+                <ui-btn-upload data-processor="migrate.fileImport">import</ui-btn-upload>
+                <ui-btn data-processor="migrate.export">export</ui-btn>
+            </div>
+        </div>
+    </div>
+
+    <div class="uia-overflow"></div>
+</div>

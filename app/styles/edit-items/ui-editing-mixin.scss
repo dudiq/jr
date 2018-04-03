@@ -1,0 +1,15 @@
+@import "../vars/animation";
+@mixin create-editing-transform($class-name, $what-move, $width){
+    .#{$what-move}{
+        transition: all $defaultDelay ease-in-out;
+        position: relative;
+        z-index: 1;
+    }
+    .is-editing {
+        &.#{$class-name} {
+            .#{$what-move} {
+                transform: translate3d($width, 0, 0);
+            }
+        }
+    }
+}

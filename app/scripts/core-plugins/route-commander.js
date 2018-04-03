@@ -14,6 +14,7 @@
 
     var activeKeys = {};
     var currentAlias;
+    var isWorking = false;
 
     function processRouteEv(ev, params, methodName){
         var key = params.key;
@@ -76,47 +77,49 @@
         }
     });
 
-    RouteCmdClass.createCommander = function (params) {
-        return new RouteCmdClass(params);
-    };
+    helper.extendObject(RouteCmdClass, {
+        createCommander: function (params) {
+            return new RouteCmdClass(params);
+        },
 
-    RouteCmdClass.setKey = function(searchKey, newValue){
-        setKey(searchKey, newValue);
-    };
+        setKey: function (searchKey, newValue) {
+            setKey(searchKey, newValue);
+        },
 
-    RouteCmdClass.getKey = function(searchKey){
-        var ret;
-        processParams(function(key, value){
-            if (searchKey == key){
-                ret = value;
-                return false;
-            }
-        });
-        return ret;
-    };
+        getKey: function (searchKey) {
+            var ret;
+            processParams(function (key, value) {
+                if (searchKey == key) {
+                    ret = value;
+                    return false;
+                }
+            });
+            return ret;
+        },
 
-    RouteCmdClass.isExist = function(searchKey){
-        var exist = false;
-        processParams(function(key){
-            if (searchKey == key){
-                exist = true;
-                return false;
-            }
-        });
-        return exist;
-    };
+        isExist: function (searchKey) {
+            var exist = false;
+            processParams(function (key) {
+                if (searchKey == key) {
+                    exist = true;
+                    return false;
+                }
+            });
+            return exist;
+        },
 
-    RouteCmdClass.removeKey = function(searchKey){
-        setKey(searchKey, null, true);
-    };
+        removeKey: function (searchKey) {
+            setKey(searchKey, null, true);
+        },
 
-    RouteCmdClass.getAll = function(){
-        var ret = {};
-        processParams(function(key, value){
-            ret[key] = value;
-        });
-        return ret;
-    };
+        getAll: function () {
+            var ret = {};
+            processParams(function (key, value) {
+                ret[key] = value;
+            });
+            return ret;
+        }
+    });
 
     // set/remove key in path
     function setKey(searchKey, newValue, isDrop){
@@ -125,7 +128,12 @@
         singleSetKey(args, searchKey, newValue, isDrop);
 
         var str = args.join('/');
-        route.pushArgs(str);
+        if (isDrop) {
+            // :todo retnink this
+            route.replaceByField(-1, null, str);
+        } else {
+            route.pushByField(-1, null, str);
+        }
     }
 
     // getting all chunks from path and processing it by callback
@@ -221,7 +229,7 @@
         triggerRemoved(removed);
         triggerSet(sets);
 
-        if (!helper.isEmpty(changed)){
+        if (isWorking && !helper.isEmpty(changed)){
             broadcast.trig(rCmdEvs.onChanged, {
                 alias: currentAlias,
                 keys: changed
@@ -238,7 +246,7 @@
     }
 
     function triggerSet(map){
-        if (!helper.isEmpty(map)) {
+        if (isWorking && !helper.isEmpty(map)) {
             broadcast.trig(rCmdEvs.onSets, {
                 alias: currentAlias,
                 keys: map
@@ -247,7 +255,7 @@
     }
 
     function triggerRemoved(map){
-        if (!helper.isEmpty(map)) {
+        if (isWorking && !helper.isEmpty(map)) {
             broadcast.trig(rCmdEvs.onRemoved, {
                 alias: currentAlias,
                 keys: map
@@ -266,6 +274,10 @@
 
     // processing start app
     function onStart(){
+        broadcast.one(routeEvs.started, function () {
+            isWorking = true;
+        });
+
         // cleanup(drop) prev commands if page will be changed
         broadcast.on(naviEvs.onChanged, function(ev){
             // drop all set keys
@@ -281,7 +293,7 @@
     }
 
 
-    helper.onStart(function(){
+    app.onStart(function(){
         onStart();
     });
 

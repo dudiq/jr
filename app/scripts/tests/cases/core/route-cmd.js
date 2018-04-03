@@ -3,7 +3,6 @@
     var tester = app('tester');
 
     var assert = tester.assert;
-    var logger = tester.logger;
 
     tester.block('checking route-commander', function(it){
         var app = window.app;

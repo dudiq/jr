@@ -1,0 +1,11 @@
+@import "../../../../../styles/variables";
+
+
+.ui-user-menu{
+
+    @include defaut-popup-menu();
+    right: auto;
+    top: $top-menu-height;
+    min-width: 300px;
+
+}

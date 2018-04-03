@@ -1,0 +1,70 @@
+@import "../../../../../styles/variables";
+
+.ui-input {
+    height: $field-height;
+    width: $field-width;
+    @include set-color-theme(color, clr-sub-primary);
+
+    display: inline-block;
+
+    .ui-input-cont-wrap {
+        position: relative;
+        height: 100%;
+        margin-right: $marginNormal * 2;
+    }
+
+    .ui-input-cont {
+        position: relative;
+        height: 100%;
+        margin: 0;
+    }
+
+    .ui-input-icon {
+        position: absolute;
+        top: 0;
+        right: -$field-height / 2;
+        height: $field-height;
+        width: $field-height;
+        text-align: center;
+        line-height: $field-height;
+        font-size: $icon-size;
+    }
+
+    .is-using-icon {
+        input {
+            padding-right: 40px;
+        }
+        .ui-input-cont {
+            margin-right: $field-height - $marginNormal;
+        }
+    }
+
+    input {
+        @include set-color-theme(color, clr-sub-primary);
+        position: absolute;
+        left: 0;
+        top: 0;
+        padding: 0 $marginNormal;
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        border: none;
+        border-bottom: 1px solid;
+        @include set-color-theme('border-bottom-color', clr-separator);
+        background-color: transparent;
+
+        &:-webkit-autofill,
+        &:-webkit-autofill:hover,
+        &:-webkit-autofill:focus,
+        &:-webkit-autofill:active {
+            @include set-color-theme-sub('box-shadow', clr-shadow, '0 0 0 1000px', 'inset');
+            @include set-color-theme-sub('-webkit-text-fill-color', clr-sub-primary, '', '!important');
+        }
+
+    }
+    //.uia-content & {
+    //    input {
+    //        @include set-color-theme('color', 'inputColorInverse');
+    //    }
+    //}
+}

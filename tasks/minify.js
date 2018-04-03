@@ -118,9 +118,9 @@ module.exports = function (grunt) {
                 pFiles.map(function (pFileSingle) {
 
                     var node = fileToModMap[pFileSingle];
-                    var module = node.module;
-                    var modName = module.name();
-                    if (!modulesForMinify[modName]){
+                    var module = node ? node.module : null;
+                    var modName = module ? module.name() : null;
+                    if (modName && !modulesForMinify[modName]){
                         var fileSrc = source + '/' + pFileSingle;
                         var fileDest = dest + '/' + pFileSingle;
                         var item = {
@@ -232,6 +232,8 @@ module.exports = function (grunt) {
         if (doMinifyCode){
             grunt.log.writeln('--- Started minify');
             var newHtml = units.html;
+            var pkg = grunt.file.readJSON('package.json');
+            newHtml = newHtml.replace('{{appTitle}}', pkg.name);
             grunt.file.write(source + '/index.html', newHtml);
 
             processMinifyData(dest, source, units, modulesForMinify);

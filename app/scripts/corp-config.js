@@ -1,15 +1,15 @@
-(function(){
-    var app = window.app;
-
-    // config for CORPORATE production version
+(function(app){
+    // config for production
 
     app('app-config', {
-
+        // server: {
+        //     version: 'v1',
+        //     serviceUrl: 'http://localhost',
+        //     storageUrl: 'https://localhost'
+        // }
     });
 
+    var appLogger = app('logger');
+    appLogger.logLevel(appLogger.LEVEL_PROD);
 
-    // for production release, drop all warnings and info messages, showing only errors
-    var errors = app('errors');
-    errors.setLevel(errors.LEVEL_PROD);
-
-})();
+})(window.app);

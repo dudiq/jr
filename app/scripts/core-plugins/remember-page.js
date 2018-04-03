@@ -63,11 +63,14 @@
     //
     // accessPages - priority pages. first - is main priority
     rememberPage.open = function(accessPages){
-        var loc = savedPagePath || route.location();
+        var routeLoc = route.location();
+        var loc = savedPagePath || routeLoc;
         var pageName = route.getFieldValueByIndex(0, loc);
         if (pageAuth(pageName)){
             // checking access to saved path page id, if ok, do redirect
-            route.pushState(loc);
+            if (routeLoc != loc){
+                route.pushState(loc);
+            }
         } else {
             doDefaultRedirect(accessPages);
         }

@@ -3,7 +3,6 @@
     var tester = app('tester');
 
     var assert = tester.assert;
-    var logger = tester.logger;
 
     tester.block('watch scope', function(describe){
         var watchScope = app('watch-scope');

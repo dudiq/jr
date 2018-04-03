@@ -3,7 +3,6 @@
     var tester = app('tester');
 
     var assert = tester.assert;
-    var logger = tester.logger;
 
     var helper = app('helper');
     tester.block('helper methods checking', function(it){

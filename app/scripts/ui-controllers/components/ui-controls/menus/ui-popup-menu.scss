@@ -1,0 +1,18 @@
+@import "../../../../../styles/variables";
+
+
+.ui-popup-menu {
+    @include defaut-popup-menu();
+    .ui-popup-menu-item{
+        margin: 0 $padding-normal;
+        height: $field-height;
+        line-height: $field-height;
+        cursor: pointer;
+        @include no-selection-children();
+    }
+    .ui-popup-menu-icon{
+        text-align: center;
+        font-size: 20px;
+        vertical-align: middle;
+    }
+}

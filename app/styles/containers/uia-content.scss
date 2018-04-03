@@ -1,0 +1,28 @@
+@import "../variables";
+
+.uia-content {
+    z-index: 2;
+    position: absolute;
+    overflow: auto;
+    .is-support-touch & {
+        overflow-y: scroll; /* has to be scroll, not auto */
+    }
+    overflow-scrolling: touch;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    //top:0;
+    top: $top-menu-height;
+    //padding-top: $top-margin;
+
+    @include set-color-theme(background-color, clr-secondary);
+
+    &.uia-use-padding,
+    .uia-use-padding {
+        padding: $padding-normal;
+    }
+
+    .uia-content-line:not(:last-child) {
+        margin-bottom: $marginNormal;
+    }
+}

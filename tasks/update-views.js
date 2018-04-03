@@ -9,18 +9,23 @@ module.exports = function (grunt) {
 
         var opt = this.data.options;
 
-        var source = opt.src;
         var from = opt.from;
         var to = opt.to;
 
-        grunt.file.copy(from, to, {
-            encoding: 'utf8'
-        })
+        if (grunt.file.exists(from)) {
+            // all ok
+            grunt.file.copy(from, to, {
+                encoding: 'utf8'
+            });
 
-        var replaceViewsOpt = opt.replaceViews;
-        replaceViewsLib(grunt, replaceViewsOpt);
+            replaceViewsLib(grunt, opt.replaceViews);
 
-        grunt.log.subhead(' > updated TPL inject');
+            grunt.log.subhead(' > updated TPL inject');
+        } else {
+            var text = 'hmm, views not exists? ' + from;
+            grunt.log.writeln(text['blue'].bold);
+        }
+
     });
 
 };

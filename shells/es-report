@@ -1,0 +1,4 @@
+!#/usr/bin/sh
+cd ..
+cd app
+eslint . -f ../node_modules/eslint-html-reporter/reporter.js -o ../reports/report.html

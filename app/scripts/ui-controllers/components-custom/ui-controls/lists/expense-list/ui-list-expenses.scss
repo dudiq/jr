@@ -1,0 +1,64 @@
+@import "../../../../../../styles/variables";
+
+.ui-list-expenses {
+    margin: 0 auto;
+    max-width: $screen-big;
+
+    .ui-item-expense {
+        position: relative;
+        border-bottom: 1px solid;
+        @include set-color-theme(border-bottom-color, clr-separator);
+    }
+    .ui-item-expense:last-child {
+        border-bottom: none;
+    }
+    .ui-exp-item {
+        @include set-color-theme(background, clr-third);
+        padding: $paddingNormal;
+        padding-right: $paddingNormal * 2;
+        //border-right: 10px solid;
+        //@include set-color-theme(border-right-color, clr-third);
+
+    }
+    .wd-end-day {
+        .ui-item-time {
+            @include current-day-indicator(clr-invert);
+        }
+    }
+
+    .ui-item-desc {
+        @include set-color-theme(color, clr-four);
+        font-size: $text-size;
+    }
+
+    .uia-grid {
+        table-layout: auto;
+    }
+
+    .uia-grid-cell {
+        vertical-align: middle;
+    }
+
+    .uia-grid-cell:last-child {
+        text-align: right;
+    }
+
+    .ui-item-cost {
+        font-size: $text-size-hard;
+    }
+
+    .ui-item-time {
+        @include set-color-theme(color, clr-four);
+        font-size: $text-size-small;
+        white-space: nowrap;
+    }
+
+    .ui-edit-btn {
+        height: 54px;
+        width: 54px;
+        line-height: 54px;
+        font-size: $text-size-hard;
+    }
+
+    @include create-editing-transform('ui-item-expense', 'ui-exp-item', -124px);
+}
